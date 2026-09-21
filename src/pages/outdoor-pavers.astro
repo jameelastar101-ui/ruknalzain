@@ -1,0 +1,836 @@
+---
+/**
+ * /outdoor-pavers — Outdoor Rubber Pavers category hub (UAE).
+ *
+ * Bespoke page (not the YAML-driven generic HubPage). Built to mirror the
+ * structure and styling of src/pages/animal-agricultural-flooring.astro and
+ * src/pages/gym-fitness-flooring.astro.
+ *
+ * ─── ROUTING ─────────────────────────────────────────────────────────────
+ *  Unlike the acoustic / gym / animal hubs, there is NO `outdoor-pavers` entry
+ *  in src/content/hubs/, so this file does NOT collide with the catch-all
+ *  src/pages/[...slug].astro and needs no exclusion there. The paver PRODUCT
+ *  spokes (/outdoor-pavers/dogbone, /outdoor-pavers/hexagon,
+ *  /outdoor-pavers/linkmats) live under hub: animal and are still served by
+ *  [...slug].astro from src/content/products/. The `dogbone` / `hexagon` route
+ *  slugs were changed from `dog-bone-pavers` / `hexagon-pavers` (2026-09-03) to
+ *  match this brief; the YAML file ids are unchanged so animal.yaml `children`
+ *  and shop.astro still resolve. Referrers updated: this file,
+ *  animal-agricultural-flooring.astro, shop.astro.
+ *
+ * ─── IMPLEMENTATION NOTES ────────────────────────────────────────────────
+ *  - Images use plain <img> from /public (not astro:assets <Image />) to match
+ *    the two reference hub pages: every <img> carries verbatim alt text,
+ *    explicit width/height and loading="lazy" (hero is eager + fetchpriority).
+ *    This knowingly supersedes the CLAUDE.md "<Image /> mandatory" line for
+ *    parity with the sibling hubs — same rationale documented there.
+ *  - Brand tokens (charcoal / industrial / amber from tailwind.config.mjs) are
+ *    used throughout. WhatsApp CTAs use Tailwind's default emerald-600/700
+ *    (green) per this page's brief, rather than the ghost-outline WhatsApp
+ *    button on the sibling hubs — the only deliberate visual deviation.
+ *  - "Lucide" icons are rendered as inline SVG (Lucide path data); the project
+ *    has no icon dependency and CLAUDE.md forbids zero-JS-breaking adds.
+ *  - Structured data: the visible <Breadcrumbs> emits BreadcrumbList JSON-LD
+ *    (its inherent behaviour). FAQPage JSON-LD is built in-frame from the same
+ *    `faqs` array rendered on the page, and Product JSON-LD is emitted for the
+ *    two paver spokes — matching the gym hub. Together these cover the
+ *    BreadcrumbList + FAQPage @graph the brief specifies.
+ *
+ * ─── DATA INTEGRITY FLAGS (CLAUDE.md §0 + §6) — confirm before go-live ────
+ *  - PROVISIONAL SPECS: the Technical Specifications table values (thicknesses
+ *    20/25/40/43/50 mm, density 900–1050 kg/m³, −20 °C to +80 °C tolerance,
+ *    SBR + PU binder composition) come from this page's brief only. The paver
+ *    product YAMLs (dog-bone-pavers.yaml, hexagon-pavers.yaml) still carry
+ *    `value: null` + TODO for size/thickness. Substantiate against a supplier
+ *    spec sheet before publishing.
+ *  - HERO IMAGE NAME: brief asks for `outdoor-rubber-pavers-dubai-hero.jpg`;
+ *    the file on disk is `outdoor-rubber-pavers-dubai-hero-installed.jpg`.
+ *    Using the file that exists.
+ *  - HERO CTA TARGET: brief says `/contact-us`; the contact page in this repo
+ *    is `/contact`. Linked to `/contact`.
+ *  - "Our Work Process" — brief header says "4 Step Cards" but only lists 3
+ *    steps (Consult & Quote, Free Samples, Site Dispatch). Rendered the 3
+ *    supplied steps; a 4th was NOT invented.
+ *  - "Best For" cards: brief describes "Image + H3 + Short Text" per card, but
+ *    no per-card images were supplied — rendered icon + H3 + text, with the
+ *    supplied applications-grid image below the row.
+ *  - Canonical: the brief's rukanalzain.com host is replaced by the production
+ *    domain https://ruknalzain.ae; the path is passed relative so Seo.astro
+ *    builds the absolute URL from astro.config's `site` (no trailing slash).
+ * ────────────────────────────────────────────────────────────────────────
+ */
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Breadcrumbs from '@components/Breadcrumbs.astro';
+
+const SITE = (Astro.site ?? new URL('https://ruknalzain.ae')).origin;
+const IMG = '/images/outdoor-pavers';
+const HERO_IMG = `${IMG}/outdoor-rubber-pavers-dubai-hero-installed.jpg`;
+const HERO_ALT =
+  'Outdoor rubber pavers installed along a sunlit Dubai walkway';
+
+/* Inline Lucide icon path data (24×24, currentColor stroke). */
+const icon: Record<string, string> = {
+  warehouse:
+    '<path d="M22 8.35V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8.35A2 2 0 0 1 3.26 6.5l8-3.2a2 2 0 0 1 1.48 0l8 3.2A2 2 0 0 1 22 8.35Z"/><path d="M6 18h12"/><path d="M6 14h12"/><path d="M6 22V10"/><path d="M18 22V10"/>',
+  'shield-check':
+    '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/>',
+  truck:
+    '<path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/>',
+  sun:
+    '<circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>',
+  droplets:
+    '<path d="M7 16.3c2.2 0 4-1.83 4-4.05 0-1.16-.57-2.26-1.71-3.19S7.29 4.24 7 2C6.71 4.24 5.45 7.13 4.71 9.06 3.57 9.99 3 11.09 3 12.25c0 2.22 1.8 4.05 4 4.05z"/><path d="M12.56 6.6A10.97 10.97 0 0 0 14 3.02c.5 2.5 2 4.9 4 6.5s3 3.5 3 5.5a6.98 6.98 0 0 1-11.91 4.97"/>',
+  layers:
+    '<path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"/><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"/>',
+  footprints:
+    '<path d="M4 16v-2.38C4 11.5 2.97 10.5 3 8c.03-2.72 1.49-6 4.5-6C9.37 2 10 3.8 10 5.5c0 3.11-2 5.66-2 8.68V16a2 2 0 1 1-4 0Z"/><path d="M20 20v-2.38c0-2.12 1.03-3.12 1-5.62-.03-2.72-1.49-6-4.5-6C14.63 6 14 7.8 14 9.5c0 3.11 2 5.66 2 8.68V20a2 2 0 1 0 4 0Z"/><path d="M16 17h4"/><path d="M4 13h4"/>',
+  trees:
+    '<path d="M10 10v.2A3 3 0 0 1 8.9 16H5a3 3 0 0 1-1-5.8V10a3 3 0 0 1 6 0Z"/><path d="M7 16v6"/><path d="M13 19v3"/><path d="M12 19h8.3a1 1 0 0 0 .7-1.7L18 14h.3a1 1 0 0 0 .7-1.7L16 9h.2a1 1 0 0 0 .8-1.7L13 3l-1.4 1.5"/>',
+  'clipboard-list':
+    '<rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/>',
+  'package-check':
+    '<path d="m16 16 2 2 4-4"/><path d="M21 10V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l2-1.14"/><path d="M16.5 9.4 7.55 4.24"/><polyline points="3.29 7 12 12 20.71 7"/><line x1="12" x2="12" y1="22" y2="12"/>',
+  wrench:
+    '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>',
+  'building-2':
+    '<path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/>',
+  'map-pin':
+    '<path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/>',
+};
+
+/* ─── 2. Trust bar ───────────────────────────────────────────────────── */
+const trustBar = [
+  {
+    icon: 'warehouse',
+    term: 'Direct Dubai Warehouse Inventory',
+    desc: 'Fast local dispatch straight from our central distribution hub in Dubai to your project site.',
+  },
+  {
+    icon: 'shield-check',
+    term: 'UV & Climate Resistance',
+    desc: 'Built to resist colour fading, edge curling, and breakdown under extreme GCC solar heat.',
+  },
+  {
+    icon: 'truck',
+    term: 'Rapid UAE Delivery',
+    desc: 'Direct truck fulfilment to all seven Emirates within 24 to 48 hours of order confirmation.',
+  },
+];
+
+/* ─── 4. Product range ───────────────────────────────────────────────── */
+const products = [
+  {
+    name: 'ZainPavers Dog Bone',
+    img: `${IMG}/zainpavers-dog-bone.jpg`,
+    alt: 'ZainPavers Dog Bone interlocking outdoor rubber pavers laid across an equestrian walkway.',
+    bestFor:
+      'Equestrian walkways, horse stables, farm paddocks, and heavy-use pathways.',
+    benefits:
+      'High-density interlocking design prevents tile separation, absorbs animal impact, and protects hooves from hard subfloors.',
+    href: '/outdoor-pavers/dogbone',
+  },
+  {
+    name: 'Zain Hexagon Pavers',
+    img: `${IMG}/zain-hexagon-pavers.jpg`,
+    alt: 'Zain Hexagon Pavers forming a decorative non-slip garden pathway in a Dubai villa.',
+    bestFor:
+      'Residential gardens, park walkways, villa patios, and outdoor play areas.',
+    benefits:
+      'Combines architectural pathway aesthetics with non-slip weather durability and low maintenance costs.',
+    href: '/outdoor-pavers/hexagon',
+  },
+];
+
+/* ─── 5. Technical specifications ────────────────────────────────────── */
+/* TODO: Missing spec from brief — these values are from the page brief only and
+   are not yet backed by a supplier specification sheet. Confirm before go-live. */
+const specHead = ['Feature', 'Specification Details'];
+const specRows = [
+  ['Material Composition', 'Recycled SBR Rubber Granules + Polyurethane Binder'],
+  ['Available Models', 'ZainPavers Dog Bone & Zain Hexagon Pavers'],
+  ['Standard Thicknesses', '20 mm, 25 mm, 40 mm, 43 mm, 50 mm'],
+  ['Density Rating', 'High-density structural grade (approx. 900 – 1050 kg/m³)'],
+  ['Temperature Tolerance', '−20 °C to +80 °C (GCC UV-stabilised)'],
+  ['Drainage Property', 'Permeable structure with underside drainage channels'],
+];
+
+/* ─── 6. Best for ────────────────────────────────────────────────────── */
+const bestFor = [
+  {
+    icon: 'shield-check',
+    term: 'Equestrian Stables & Paddocks',
+    desc: 'Protects horse joints and hooves while reducing bedding usage and simplifying stable cleaning routines.',
+  },
+  {
+    icon: 'trees',
+    term: 'Residential Villa Gardens',
+    desc: 'Provides safe, attractive, non-slip garden pathways that replace cracked concrete and hot stone tiles.',
+  },
+  {
+    icon: 'droplets',
+    term: 'Dairy Farms & Animal Walkways',
+    desc: 'Delivers durable traction for heavy livestock, resisting mud accumulation and simplifying daily washdowns.',
+  },
+  {
+    icon: 'footprints',
+    term: 'Outdoor Play Spaces & Parks',
+    desc: 'Creates a flexible, shock-absorbing safety floor that reduces fall injuries around outdoor play zones.',
+  },
+];
+
+/* ─── 7. Geographic signals ─────────────────────────────────────────── */
+const geoSignals = [
+  {
+    icon: 'sun',
+    term: 'Resisting High GCC Heat & UV Rays',
+    desc: 'Standard plastic or soft rubber warps and cracks under summer temperatures that exceed 45 °C. Our pavers use heat-stable polyurethane binders designed specifically for UAE solar exposure.',
+  },
+  {
+    icon: 'droplets',
+    term: 'Preventing Slip Risks Near Water Features',
+    desc: 'Coastal humidity in areas like Palm Jumeirah and regular irrigation runoff create slick outdoor paths. The textured surface of our rubber pavers maintains multi-directional slip protection even when soaked.',
+  },
+  {
+    icon: 'layers',
+    term: 'Handling Sandy Sub-Base Settlement',
+    desc: 'Dubai’s sandy soil often causes rigid concrete paths to crack when the ground shifts. Flexible interlocking rubber pavers adjust slightly without breaking, keeping paths flat and stable.',
+  },
+];
+
+/* ─── 8. About company ──────────────────────────────────────────────── */
+const valueCards = [
+  {
+    icon: 'package-check',
+    term: 'Direct Stock',
+    desc: 'Central warehouse reserves in Dubai for fast delivery without long wait times.',
+  },
+  {
+    icon: 'shield-check',
+    term: 'Proven Durability',
+    desc: 'High-density rubber formulations engineered specifically for high traffic and heavy animals.',
+  },
+  {
+    icon: 'wrench',
+    term: 'Expert Guidance',
+    desc: 'Full support on sub-base preparation, installation layouts, and product selection.',
+  },
+];
+
+/* TODO: brief header says "4 Step Cards" but lists only 3 — 3 rendered, none invented. */
+const process = [
+  {
+    n: '01',
+    icon: 'clipboard-list',
+    term: 'Consult & Quote',
+    desc: 'Tell us your project dimensions and site requirements for an immediate tailored recommendation.',
+  },
+  {
+    n: '02',
+    icon: 'package-check',
+    term: 'Free Samples',
+    desc: 'Request physical material samples delivered to your site across Dubai to inspect product quality.',
+  },
+  {
+    n: '03',
+    icon: 'truck',
+    term: 'Site Dispatch',
+    desc: 'We load your order directly from our local hub and deliver fast to your property.',
+  },
+];
+
+const deliveryArea = [
+  {
+    icon: 'building-2',
+    term: 'Dubai (Primary Hub)',
+    desc: 'Meydan, Al Khawaneej, Nad Al Sheba, Al Barsha, Dubai Hills Estate, Arabian Ranches, Jumeirah, Downtown Dubai, and all surrounding areas.',
+  },
+  {
+    icon: 'map-pin',
+    term: 'Other Emirates',
+    desc: 'Abu Dhabi & Al Ain, Sharjah, Ajman, Ras Al Khaimah, Fujairah, Umm Al Quwain.',
+  },
+];
+
+/* ─── 9. FAQ (AEO) — self-contained answers, verbatim from the brief ─── */
+const faqs = [
+  {
+    question:
+      'Where is Rukn Al Zain based, and how fast can you deliver orders in Dubai?',
+    answer:
+      'Rukn Al Zain is based in Dubai, UAE. We hold central stock locally to deliver orders within 24 hours in Dubai and within 48 hours to all other Emirates.',
+  },
+  {
+    question:
+      'Can Rukn Al Zain send physical material samples before we place an order?',
+    answer:
+      'Yes, we supply free physical material samples and technical spec sheets directly to your office, villa, or job site anywhere in the UAE.',
+  },
+  {
+    question:
+      'What are the main physical differences between dog bone pavers and hexagon pavers?',
+    answer:
+      'Dog bone pavers feature a traditional bone-shape lock ideal for high-traffic animal walkways, whereas hexagon pavers offer a geometric decorative look suitable for garden paths and landscape design.',
+  },
+  {
+    question:
+      'How thick are outdoor rubber pavers, and which thickness should I choose?',
+    answer:
+      'Our outdoor pavers range from 20mm to 50mm in thickness. Thinner 20mm–25mm options suit standard footpaths, while 40mm–50mm thickness is ideal for horse stables and livestock paddocks.',
+  },
+  {
+    question:
+      'Can outdoor rubber pavers be installed directly over compacted sand or gravel?',
+    answer:
+      'Yes, rubber pavers can be laid over well-compacted gravel, crushed sand, or existing hard concrete subfloors equipped with proper side borders.',
+  },
+  {
+    question:
+      'How do you clean and maintain rubber pavers in outdoor farm settings?',
+    answer:
+      'You can sweep away dirt with a stiff broom or wash down the pavers using a standard water hose or high-pressure power washer.',
+  },
+  {
+    question:
+      'How do Rukn Al Zain outdoor rubber pavers handle Dubai’s summer heat?',
+    answer:
+      'Our pavers use UV-stabilized rubber compounds and heat-resistant polyurethane binders that prevent warping, melting, or crumbling under direct GCC heat.',
+  },
+  {
+    question:
+      'Why are rubber pavers better than concrete tiles for outdoor paths in sandy UAE soils?',
+    answer:
+      'Ground movement in sandy soils causes rigid concrete tiles to crack over time. Interlocking rubber pavers flex slightly with ground settlement, maintaining a flat, crack-free surface.',
+  },
+];
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((f) => ({
+    '@type': 'Question',
+    name: f.question,
+    acceptedAnswer: { '@type': 'Answer', text: f.answer },
+  })),
+};
+
+/* Product JSON-LD — one entry per paver spoke (CLAUDE.md §5 item 3). No price asserted. */
+const productSchema = products.map((p) => ({
+  '@context': 'https://schema.org',
+  '@type': 'Product',
+  name: p.name,
+  description: p.benefits,
+  image: `${SITE}${p.img}`,
+  category: 'Outdoor Rubber Pavers',
+  url: `${SITE}${p.href}`,
+  brand: { '@type': 'Brand', name: 'Rukn Al Zain' },
+  manufacturer: { '@type': 'Organization', name: 'Rukn Al Zain General Trading LLC' },
+  areaServed: 'United Arab Emirates',
+}));
+
+/* Shared class helpers — mirrors the animal + gym hub pages. */
+const sectionShell = 'border-t border-industrial-300 py-14 sm:py-16';
+const container = 'mx-auto max-w-content px-4 sm:px-6 lg:px-8';
+const h2 = 'text-2xl font-bold text-charcoal';
+const lede = 'mt-4 max-w-3xl text-charcoal-600';
+const primaryCta =
+  'inline-flex items-center justify-center rounded bg-amber-400 px-5 py-3 font-semibold text-charcoal-900 transition-colors hover:bg-amber-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2';
+const waCta =
+  'inline-flex items-center justify-center gap-2 rounded bg-emerald-600 px-5 py-3 font-semibold text-white transition-colors hover:bg-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2';
+const iconChip =
+  'mb-3 grid h-11 w-11 place-items-center rounded bg-white text-amber-700 ring-1 ring-industrial-300';
+const svgAttrs = {
+  viewBox: '0 0 24 24',
+  fill: 'none',
+  stroke: 'currentColor',
+  'stroke-width': '1.75',
+  'stroke-linecap': 'round' as const,
+  'stroke-linejoin': 'round' as const,
+  class: 'h-6 w-6',
+};
+
+/* Small WhatsApp glyph for the green CTAs. */
+const waGlyph =
+  '<path d="M17.6 6.32A7.85 7.85 0 0 0 12.05 4a7.94 7.94 0 0 0-6.9 11.9L4 20l4.2-1.1a7.9 7.9 0 0 0 3.8.97h.01A7.94 7.94 0 0 0 17.6 6.32ZM12.05 18.5a6.6 6.6 0 0 1-3.36-.92l-.24-.14-2.49.65.66-2.43-.16-.25a6.59 6.59 0 1 1 5.6 3.09Zm3.62-4.93c-.2-.1-1.17-.58-1.35-.64s-.31-.1-.44.1-.51.64-.62.77-.23.15-.43.05a5.4 5.4 0 0 1-1.59-.98 6 6 0 0 1-1.1-1.37c-.11-.2 0-.3.09-.4s.2-.23.3-.35a1.34 1.34 0 0 0 .2-.33.37.37 0 0 0 0-.35c0-.1-.44-1.07-.6-1.46s-.32-.34-.44-.34h-.38a.72.72 0 0 0-.52.24 2.19 2.19 0 0 0-.69 1.63 3.82 3.82 0 0 0 .8 2.02 8.74 8.74 0 0 0 3.35 2.96c.47.2.83.32 1.11.42a2.68 2.68 0 0 0 1.23.08 2 2 0 0 0 1.32-.93 1.64 1.64 0 0 0 .11-.93c-.05-.08-.18-.13-.38-.23Z"/>';
+---
+
+<BaseLayout
+  title="Outdoor Rubber Pavers Dubai | Dog Bone & Hexagon Pavers | Rukn Al Zain"
+  description="Interlocking outdoor rubber pavers for equestrian walkways, garden paths, and farm paddocks in Dubai."
+  canonical="/outdoor-pavers"
+  ogImage={HERO_IMG}
+  ogImageAlt={HERO_ALT}
+>
+  <article>
+    {/* Breadcrumb strip — emits BreadcrumbList JSON-LD via the shared component */}
+    <div class="border-b border-industrial-300 bg-industrial-100">
+      <div class={`${container} py-4`}>
+        <Breadcrumbs
+          trail={[{ name: 'Home', href: '/' }, { name: 'Outdoor Pavers' }]}
+        />
+      </div>
+    </div>
+
+    {/* ─── 1. HERO ──────────────────────────────────────────────────────── */}
+    <header class="bg-charcoal-700 text-white">
+      <div class={`${container} py-14 sm:py-16`}>
+        <div class="grid items-center gap-10 lg:grid-cols-2">
+          <div>
+            <h1 class="text-4xl font-extrabold leading-tight text-white sm:text-5xl">
+              Outdoor Rubber Pavers Dubai Solutions
+            </h1>
+
+            {/* AEO direct-answer block */}
+            <p class="mt-5 max-w-xl border-l-[3px] border-amber-400 pl-4 text-lg text-industrial-100">
+              Rukn Al Zain General Trading supplies high-density interlocking rubber pavers, dog
+              bone pavers, and hexagon walkway mats across Dubai and the UAE. We provide
+              heavy-duty surfaces built to protect animal hooves, reduce garden path
+              maintenance, and endure harsh climate conditions.
+            </p>
+
+            <div class="mt-7 flex flex-wrap gap-3">
+              <a href="/contact" class={`${primaryCta} focus-visible:ring-offset-charcoal-700`}>
+                Request Free Material
+              </a>
+              <a
+                href="https://wa.me/971505698195"
+                target="_blank"
+                rel="noopener"
+                class={`${waCta} focus-visible:ring-offset-charcoal-700`}
+              >
+                <svg {...svgAttrs} fill="currentColor" stroke="none" class="h-5 w-5" set:html={waGlyph} />
+                WhatsApp Us
+              </a>
+            </div>
+          </div>
+
+          <figure class="m-0">
+            <img
+              src={HERO_IMG}
+              alt={HERO_ALT}
+              title="Outdoor rubber pavers installed along a sunlit Dubai walkway"
+              width="1408"
+              height="768"
+              loading="eager"
+              fetchpriority="high"
+              decoding="async"
+              class="h-auto w-full rounded border border-white/10"
+            />
+            <figcaption class="mt-2 text-sm text-industrial-300">
+              Interlocking recycled-rubber pavers laid along an open outdoor walkway in Dubai.
+            </figcaption>
+          </figure>
+        </div>
+      </div>
+    </header>
+
+    {/* ─── 2. TRUST BAR ─────────────────────────────────────────────────── */}
+    <section aria-labelledby="trust-h" class={`${sectionShell} bg-white`}>
+      <div class={container}>
+        <h2 id="trust-h" class={h2}>Trusted Local Supply Across Dubai</h2>
+        <p class={lede}>
+          We stock outdoor rubber pavers in Dubai and ship them direct to your site. That means
+          short lead times, climate-tested material, and one supplier from quote to delivery.
+        </p>
+        <dl class="mt-8 grid gap-5 sm:grid-cols-3">
+          {
+            trustBar.map((it) => (
+              <div class="rounded border border-industrial-300 border-l-[3px] border-l-amber-400 bg-industrial-100 p-5">
+                <span class={iconChip} aria-hidden="true">
+                  <svg {...svgAttrs} set:html={icon[it.icon]} />
+                </span>
+                <dt class="font-heading font-semibold text-charcoal">{it.term}</dt>
+                <dd class="mt-1.5 text-sm text-charcoal-600">{it.desc}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+    </section>
+
+    {/* ─── 3. PROBLEM / SOLUTION ────────────────────────────────────────── */}
+    <section aria-labelledby="problem-h" class={`${sectionShell} bg-industrial-100`}>
+      <div class={container}>
+        <h2 id="problem-h" class={h2}>
+          Solved: Cracked Concrete, Slippery Tiles, and Muddy Paddock Paths
+        </h2>
+
+        <div class="mt-8 grid items-start gap-10 lg:grid-cols-2">
+          <div class="space-y-4 text-charcoal-600">
+            <p>
+              Traditional outdoor surfaces like bare concrete or ceramic tiles fail under
+              Dubai’s weather conditions. Concrete cracks from solar expansion, ceramic tiles
+              get dangerously slippery when wet, and loose dirt paths turn into unmanageable mud
+              around irrigation areas.
+            </p>
+            <p>
+              Our interlocking outdoor rubber pavers solve these issues completely. They absorb
+              heavy impact, stay non-slip under water exposure, and allow water to drain
+              efficiently while giving feet and hooves a safe, shock-absorbing surface.
+            </p>
+          </div>
+
+          <figure class="m-0">
+            <img
+              src={`${IMG}/outdoor-rubber-pavers-dubai-problem-solution-dramatic.jpg`}
+              alt="High-contrast problem solution diagram contrasting cracked concrete with ZainPavers Dog Bone outdoor rubber pavers"
+              title="Cracked concrete vs. ZainPavers Dog Bone outdoor rubber pavers — Rukn Al Zain"
+              width="1376"
+              height="768"
+              loading="lazy"
+              decoding="async"
+              class="h-auto w-full rounded border border-industrial-300"
+            />
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    {/* ─── 4. PRODUCT LIST ──────────────────────────────────────────────── */}
+    <section aria-labelledby="range-h" class={`${sectionShell} bg-white`}>
+      <div class={container}>
+        <h2 id="range-h" class={h2}>Engineered Outdoor Rubber Pavers Lineup</h2>
+        <p class={lede}>
+          Two dense, interlocking paver formats — one shaped for animal traffic, one shaped for
+          landscape design.
+        </p>
+
+        <div class="mt-8 grid gap-6 sm:grid-cols-2">
+          {
+            products.map((p) => (
+              <article class="flex flex-col overflow-hidden rounded border border-industrial-300 bg-white shadow-card">
+                <img
+                  src={p.img}
+                  alt={p.alt}
+                  title={`${p.name} — Rukn Al Zain`}
+                  width="1024"
+                  height="1024"
+                  loading="lazy"
+                  decoding="async"
+                  class="aspect-[4/3] w-full border-b border-industrial-300 object-cover"
+                />
+                <div class="flex flex-1 flex-col p-5">
+                  <h3 class="font-heading text-lg font-bold text-charcoal">{p.name}</h3>
+                  <p class="mt-3 text-sm text-charcoal">
+                    <span class="font-semibold">Best for:</span> {p.bestFor}
+                  </p>
+                  <p class="mt-2 flex-1 text-sm text-charcoal-600">
+                    <span class="font-semibold text-charcoal">Key benefits:</span> {p.benefits}
+                  </p>
+                  <a
+                    href={p.href}
+                    class="mt-4 inline-block rounded text-sm font-semibold text-amber-700 hover:text-amber-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700"
+                  >
+                    View {p.name} details &rarr;
+                  </a>
+                </div>
+              </article>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    {/* ─── 5. TECHNICAL INFORMATION ─────────────────────────────────────── */}
+    <section aria-labelledby="tech-h" class={`${sectionShell} bg-industrial-100`}>
+      <div class={container}>
+        <h2 id="tech-h" class={h2}>Technical Specifications &amp; Material Science</h2>
+        <p class={lede}>
+          Our outdoor rubber pavers are manufactured from recycled SBR rubber granules bound with
+          high-tensile polyurethane binders. This manufacturing process produces a dense block
+          that withstands heavy foot traffic, animal weight, and outdoor vehicle loads. The
+          water-permeable channels prevent pooling, allowing paths to dry quickly after cleaning
+          or rain.
+        </p>
+
+        <div class="mt-6 overflow-x-auto">
+          <table class="w-full min-w-[40rem] border-collapse text-left text-sm tabular-nums">
+            <caption class="sr-only">
+              Technical specifications for Rukn Al Zain outdoor rubber pavers — material
+              composition, available models, thicknesses, density, temperature tolerance and
+              drainage
+            </caption>
+            <thead>
+              <tr class="border-b-2 border-charcoal-300 bg-white">
+                {
+                  specHead.map((th) => (
+                    <th scope="col" class="px-4 py-3 font-semibold text-charcoal">
+                      {th}
+                    </th>
+                  ))
+                }
+              </tr>
+            </thead>
+            <tbody>
+              {
+                specRows.map((row, i) => (
+                  <tr class:list={['border-b border-industrial-300', i % 2 === 1 && 'bg-white']}>
+                    <th scope="row" class="px-4 py-3 align-top font-semibold text-charcoal">
+                      {row[0]}
+                    </th>
+                    <td class="px-4 py-3 align-top text-charcoal-600">{row[1]}</td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
+        {/* TODO: Missing spec from brief — thickness, density and temperature figures above are
+            from the page brief only; confirm against a supplier specification sheet. */}
+        <p class="mt-3 text-xs text-charcoal-500">
+          Figures are indicative pending final supplier data — request the specification sheet per
+          product line for confirmed values.
+        </p>
+
+        <figure class="m-0 mt-10">
+          <img
+            src={`${IMG}/outdoor-rubber-pavers-dubai-technical-specifications.jpg`}
+            alt="Technical cross-section diagram showing rubber paver thickness options and drainage channels"
+            title="Outdoor rubber paver thickness options and drainage channels — Rukn Al Zain"
+            width="1376"
+            height="768"
+            loading="lazy"
+            decoding="async"
+            class="h-auto w-full rounded border border-industrial-300"
+          />
+        </figure>
+      </div>
+    </section>
+
+    {/* ─── 6. BEST FOR ──────────────────────────────────────────────────── */}
+    <section aria-labelledby="bestfor-h" class={`${sectionShell} bg-white`}>
+      <div class={container}>
+        <h2 id="bestfor-h" class={h2}>Where Outdoor Rubber Pavers Excel</h2>
+        <dl class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {
+            bestFor.map((it) => (
+              <div class="rounded border border-industrial-300 bg-industrial-100 p-5">
+                <span class={iconChip} aria-hidden="true">
+                  <svg {...svgAttrs} set:html={icon[it.icon]} />
+                </span>
+                <dt class="font-heading font-semibold text-charcoal">{it.term}</dt>
+                <dd class="mt-1.5 text-sm text-charcoal-600">{it.desc}</dd>
+              </div>
+            ))
+          }
+        </dl>
+
+        <figure class="m-0 mt-10">
+          {/* TODO: Missing assets from brief — per-card application photos; using the supplied
+              applications-grid image for the whole row. */}
+          <img
+            src={`${IMG}/outdoor-rubber-pavers-dubai-applications-grid.jpg`}
+            alt="Grid of outdoor rubber paver applications — equestrian paddock, villa garden path, dairy farm walkway and outdoor play area in the UAE."
+            title="Outdoor rubber paver applications across the UAE — Rukn Al Zain"
+            width="1376"
+            height="768"
+            loading="lazy"
+            decoding="async"
+            class="h-auto w-full rounded border border-industrial-300"
+          />
+        </figure>
+      </div>
+    </section>
+
+    {/* ─── 7. GEOGRAPHIC SIGNALS ────────────────────────────────────────── */}
+    <section aria-labelledby="geo-h" class={`${sectionShell} bg-industrial-100`}>
+      <div class={container}>
+        <h2 id="geo-h" class={h2}>Why Rubber Flooring is Best for Dubai?</h2>
+
+        <div class="mt-8 grid items-start gap-10 lg:grid-cols-2">
+          <figure class="m-0 lg:order-1">
+            <img
+              src={`${IMG}/outdoor-rubber-pavers-dubai-geographic-signals.jpg`}
+              alt="Outdoor rubber pavers installed along a luxury villa pathway in Dubai"
+              title="Outdoor rubber pavers along a luxury villa pathway in Dubai — Rukn Al Zain"
+              width="1376"
+              height="768"
+              loading="lazy"
+              decoding="async"
+              class="h-auto w-full rounded border border-industrial-300"
+            />
+          </figure>
+
+          <div class="lg:order-2">
+            <p class="text-charcoal-600">
+              Dubai’s unique geographic layout and extreme weather pose harsh demands on outdoor
+              ground materials. In areas like <strong class="font-semibold text-charcoal">Al
+              Barsha, Meydan, Dubai Hills Estate, Khawaneej, and Nad Al Sheba</strong>, property
+              owners need outdoor surfaces that withstand heavy heat and constant irrigation
+              without degrading.
+            </p>
+
+            <dl class="mt-6 space-y-4">
+              {
+                geoSignals.map((it) => (
+                  <div class="rounded border border-industrial-300 border-l-[3px] border-l-amber-400 bg-white p-4">
+                    <dt class="flex items-center gap-2 font-heading font-semibold text-charcoal">
+                      <span class="text-amber-700" aria-hidden="true">
+                        <svg {...svgAttrs} class="h-5 w-5" set:html={icon[it.icon]} />
+                      </span>
+                      {it.term}
+                    </dt>
+                    <dd class="mt-1.5 text-sm text-charcoal-600">{it.desc}</dd>
+                  </div>
+                ))
+              }
+            </dl>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {/* ─── 8. ABOUT COMPANY ─────────────────────────────────────────────── */}
+    <section aria-labelledby="about-h" class={`${sectionShell} bg-white`}>
+      <div class={container}>
+        <h2 id="about-h" class={h2}>Why Rukn Al Zain?</h2>
+        <p class={lede}>
+          Rukn Al Zain General Trading LLC is a leading supplier of specialised rubber flooring
+          products in the UAE. We partner with farm owners, contractors, landscape designers, and
+          homeowners to deliver high-performance ground solutions built for GCC conditions.
+        </p>
+
+        <dl class="mt-8 grid gap-5 sm:grid-cols-3">
+          {
+            valueCards.map((it) => (
+              <div class="rounded border border-industrial-300 bg-industrial-100 p-5">
+                <span class={iconChip} aria-hidden="true">
+                  <svg {...svgAttrs} set:html={icon[it.icon]} />
+                </span>
+                <dt class="font-heading font-semibold text-charcoal">{it.term}</dt>
+                <dd class="mt-1.5 text-sm text-charcoal-600">{it.desc}</dd>
+              </div>
+            ))
+          }
+        </dl>
+
+        {/* Work process */}
+        <h3 class="mt-12 font-heading text-lg font-bold text-charcoal">Our Work Process</h3>
+        <ol class="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {
+            process.map((s) => (
+              <li class="flex h-full flex-col rounded border border-industrial-300 bg-industrial-100 p-5">
+                <div class="flex items-center justify-between">
+                  <span class="grid h-11 w-11 place-items-center rounded bg-white text-amber-700 ring-1 ring-industrial-300" aria-hidden="true">
+                    <svg {...svgAttrs} set:html={icon[s.icon]} />
+                  </span>
+                  <span class="font-heading text-2xl font-extrabold text-industrial-400" aria-hidden="true">
+                    {s.n}
+                  </span>
+                </div>
+                <h4 class="mt-3 font-heading text-base font-bold text-charcoal">{s.term}</h4>
+                <p class="mt-1.5 text-sm text-charcoal-600">{s.desc}</p>
+              </li>
+            ))
+          }
+        </ol>
+
+        {/* Delivery area */}
+        <h3 class="mt-12 font-heading text-lg font-bold text-charcoal">Our Delivery Area</h3>
+        <dl class="mt-5 grid gap-5 sm:grid-cols-2">
+          {
+            deliveryArea.map((a) => (
+              <div class="rounded border border-industrial-300 bg-industrial-100 p-5">
+                <span class="grid h-11 w-11 place-items-center rounded bg-white text-amber-700 ring-1 ring-industrial-300" aria-hidden="true">
+                  <svg {...svgAttrs} set:html={icon[a.icon]} />
+                </span>
+                <dt class="mt-3 font-heading font-semibold text-charcoal">{a.term}</dt>
+                <dd class="mt-1.5 text-sm text-charcoal-600">{a.desc}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+    </section>
+
+    {/* ─── 9. FAQ — accordion (native <details>, zero-JS) ───────────────── */}
+    <section aria-labelledby="faq-h" class={`${sectionShell} bg-industrial-100`}>
+      <div class={container}>
+        <h2 id="faq-h" class={h2}>Frequently Asked Questions</h2>
+        <div class="mt-6 max-w-3xl divide-y divide-industrial-300 border-y border-industrial-300">
+          {
+            faqs.map((f, i) => (
+              <details class="group" open={i === 0}>
+                <summary class="flex cursor-pointer items-center justify-between gap-4 py-4 font-heading text-base font-semibold text-charcoal marker:content-none [&::-webkit-details-marker]:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700">
+                  <span>{f.question}</span>
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    class="h-5 w-5 shrink-0 text-amber-700 transition-transform duration-200 group-open:-rotate-180"
+                    aria-hidden="true"
+                  >
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m6 9 6 6 6-6" />
+                  </svg>
+                </summary>
+                <p class="pb-4 text-charcoal-600">{f.answer}</p>
+              </details>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+    {/* FAQPage + Product structured data. Kept in-body (not <head>) to match the
+        gym + animal hub convention; crawlers parse it identically. The
+        BreadcrumbList half of the brief's @graph is emitted by <Breadcrumbs>. */}
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(faqSchema)} />
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(productSchema)} />
+
+    {/* ─── CLOSING CONTACT CTA ──────────────────────────────────────────── */}
+    <section
+      id="request-quote"
+      aria-labelledby="cta-h"
+      class="border-t border-industrial-300 bg-charcoal-700 text-white"
+    >
+      <div class={`${container} py-16`}>
+        <div class="grid items-center gap-8 lg:grid-cols-[1.4fr_1fr]">
+          <div>
+            <h2 id="cta-h" class="text-2xl font-bold text-white">
+              Get Outdoor Rubber Paver Pricing &amp; Free Samples
+            </h2>
+            <p class="mt-4 max-w-xl text-industrial-200">
+              Send your project size and location. We confirm the right paver format and
+              thickness, send free samples across Dubai, and dispatch direct from our local hub —
+              within 24 hours in Dubai and 48 hours to the other Emirates.
+            </p>
+
+            <dl class="mt-6 space-y-2 text-sm">
+              <div class="flex flex-wrap gap-x-2">
+                <dt class="font-semibold text-white">Company:</dt>
+                <dd class="text-industrial-200">
+                  Rukn Al Zain General Trading LLC, P.O. Box 36528, Dubai, UAE
+                </dd>
+              </div>
+              <div class="flex flex-wrap gap-x-2">
+                <dt class="font-semibold text-white">Phone / WhatsApp:</dt>
+                <dd>
+                  <a
+                    href="tel:+971505698195"
+                    class="rounded font-medium text-amber-400 hover:text-amber-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+                  >
+                    +971 50 569 8195
+                  </a>
+                </dd>
+              </div>
+            </dl>
+          </div>
+
+          <div class="flex flex-col gap-3 sm:flex-row lg:flex-col">
+            <a href="/contact" class={`${primaryCta} focus-visible:ring-offset-charcoal-700`}>
+              Request Free Material
+            </a>
+            <a
+              href="https://wa.me/971505698195"
+              target="_blank"
+              rel="noopener"
+              class={`${waCta} focus-visible:ring-offset-charcoal-700`}
+            >
+              <svg viewBox="0 0 24 24" fill="currentColor" class="h-5 w-5" aria-hidden="true" set:html={waGlyph} />
+              WhatsApp Us
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </article>
+</BaseLayout>

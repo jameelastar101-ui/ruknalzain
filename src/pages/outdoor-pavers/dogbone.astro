@@ -1,0 +1,1291 @@
+---
+/**
+ * /outdoor-pavers/dogbone — "ZainPavers Dog Bone — Heavy-Duty Outdoor Pavers"
+ * conversion + SEO / AEO / GEO product landing page.
+ *
+ * Bespoke page (not the YAML-driven generic ProductPage), built to mirror the
+ * sibling spoke src/pages/outdoor-pavers/hexagon.astro (and, through it,
+ * src/pages/hammer-top.astro / src/pages/horse-mats.astro / acoustic-strips.astro
+ * / screed-isolation.astro) — same class helpers, progressive-enhancement
+ * scroll-reveal motion, hand-rolled breadcrumb and combined JSON-LD @graph
+ * (prefix `db-`).
+ *
+ * ─── ROUTING ─────────────────────────────────────────────────────────────
+ * This file serves /outdoor-pavers/dogbone. The content entry
+ * src/content/products/dog-bone-pavers.yaml keeps `path: /outdoor-pavers/dogbone`
+ * and that branch is now filtered out of getStaticPaths in
+ * src/pages/[...slug].astro — the same pattern already used for
+ * acoustic-underlay, sports-track-underlay, screed-isolation, acoustic-strips,
+ * hammer-top, horse-mats, outdoor-pavers/hexagon, zainfit, zainsquare, zainduo,
+ * zainactive-rolls and curb-stone. The YAML entry stays as data (still a child
+ * of the `animal` hub via animal.yaml `children:` and listed on /outdoor-pavers,
+ * /shop and the /animal-agricultural-flooring grid); this file serves the URL.
+ * No internal links change — every referrer (outdoor-pavers.astro,
+ * animal-agricultural-flooring.astro, shop.astro, blog/[slug].astro,
+ * outdoor-pavers/hexagon.astro and the best-flooring-horse-stables blog post)
+ * already points at /outdoor-pavers/dogbone.
+ *
+ * ─── DECISIONS TAKEN / FLAGS (CLAUDE.md §0 "Data Integrity" + §6) ─────────
+ *  - URL SLUG: the build request targets `/outdoor-pavers/dog-bone-pavers`. The
+ *    live site routes `/outdoor-pavers/dogbone` (slug shortened 2026-09-03 per an
+ *    explicit client instruction, together with hexagon-pavers → hexagon) and the
+ *    hub page, the animal hub product grid, /shop, blog/[slug].astro and the blog
+ *    post best-flooring-horse-stables-uae-climate.md all link to
+ *    `/outdoor-pavers/dogbone`. Confirmed with the client 2026-09-04 to KEEP
+ *    `/dogbone` — building here preserves every internal link and matches the
+ *    `/outdoor-pavers/hexagon` sibling. The request's `/dog-bone-pavers` is not
+ *    used. If the longer slug is ever required, re-slug this file plus
+ *    dog-bone-pavers.yaml, hexagon-pavers.yaml + hexagon.astro (for parity),
+ *    outdoor-pavers.astro, animal-agricultural-flooring.astro, shop.astro,
+ *    blog/[slug].astro and the blog post together.
+ *  - BREADCRUMB PARENT: the request's BreadcrumbList is Home → Outdoor Pavers →
+ *    ZainPavers Dog Bone, and a real /outdoor-pavers hub page exists, so both the
+ *    visible trail and the BreadcrumbList JSON-LD below use it. This differs from
+ *    the YAML-driven trail (dog-bone-pavers.yaml `hub: animal` would render
+ *    Home → Animal & Agricultural Flooring → …). Matches hexagon.astro. TODO:
+ *    confirm "Outdoor Pavers" is the intended parent-hub label for the paver
+ *    spokes and not "Animal & Agricultural Flooring".
+ *  - CANONICAL HOST: the request shows "rukanalzain.com/outdoor-pavers/dog-bone-pavers";
+ *    the configured site is "https://ruknalzain.ae" (astro.config.mjs — note
+ *    the spelling: ruk*n*alzain, not ruk*an*alzain). Canonical + all schema URLs
+ *    are built from the configured site via BaseLayout `canonical={PATH}` (same
+ *    choice as every sibling). TODO: confirm the production domain / spelling.
+ *  - H1: the single visible <h1> uses the request's Hero H1 string
+ *    "ZainPavers Dog Bone — Heavy-Duty Outdoor Pavers" verbatim; the <title> tag
+ *    uses the request's Title Tag verbatim.
+ *  - DESIGN SYSTEM: the request describes Next.js / React / lucide-react icons and
+ *    a dark `bg-neutral-950` zinc palette. This is a static Astro site (zero-JS)
+ *    on the live charcoal / industrial-grey design system with a single amber
+ *    action accent; the WhatsApp buttons use the parent hub's green
+ *    (emerald-600/700) treatment, which this request also calls for. Lucide icons
+ *    are inlined as raw SVG path data (no runtime). The FAQ accordion uses native
+ *    <details>/<summary>.
+ *  - TECHNICAL SPECIFICATIONS: dog-bone-pavers.yaml lists "Paver size" (mm) and
+ *    "Thickness" (mm) as null "to collect". Every row rendered below is the
+ *    descriptive text supplied in this page-build request, NOT numeric data from
+ *    "Rukn_Al_Zain_SEO_Content_Brief V2.docx". The thickness set
+ *    (20/25/40/43/50 mm), density band (900–1050 kg/m³) and −20/+80 °C range are
+ *    from the request, not a manufacturer certificate — the same figures are
+ *    already flagged PROVISIONAL on outdoor-pavers.astro and hexagon.astro. Treat
+ *    the whole table as PROVISIONAL and confirm against real product data before
+ *    go-live.
+ *  - LEAD FORM FIELDS: the request lists Full Name, Phone/WhatsApp, Project
+ *    Location, Required Area (m²) and Project Details. An optional Email field is
+ *    also included for parity with hexagon.astro / hammer-top.astro and standard
+ *    lead capture — it is not marked required. Remove it if the client wants an
+ *    exact field match with the brief.
+ *  - STRUCTURED DATA: a single combined @graph (BreadcrumbList + Product +
+ *    FAQPage) is emitted inline. The request supplied BreadcrumbList + Product
+ *    (with an Offer node) + FAQPage; all three are reproduced, with URLs rebased
+ *    onto the configured host and the FAQPage generated 1:1 from the on-page FAQ.
+ *    Organization JSON-LD is emitted sitewide by BaseLayout.
+ *
+ * ─── IMAGE ASSETS ───────────────────────────────────────────────────────
+ * Unlike hexagon.astro, purpose-built dog-bone renders exist on disk. Mapping
+ * request → file actually in public/images/outdoor-pavers/:
+ *   - zainpavers-dog-bone-hero.jpg
+ *       ↳ USING: zainpavers-dog-bone.jpg (1024×1024 product shot). A landscape
+ *         alternative zainpavers-dog-bone-hero-alt.jpg (1376×768) also exists.
+ *   - zainpavers-dog-bone-problem-solution-dramatic.jpg   ✓ on disk (1376×768)
+ *   - zainpavers-dog-bone-key-benefits.jpg                ✓ on disk (1376×768)
+ *   - zainpavers-dog-bone-technical-specifications.jpg
+ *       ↳ SUBSTITUTE: outdoor-rubber-pavers-dubai-technical-specifications.jpg
+ *         (1376×768, shared category cutaway — the dog-bone-specific render is
+ *         not on disk).
+ *   - zainpavers-dog-bone-ideal-applications.jpg          ✓ on disk (1376×768)
+ *   - zainpavers-dog-bone-geographic-signals.jpg          ✓ on disk (1376×768)
+ * public/ images use a plain <img> (astro:assets <Image /> only optimises
+ * src/assets imports). TODO: commission the dog-bone technical-specifications
+ * render, convert every render to optimised WebP, and add a purpose-built
+ * 1200×630 OG card (og:image currently falls back to the square hero shot).
+ */
+import BaseLayout from '@layouts/BaseLayout.astro';
+
+const SITE = (Astro.site ?? new URL('https://ruknalzain.ae')).origin;
+const IMG = '/images/outdoor-pavers';
+const PATH = '/outdoor-pavers/dogbone';
+
+const HERO_IMG = `${IMG}/zainpavers-dog-bone.jpg`; // 1024×1024 (see IMAGE ASSETS note)
+const HERO_ALT =
+  'ZainPavers Dog Bone interlocking rubber pavers displayed on an outdoor pedestal in Dubai';
+const PS_IMG = `${IMG}/zainpavers-dog-bone-problem-solution-dramatic.jpg`; // 1376×768
+const PS_ALT =
+  'Side-by-side comparison contrasting fractured concrete hazards with shock-absorbing ZainPavers Dog Bone interlocking rubber pavers';
+const BENEFITS_IMG = `${IMG}/zainpavers-dog-bone-key-benefits.jpg`; // 1376×768
+const BENEFITS_ALT =
+  'Close-up display highlighting high-density SBR construction, shift-proof interlock design and built-in drainage channels of ZainPavers Dog Bone pavers';
+const SPEC_IMG = `${IMG}/outdoor-rubber-pavers-dubai-technical-specifications.jpg`; // 1376×768 (see IMAGE ASSETS note)
+const SPEC_ALT =
+  'Architectural cutaway diagram showing the dense SBR rubber granule core, thickness range and underside drainage channels of ZainPavers Dog Bone pavers';
+const APPS_IMG = `${IMG}/zainpavers-dog-bone-ideal-applications.jpg`; // 1376×768
+const APPS_ALT =
+  'Four-quadrant composite showcasing ZainPavers Dog Bone applications across equestrian walkways, villa gardens, dairy farms and public park paths';
+const GEO_IMG = `${IMG}/zainpavers-dog-bone-geographic-signals.jpg`; // 1376×768
+const GEO_ALT =
+  'Outdoor ZainPavers Dog Bone interlocking rubber pavers installed along a sunlit villa pathway in Dubai with palm trees and modern GCC architecture';
+const OG_IMG = HERO_IMG; // fallback share image — no purpose-built 1200×630 card yet
+
+const WHATSAPP_HERO =
+  'https://wa.me/971505698195?text=Hello%20Rukn%20Al%20Zain,%20I%20am%20interested%20in%20ZainPavers%20Dog%20Bone%20outdoor%20rubber%20pavers.';
+const WHATSAPP_PLAIN = 'https://wa.me/971505698195';
+
+/* ─── Inline Lucide icon path data (24×24, currentColor stroke) ─────────── */
+const icon: Record<string, string> = {
+  truck:
+    '<path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/>',
+  warehouse:
+    '<path d="M22 8.35V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8.35A2 2 0 0 1 3.26 6.5l8-3.2a2 2 0 0 1 1.48 0l8 3.2A2 2 0 0 1 22 8.35Z"/><path d="M6 18h12"/><path d="M6 14h12"/><rect width="12" height="12" x="6" y="10"/>',
+  'shield-check':
+    '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/>',
+  clock:
+    '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
+  sun:
+    '<circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>',
+  weight:
+    '<circle cx="12" cy="5" r="3"/><path d="M6.5 8a2 2 0 0 0-1.905 1.46L2.1 18.5A2 2 0 0 0 4 21h16a2 2 0 0 0 1.925-2.54L19.4 9.46A2 2 0 0 0 17.48 8Z"/>',
+  link:
+    '<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>',
+  hand:
+    '<path d="M18 11V6a2 2 0 0 0-2-2a2 2 0 0 0-2 2"/><path d="M14 10V4a2 2 0 0 0-2-2a2 2 0 0 0-2 2v2"/><path d="M10 10.5V6a2 2 0 0 0-2-2a2 2 0 0 0-2 2v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/>',
+  droplets:
+    '<path d="M7 16.3c2.2 0 4-1.83 4-4.05 0-1.16-.57-2.26-1.71-3.19S7.29 4.24 7 2c-.29 2.24-1.14 4.13-2.29 5.06S3 11.1 3 12.25c0 2.22 1.8 4.05 4 4.05z"/><path d="M12.56 6.6A10.97 10.97 0 0 0 14 3.02c.5 2.5 2 4.9 4 6.5s3 3.5 3 5.5a6.98 6.98 0 0 1-11.91 4.97"/>',
+  'spray-can':
+    '<path d="M3 3h.01"/><path d="M7 5h.01"/><path d="M11 7h.01"/><path d="M3 7h.01"/><path d="M7 9h.01"/><path d="M3 11h.01"/><rect width="4" height="4" x="15" y="5"/><path d="m19 9 2 2v10c0 .6-.4 1-1 1h-6c-.6 0-1-.4-1-1V11l2-2"/><path d="m13 14 8-2"/><path d="m13 19 8-2"/>',
+  footprints:
+    '<path d="M4 16v-2.38C4 11.5 2.97 10.5 3 8c.03-2.72 1.49-6 4.5-6C9.37 2 10 3.8 10 5.5c0 3.11-2 5.66-2 8.68V16a2 2 0 1 1-4 0Z"/><path d="M20 20v-2.38c0-2.12 1.03-3.12 1-5.62-.03-2.72-1.49-6-4.5-6C14.63 6 14 7.8 14 9.5c0 3.11 2 5.66 2 8.68V20a2 2 0 1 0 4 0Z"/><path d="M16 17h4"/><path d="M4 13h4"/>',
+  trees:
+    '<path d="M10 10v.2A3 3 0 0 1 8.9 16H5a3 3 0 0 1-1-5.8V10a3 3 0 0 1 6 0Z"/><path d="M7 16v6"/><path d="M13 19v3"/><path d="M12 19h8.3a1 1 0 0 0 .7-1.7L18 14h.3a1 1 0 0 0 .7-1.7L16 9h.2a1 1 0 0 0 .8-1.7L13 3l-1.4 1.5"/>',
+  house:
+    '<path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
+  layers:
+    '<path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"/><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"/>',
+  wrench:
+    '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>',
+  'clipboard-list':
+    '<rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/>',
+  'package-check':
+    '<path d="m16 16 2 2 4-4"/><path d="M21 10V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l2-1.14"/><path d="M16.5 9.4 7.55 4.24"/><polyline points="3.29 7 12 12 20.71 7"/><line x1="12" x2="12" y1="22" y2="12"/>',
+  'map-pin':
+    '<path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/>',
+};
+
+/* Small WhatsApp glyph for the green CTAs (shared with hexagon.astro). */
+const waGlyph =
+  '<path d="M17.6 6.32A7.85 7.85 0 0 0 12.05 4a7.94 7.94 0 0 0-6.9 11.9L4 20l4.2-1.1a7.9 7.9 0 0 0 3.8.97h.01A7.94 7.94 0 0 0 17.6 6.32ZM12.05 18.5a6.6 6.6 0 0 1-3.36-.92l-.24-.14-2.49.65.66-2.43-.16-.25a6.59 6.59 0 1 1 5.6 3.09Zm3.62-4.93c-.2-.1-1.17-.58-1.35-.64s-.31-.1-.44.1-.51.64-.62.77-.23.15-.43.05a5.4 5.4 0 0 1-1.59-.98 6 6 0 0 1-1.1-1.37c-.11-.2 0-.3.09-.4s.2-.23.3-.35a1.34 1.34 0 0 0 .2-.33.37.37 0 0 0 0-.35c0-.1-.44-1.07-.6-1.46s-.32-.34-.44-.34h-.38a.72.72 0 0 0-.52.24 2.19 2.19 0 0 0-.69 1.63 3.82 3.82 0 0 0 .8 2.02 8.74 8.74 0 0 0 3.35 2.96c.47.2.83.32 1.11.42a2.68 2.68 0 0 0 1.23.08 2 2 0 0 0 1.32-.93 1.64 1.64 0 0 0 .11-.93c-.05-.08-.18-.13-.38-.23Z"/>';
+
+/* ─── 2. Trust bar (verbatim from the request) ────────────────────────── */
+const trustCards = [
+  {
+    icon: 'warehouse',
+    term: 'Direct Dubai Warehouse Inventory',
+    desc: 'Fast local dispatch straight from our central distribution hub in Dubai to your project site.',
+  },
+  {
+    icon: 'shield-check',
+    term: 'UV & Climate Resistance',
+    desc: 'Built with heat-stable polyurethane binders to resist colour fading, edge curling and breakdown under extreme GCC solar heat.',
+  },
+  {
+    icon: 'clock',
+    term: 'Rapid UAE Delivery',
+    desc: 'Direct truck fulfilment to all seven Emirates within 24 to 48 hours of order confirmation.',
+  },
+];
+
+/* ─── 3. Problem / Solution — paired blocks (verbatim from the request) ── */
+const problemPoints = [
+  {
+    term: 'Concrete Joint Stress',
+    desc: 'Hard concrete exerts repeated stress on joints, hooves and feet, causing fatigue and injury over time.',
+  },
+  {
+    term: 'Extreme Heat Warping',
+    desc: 'Traditional stone and tile surfaces warp and crack in 45 °C-plus Dubai summer heat.',
+  },
+  {
+    term: 'Slippery Washdown Hazards',
+    desc: 'Smooth wet tiles turn dangerously slick during daily paddock and yard washdowns.',
+  },
+  {
+    term: 'Sandy Sub-Base Settlement',
+    desc: 'Shifting sandy ground cracks rigid concrete slabs along their joints within a few seasons.',
+  },
+];
+const solutionPoints = [
+  {
+    term: 'Anti-Fatigue Cushioning',
+    desc: 'ZainPavers Dog Bone (900 – 1050 kg/m³) absorbs shock and cushions every step for people and livestock.',
+  },
+  {
+    term: 'Heat Stability to +80 °C',
+    desc: 'Polyurethane-bound pavers withstand surface temperatures up to +80 °C without edge curling.',
+  },
+  {
+    term: 'Non-Slip Drainage',
+    desc: 'A textured face plus underside channels move water away fast, keeping traction in wet conditions.',
+  },
+  {
+    term: 'Interlocking Flex',
+    desc: 'The flexible bone shape interlocks piece to piece and adjusts to sub-base movement without breaking.',
+  },
+];
+
+/* ─── 4. Key product benefits (verbatim from the request) ─────────────── */
+const benefits = [
+  {
+    icon: 'weight',
+    term: 'Heavy-Duty High Density',
+    desc: '900 – 1050 kg/m³ density structural rubber built for heavy foot traffic, farm equipment and livestock.',
+  },
+  {
+    icon: 'link',
+    term: 'Shift-Proof Interlocking Shape',
+    desc: 'The bone shape binds securely without adhesives, preventing tile separation or tripping hazards.',
+  },
+  {
+    icon: 'hand',
+    term: 'Easy Handling & Installation',
+    desc: 'Compact unit size makes individual pavers easy to carry, position and trim during installation.',
+  },
+  {
+    icon: 'droplets',
+    term: 'Built-In Underside Drainage',
+    desc: 'Permeable structural channels allow water and runoff to flow beneath the surface for fast drying.',
+  },
+  {
+    icon: 'spray-can',
+    term: 'Low Maintenance',
+    desc: 'Eliminates mud and dust; requires simple sweeping or power washing to clean.',
+  },
+];
+
+/* ─── 5. Technical specifications — PROVISIONAL (see data-integrity flags) */
+const specHead = ['Feature', 'Specification Details'];
+const specRows: [string, string][] = [
+  ['Material Composition', 'Recycled SBR rubber granules + polyurethane binder'],
+  ['Model Name', 'ZainPavers Dog Bone'],
+  ['Standard Thicknesses', '20 mm, 25 mm, 40 mm, 43 mm, 50 mm'],
+  ['Density Rating', 'High-density structural grade (900 – 1050 kg/m³)'],
+  ['Temperature Tolerance', '−20 °C to +80 °C (GCC UV-stabilised)'],
+  ['Drainage Property', 'Permeable structure with underside drainage channels'],
+  ['Installation Method', 'Dry-lay interlock on compacted base or adhesive-bonded on concrete'],
+];
+
+/* ─── 6. Best for / ideal applications (verbatim from the request) ─────── */
+const applications = [
+  {
+    icon: 'shield-check',
+    term: 'Equestrian Stables & Walkways',
+    desc: 'Protects horse joints and hooves while reducing bedding usage in stable lanes.',
+  },
+  {
+    icon: 'footprints',
+    term: 'Dairy Farms & Animal Paddocks',
+    desc: 'Heavy-duty traction that resists mud accumulation and stands up to daily washdowns.',
+  },
+  {
+    icon: 'trees',
+    term: 'Residential Villa Gardens',
+    desc: 'Replaces hot stone or cracked tiles with safe, soft garden pathways.',
+  },
+  {
+    icon: 'house',
+    term: 'Parks & High-Traffic Public Paths',
+    desc: 'Safe, shock-absorbing pedestrian walkways that tolerate heavy foot traffic.',
+  },
+];
+
+/* ─── 7. Geographic signals — title + sub-points (verbatim from request) ─ */
+const geoSignals = [
+  {
+    icon: 'sun',
+    term: 'Resisting Extreme GCC Solar Radiation',
+    desc: 'Designed for summer ambient temperatures exceeding 45 °C, avoiding edge curling or UV breakdown.',
+  },
+  {
+    icon: 'layers',
+    term: 'Navigating Sandy UAE Sub-Bases',
+    desc: 'Flexes gently over shifting sand layers without cracking like rigid concrete slabs.',
+  },
+  {
+    icon: 'droplets',
+    term: 'Slip Protection in Coastal & Irrigated Environments',
+    desc: 'A textured surface provides reliable multi-directional anti-slip grip in high humidity (Palm Jumeirah) and heavy garden irrigation.',
+  },
+  {
+    icon: 'map-pin',
+    term: 'Target Areas',
+    desc: 'Al Barsha, Meydan, Dubai Hills Estate, Al Khawaneej, Nad Al Sheba and Palm Jumeirah.',
+  },
+];
+
+/* ─── 8. About Rukn Al Zain — 4-step work process (verbatim) ──────────── */
+const processSteps = [
+  {
+    n: '01',
+    icon: 'clipboard-list',
+    term: 'Consult & Quote',
+    desc: 'Share project dimensions for tailored recommendations.',
+  },
+  {
+    n: '02',
+    icon: 'package-check',
+    term: 'Free Samples',
+    desc: 'Request physical material samples delivered to your site.',
+  },
+  {
+    n: '03',
+    icon: 'truck',
+    term: 'Site Dispatch',
+    desc: 'Direct dispatch from our Dubai warehouse for rapid delivery.',
+  },
+  {
+    n: '04',
+    icon: 'wrench',
+    term: 'Layout Guidance',
+    desc: 'Technical advice on sub-base preparation and fitting.',
+  },
+];
+
+const coverageAreas = [
+  'Dubai',
+  'Abu Dhabi',
+  'Sharjah',
+  'Ajman',
+  'Ras Al Khaimah',
+  'Umm Al Quwain',
+  'Fujairah',
+];
+
+/* Dubai-hub districts + wider-Emirates list from the request's Delivery Coverage. */
+const dubaiDistricts = [
+  'Meydan',
+  'Al Khawaneej',
+  'Nad Al Sheba',
+  'Al Barsha',
+  'Dubai Hills Estate',
+  'Arabian Ranches',
+  'Jumeirah',
+];
+const w6erEmirates = [
+  'Abu Dhabi',
+  'Al Ain',
+  'Sharjah',
+  'Ajman',
+  'Ras Al Khaimah',
+  'Fujairah',
+  'Umm Al Quwain',
+];
+
+/* Project-location dropdown for the lead form. */
+const emirates = [...coverageAreas, 'Outside the UAE'];
+
+/* ─── 9. FAQ (AEO) — self-contained answers, 1:1 with the JSON-LD below ──
+   Reproduced verbatim from the FAQ list supplied in the build request. The
+   answer strings are the single source for both the visible accordion and the
+   FAQPage schema, guaranteeing an exact text match (request §9). */
+const faqs = [
+  {
+    question:
+      'What services does Rukn Al Zain General Trading LLC provide for outdoor flooring projects?',
+    answer:
+      'Rukn Al Zain supplies high-density interlocking rubber pavers, dog bone pavers, and hexagon walkway mats across Dubai and the UAE. We assist clients with technical spec selection, physical sample deliveries, and layout guidance.',
+  },
+  {
+    question:
+      'Where is Rukn Al Zain located, and what are the delivery times across the UAE?',
+    answer:
+      'Our central distribution hub is located in Dubai, United Arab Emirates. We maintain local stock to fulfill orders within 24 hours across Dubai and within 48 hours to all other Emirates.',
+  },
+  {
+    question:
+      'What materials and structural specifications make ZainPavers Dog Bone pavers so durable?',
+    answer:
+      'ZainPavers Dog Bone pavers are manufactured from recycled SBR rubber granules bound with high-tensile polyurethane binders, producing a dense structural block (900 - 1050 kg/m³) with built-in underside drainage channels.',
+  },
+  {
+    question:
+      'What thickness options and density levels are available for dog bone pavers?',
+    answer:
+      'Our outdoor dog bone rubber pavers are available in standard thicknesses of 20mm, 25mm, 40mm, 43mm, and 50mm, delivering high-density shock absorption designed for heavy foot traffic, livestock, and outdoor vehicles.',
+  },
+  {
+    question: 'Where are ZainPavers Dog Bone pavers most effectively installed?',
+    answer:
+      'These interlocking pavers are specifically suited for equestrian walkways, horse stables, farm paddocks, dairy farm paths, and residential villa gardens where heavy traffic and traction control are required.',
+  },
+  {
+    question: 'How are outdoor dog bone rubber pavers cleaned and maintained?',
+    answer:
+      'Daily care requires sweeping away sand and debris, while deep cleaning is completed by pressure washing or washing down the permeable surface with water and mild neutral detergents.',
+  },
+  {
+    question: 'How do ZainPavers Dog Bone pavers handle Dubai’s extreme heat and sunlight?',
+    answer:
+      'Engineered with heat-stable, UV-stabilized polyurethane binders, these pavers endure ambient outdoor temperatures ranging from -20°C to +80°C without warping, cracking, or edge curling under intense GCC solar exposure.',
+  },
+  {
+    question:
+      'How do dog bone rubber pavers perform on Dubai’s sandy soil and near wet area irrigation?',
+    answer:
+      'The flexible interlocking shape adjusts to minor shifts in sandy sub-bases without cracking like rigid concrete, while the textured surface and underside drainage channels provide multi-directional anti-slip protection near irrigation runoff and humid coastal zones.',
+  },
+];
+
+/* ─── Structured data — single combined @graph ───────────────────────────
+   BreadcrumbList + Product (+ Offer) + FAQPage from the build request, with all
+   URLs rebased onto the configured host. The visible breadcrumb trail is
+   hand-rolled below (not the <Breadcrumbs /> component) so the BreadcrumbList is
+   declared exactly once. Organization JSON-LD is emitted sitewide by
+   BaseLayout. */
+const breadcrumbSchema = {
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE}/` },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: 'Outdoor Pavers',
+      item: `${SITE}/outdoor-pavers`,
+    },
+    {
+      '@type': 'ListItem',
+      position: 3,
+      name: 'ZainPavers Dog Bone',
+      item: `${SITE}${PATH}`,
+    },
+  ],
+};
+
+const productSchema = {
+  '@type': 'Product',
+  name: 'ZainPavers Dog Bone',
+  image: `${SITE}${OG_IMG}`,
+  description:
+    'Dense, heavy-duty interlocking dog bone rubber pavers designed for equestrian walkways, farm paddocks, and garden paths.',
+  sku: 'RZ-PAVER-DB',
+  category: 'Outdoor Rubber Pavers',
+  brand: { '@type': 'Brand', name: 'Rukn Al Zain' },
+  manufacturer: { '@type': 'Organization', name: 'Rukn Al Zain General Trading LLC' },
+  material: 'Recycled SBR rubber granules bound with polyurethane binder',
+  areaServed: 'United Arab Emirates',
+  offers: {
+    '@type': 'Offer',
+    url: `${SITE}${PATH}`,
+    priceCurrency: 'AED',
+    availability: 'https://schema.org/InStock',
+    itemCondition: 'https://schema.org/NewCondition',
+  },
+};
+
+const faqSchema = {
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((f) => ({
+    '@type': 'Question',
+    name: f.question,
+    acceptedAnswer: { '@type': 'Answer', text: f.answer },
+  })),
+};
+
+const graphSchema = {
+  '@context': 'https://schema.org',
+  '@graph': [breadcrumbSchema, productSchema, faqSchema],
+};
+
+/* Shared class helpers — mirrors src/pages/outdoor-pavers/hexagon.astro. */
+const sectionShell = 'border-t border-industrial-300 py-14 sm:py-16';
+const container = 'mx-auto max-w-content px-4 sm:px-6 lg:px-8';
+const h2 = 'text-2xl font-bold text-charcoal';
+const lede = 'mt-4 max-w-3xl text-charcoal-600';
+const primaryCta =
+  'inline-flex items-center justify-center rounded bg-amber-400 px-5 py-3 font-semibold text-charcoal-900 transition-colors hover:bg-amber-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2';
+const waCta =
+  'inline-flex items-center justify-center gap-2 rounded bg-emerald-600 px-5 py-3 font-semibold text-white transition-colors hover:bg-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2';
+const iconChip =
+  'mb-3 grid h-11 w-11 place-items-center rounded bg-white text-amber-700 ring-1 ring-industrial-300';
+const crumbLink =
+  'rounded hover:text-amber-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700';
+const fieldClass =
+  'mt-1.5 block w-full rounded border border-charcoal-300 bg-white px-3 py-2.5 text-charcoal shadow-sm focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-700';
+const labelClass = 'block text-sm font-medium text-charcoal';
+const svgAttrs = {
+  viewBox: '0 0 24 24',
+  fill: 'none',
+  stroke: 'currentColor',
+  'stroke-width': '1.75',
+  'stroke-linecap': 'round' as const,
+  'stroke-linejoin': 'round' as const,
+  class: 'h-6 w-6',
+};
+---
+
+<BaseLayout
+  title="Dog Bone Rubber Pavers Dubai | Garden & Farm Walkways | Rukn Al Zain"
+  description="Dense, heavy-duty dog bone pavers for gardens, animal walkways, dairy farms, and equine flooring in Dubai — easy to handle and install."
+  canonical={PATH}
+  ogImage={OG_IMG}
+  ogImageAlt="ZainPavers Dog Bone interlocking recycled-rubber pavers by Rukn Al Zain, Dubai UAE."
+>
+  <article class="db-page">
+    {/*
+      Mark the document as JS-capable ASAP so scroll-reveal elements start hidden
+      only when the animation engine is available. A failsafe timer guarantees
+      content becomes visible even if the observer below never runs, and
+      reduced-motion visitors skip the effect entirely.
+    */}
+    <script is:inline>
+      (function () {
+        document.documentElement.classList.add('db-js');
+        var sel = '.db-page [data-reveal], .db-page [data-reveal-group]';
+        var showAll = function () {
+          document.querySelectorAll(sel).forEach(function (el) {
+            el.classList.add('in');
+          });
+        };
+        var reduce =
+          window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (reduce) {
+          if (document.readyState === 'loading')
+            document.addEventListener('DOMContentLoaded', showAll);
+          else showAll();
+        } else {
+          setTimeout(showAll, 1600);
+        }
+      })();
+    </script>
+
+    {/* Breadcrumb strip — Home > Outdoor Pavers > ZainPavers Dog Bone.
+        Hand-rolled (not <Breadcrumbs />) so the BreadcrumbList JSON-LD is
+        declared once, in the combined @graph at the foot of this file. */}
+    <div class="border-b border-industrial-300 bg-industrial-100">
+      <div class={`${container} py-4`}>
+        <nav aria-label="Breadcrumb" class="text-sm">
+          <ol class="flex flex-wrap items-center gap-x-2 gap-y-1 text-charcoal-500">
+            <li class="flex items-center gap-x-2">
+              <a href="/" class={crumbLink}>Home</a>
+            </li>
+            <li class="flex items-center gap-x-2">
+              <span aria-hidden="true" class="text-charcoal-300">/</span>
+              <a href="/outdoor-pavers" class={crumbLink}>Outdoor Pavers</a>
+            </li>
+            <li class="flex items-center gap-x-2">
+              <span aria-hidden="true" class="text-charcoal-300">/</span>
+              <span aria-current="page" class="font-medium text-charcoal">ZainPavers Dog Bone</span>
+            </li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+
+    {/* ─── 1. HERO ─────────────────────────────────────────────────────────── */}
+    <header class="bg-charcoal-700 text-white">
+      <div class={`${container} py-14 sm:py-16`}>
+        <div class="grid items-center gap-10 lg:grid-cols-2">
+          <div data-hero>
+            <p class="font-heading text-sm font-semibold uppercase tracking-wide text-amber-400">
+              Heavy-Duty Outdoor Rubber Pavers
+            </p>
+            <h1 class="mt-3 text-4xl font-extrabold leading-tight text-white sm:text-5xl">
+              ZainPavers Dog Bone &mdash; Heavy-Duty Outdoor Pavers
+            </h1>
+
+            {/* AEO direct-answer block — sits immediately under the H1 */}
+            <p class="mt-5 max-w-xl border-l-[3px] border-amber-400 pl-4 text-lg text-industrial-100">
+              Rukn Al Zain General Trading supplies high-density interlocking ZainPavers Dog Bone
+              pavers across Dubai and the UAE. Engineered specifically for gardens, animal walkways,
+              dairy farms and equine flooring, these heavy-duty pavers provide a durable, non-slip,
+              shock-absorbing surface built to withstand heavy traffic and harsh climate conditions.
+            </p>
+
+            <div class="mt-8 flex flex-wrap gap-3">
+              <a href="#lead-capture" class={`${primaryCta} focus-visible:ring-offset-charcoal-700`}>
+                Request Free Sample &amp; Quote
+              </a>
+              <a
+                href={WHATSAPP_HERO}
+                target="_blank"
+                rel="noopener"
+                class={`${waCta} focus-visible:ring-offset-charcoal-700`}
+              >
+                <svg {...svgAttrs} fill="currentColor" stroke="none" class="h-5 w-5" set:html={waGlyph} />
+                WhatsApp Us
+              </a>
+            </div>
+          </div>
+
+          <figure class="m-0" data-hero>
+            <img
+              src={HERO_IMG}
+              alt={HERO_ALT}
+              title="ZainPavers Dog Bone interlocking recycled rubber pavers — Rukn Al Zain, Dubai"
+              width="1024"
+              height="1024"
+              loading="eager"
+              fetchpriority="high"
+              decoding="async"
+              class="h-auto w-full rounded border border-white/10"
+            />
+          </figure>
+        </div>
+      </div>
+    </header>
+
+    {/* ─── 2. TRUST BAR ───────────────────────────────────────────────────── */}
+    <section aria-labelledby="trust-h" class={`${sectionShell} bg-white`}>
+      <div class={container}>
+        <h2 id="trust-h" class={h2} data-reveal>
+          Trusted Local Supply Across Dubai
+        </h2>
+        <dl class="mt-8 grid gap-5 sm:grid-cols-3" data-reveal-group>
+          {
+            trustCards.map((it) => (
+              <div class="card-lift rounded border border-industrial-300 border-l-[3px] border-l-amber-400 bg-industrial-100 p-5">
+                <span class={iconChip} aria-hidden="true">
+                  <svg {...svgAttrs} set:html={icon[it.icon]} />
+                </span>
+                <dt class="font-heading font-semibold text-charcoal">{it.term}</dt>
+                <dd class="mt-1.5 text-sm text-charcoal-600">{it.desc}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+    </section>
+
+    {/* ─── 3. PROBLEM & SOLUTION ──────────────────────────────────────────── */}
+    <section aria-labelledby="ps-h" class={`${sectionShell} bg-industrial-100`}>
+      <div class={container}>
+        <h2 id="ps-h" class={h2} data-reveal>
+          Overcoming Concrete Breakdown, Slippery Paths and Unstable Ground
+        </h2>
+        <p class={lede} data-reveal>
+          Hard slabs, summer heat, wet washdowns and shifting sand each work against a conventional
+          path. ZainPavers Dog Bone answers all four with a single dense, flexible, drainable rubber
+          surface.
+        </p>
+
+        <div class="mt-8 grid gap-6 lg:grid-cols-2" data-reveal-group>
+          {/* The Problem */}
+          <div class="rounded border border-industrial-300 border-l-[3px] border-l-danger bg-white p-6">
+            <h3 class="font-heading text-lg font-bold text-charcoal">
+              The Problem: Concrete That Breaks Down
+            </h3>
+            <p class="mt-3 text-sm text-charcoal-600">
+              Rigid concrete and stone paving stresses animal joints, warps and cracks in extreme
+              heat, turns slippery under washdowns and fractures as sandy ground settles beneath it.
+            </p>
+            <dl class="mt-4 space-y-4">
+              {
+                problemPoints.map((p) => (
+                  <div>
+                    <dt class="flex gap-2 font-heading text-sm font-semibold text-charcoal">
+                      <span class="mt-0.5 text-danger" aria-hidden="true">&#10007;</span>
+                      <span>{p.term}</span>
+                    </dt>
+                    <dd class="mt-1 pl-6 text-sm text-charcoal-600">{p.desc}</dd>
+                  </div>
+                ))
+              }
+            </dl>
+          </div>
+
+          {/* The Solution */}
+          <div class="rounded border border-industrial-300 border-l-[3px] border-l-success bg-white p-6">
+            <h3 class="font-heading text-lg font-bold text-charcoal">
+              The Solution: Interlocking ZainPavers Dog Bone
+            </h3>
+            <p class="mt-3 text-sm text-charcoal-600">
+              High-density recycled SBR rubber bound with heat-stable polyurethane cushions every
+              step, holds its shape to +80 °C, drains through underside channels and flexes with the
+              sub-base instead of cracking.
+            </p>
+            <dl class="mt-4 space-y-4">
+              {
+                solutionPoints.map((s) => (
+                  <div>
+                    <dt class="flex gap-2 font-heading text-sm font-semibold text-charcoal">
+                      <span class="mt-0.5 text-success" aria-hidden="true">&#10003;</span>
+                      <span>{s.term}</span>
+                    </dt>
+                    <dd class="mt-1 pl-6 text-sm text-charcoal-600">{s.desc}</dd>
+                  </div>
+                ))
+              }
+            </dl>
+          </div>
+        </div>
+
+        <figure class="m-0 mt-10" data-reveal>
+          <img
+            src={PS_IMG}
+            alt={PS_ALT}
+            title="Fractured concrete hazards versus shock-absorbing ZainPavers Dog Bone interlocking rubber pavers"
+            width="1376"
+            height="768"
+            loading="lazy"
+            decoding="async"
+            class="h-auto w-full rounded border border-industrial-300"
+          />
+        </figure>
+      </div>
+    </section>
+
+    {/* ─── 4. KEY PRODUCT BENEFITS ────────────────────────────────────────── */}
+    <section aria-labelledby="benefits-h" class={`${sectionShell} bg-white`}>
+      <div class={container}>
+        <h2 id="benefits-h" class={h2} data-reveal>Key Performance & Engineering Benefits</h2>
+        <dl class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3" data-reveal-group>
+          {
+            benefits.map((it) => (
+              <div class="card-lift rounded border border-industrial-300 bg-industrial-100 p-5">
+                <span class={iconChip} aria-hidden="true">
+                  <svg {...svgAttrs} set:html={icon[it.icon]} />
+                </span>
+                <dt class="font-heading font-semibold text-charcoal">{it.term}</dt>
+                <dd class="mt-1.5 text-sm text-charcoal-600">{it.desc}</dd>
+              </div>
+            ))
+          }
+        </dl>
+
+        <figure class="m-0 mt-10" data-reveal>
+          <img
+            src={BENEFITS_IMG}
+            alt={BENEFITS_ALT}
+            title="High-density SBR construction, shift-proof interlock design and built-in drainage channels of ZainPavers Dog Bone pavers"
+            width="1376"
+            height="768"
+            loading="lazy"
+            decoding="async"
+            class="mx-auto h-auto w-full max-w-3xl rounded border border-industrial-300"
+          />
+        </figure>
+      </div>
+    </section>
+
+    {/* ─── 5. TECHNICAL SPECIFICATIONS ────────────────────────────────────── */}
+    <section aria-labelledby="specs-h" class={`${sectionShell} bg-industrial-100`}>
+      <div class={container}>
+        <h2 id="specs-h" class={h2} data-reveal>Technical Specifications & Dimensions</h2>
+        <p class={lede} data-reveal>
+          Manufactured from recycled SBR rubber granules bound with high-tensile, heat-stable
+          polyurethane binders. Figures are
+          <span class="font-semibold text-amber-700"> provisional</span> pending confirmation against
+          manufacturer product data and test certificates.
+        </p>
+
+        <div class="mt-8 grid gap-10 lg:grid-cols-2 lg:items-start" data-reveal-group>
+          <div class="overflow-x-auto">
+            <table class="w-full border-collapse text-left text-sm tabular-nums">
+              <caption class="sr-only">
+                ZainPavers Dog Bone technical specifications and material profile
+              </caption>
+              <thead>
+                <tr class="border-b-2 border-charcoal-300">
+                  {
+                    specHead.map((th) => (
+                      <th scope="col" class="px-4 py-3 font-heading font-bold text-charcoal">
+                        {th}
+                      </th>
+                    ))
+                  }
+                </tr>
+              </thead>
+              <tbody>
+                {
+                  specRows.map(([label, value], i) => (
+                    <tr class:list={['border-b border-industrial-300', i % 2 === 1 && 'bg-white']}>
+                      <th scope="row" class="w-2/5 px-4 py-3 align-top font-semibold text-charcoal">
+                        {label}
+                      </th>
+                      <td class="px-4 py-3 align-top text-charcoal-600">{value}</td>
+                    </tr>
+                  ))
+                }
+              </tbody>
+            </table>
+          </div>
+
+          <figure class="m-0">
+            <img
+              src={SPEC_IMG}
+              alt={SPEC_ALT}
+              title="Dense SBR rubber granule core, thickness range and underside drainage channels of ZainPavers Dog Bone pavers"
+              width="1376"
+              height="768"
+              loading="lazy"
+              decoding="async"
+              class="h-auto w-full rounded border border-industrial-300"
+            />
+          </figure>
+        </div>
+
+        {/* TODO: Missing spec from brief — dog-bone-pavers.yaml lists "Paver size"
+            (mm) and "Thickness" (mm) as null "to collect". The thickness set
+            (20/25/40/43/50 mm), density band (900–1050 kg/m³) and −20/+80 °C
+            range above are descriptive copy from the page-build request, not
+            manufacturer-certified data (the same figures are flagged provisional
+            on outdoor-pavers.astro and hexagon.astro). Confirm the recycled-rubber
+            composition, paver dimensions, thickness options, colour range,
+            density and any tested slip-resistance figures against real product
+            data / manufacturer certificates before go-live. */}
+        <p class="mt-3 text-xs text-charcoal-500" data-reveal>
+          Specifications are provisional pending final manufacturer product data and test
+          certificates. Request the current ZainPavers Dog Bone technical datasheet for confirmed
+          paver size, thickness, colour and density figures.
+        </p>
+      </div>
+    </section>
+
+    {/* ─── 6. BEST FOR / IDEAL APPLICATIONS ───────────────────────────────── */}
+    <section aria-labelledby="apps-h" class={`${sectionShell} bg-white`}>
+      <div class={container}>
+        <h2 id="apps-h" class={h2} data-reveal>Recommended Applications</h2>
+        <dl class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4" data-reveal-group>
+          {
+            applications.map((it) => (
+              <div class="card-lift rounded border border-industrial-300 border-l-[3px] border-l-amber-400 bg-industrial-100 p-5">
+                <span class={iconChip} aria-hidden="true">
+                  <svg {...svgAttrs} set:html={icon[it.icon]} />
+                </span>
+                <dt class="font-heading font-semibold text-charcoal">{it.term}</dt>
+                <dd class="mt-1.5 text-sm text-charcoal-600">{it.desc}</dd>
+              </div>
+            ))
+          }
+        </dl>
+
+        <figure class="m-0 mt-10" data-reveal>
+          <img
+            src={APPS_IMG}
+            alt={APPS_ALT}
+            title="ZainPavers Dog Bone applications across equestrian walkways, villa gardens, dairy farms and public park paths"
+            width="1376"
+            height="768"
+            loading="lazy"
+            decoding="async"
+            class="h-auto w-full rounded border border-industrial-300"
+          />
+        </figure>
+      </div>
+    </section>
+
+    {/* ─── 7. GEOGRAPHIC SIGNALS ──────────────────────────────────────────── */}
+    <section aria-labelledby="geo-h" class={`${sectionShell} bg-industrial-100`}>
+      <div class={container}>
+        <h2 id="geo-h" class={h2} data-reveal>Why ZainPavers Dog Bone is Best for Dubai & the UAE</h2>
+
+        <div class="mt-8 grid items-start gap-10 lg:grid-cols-2">
+          <figure class="m-0" data-reveal>
+            <img
+              src={GEO_IMG}
+              alt={GEO_ALT}
+              title="ZainPavers Dog Bone rubber pavers along a sunlit villa pathway in Dubai"
+              width="1376"
+              height="768"
+              loading="lazy"
+              decoding="async"
+              class="h-auto w-full rounded border border-industrial-300"
+            />
+          </figure>
+
+          <div data-reveal-group>
+            <dl class="space-y-4">
+              {
+                geoSignals.map((it) => (
+                  <div class="rounded border border-industrial-300 border-l-[3px] border-l-amber-400 bg-white p-4">
+                    <dt class="flex items-center gap-2 font-heading font-semibold text-charcoal">
+                      <span class="text-amber-700" aria-hidden="true">
+                        <svg {...svgAttrs} class="h-5 w-5" set:html={icon[it.icon]} />
+                      </span>
+                      {it.term}
+                    </dt>
+                    <dd class="mt-1.5 text-sm text-charcoal-600">{it.desc}</dd>
+                  </div>
+                ))
+              }
+            </dl>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {/* ─── 8. ABOUT RUKN AL ZAIN & DELIVERY ───────────────────────────────── */}
+    <section aria-labelledby="rzn-h" class={`${sectionShell} bg-white`}>
+      <div class={container}>
+        <h2 id="rzn-h" class={h2} data-reveal>About Rukn Al Zain General Trading LLC</h2>
+        <p class={lede} data-reveal>
+          Rukn Al Zain General Trading LLC is a trusted supplier of specialised rubber flooring across
+          the UAE, working directly with farm owners, equine managers, landscaping contractors and
+          villa owners.
+        </p>
+
+        <h3 class="mt-10 font-heading text-lg font-bold text-charcoal" data-reveal>
+          Our Work Process
+        </h3>
+        <ol class="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-4" data-reveal-group>
+          {
+            processSteps.map((s) => (
+              <li class="card-lift flex h-full flex-col rounded border border-industrial-300 bg-industrial-100 p-5">
+                <div class="flex items-center justify-between">
+                  <span class="grid h-11 w-11 place-items-center rounded bg-white text-amber-700 ring-1 ring-industrial-300" aria-hidden="true">
+                    <svg {...svgAttrs} set:html={icon[s.icon]} />
+                  </span>
+                  <span class="font-heading text-2xl font-extrabold text-industrial-400" aria-hidden="true">
+                    {s.n}
+                  </span>
+                </div>
+                <h4 class="mt-3 font-heading text-base font-bold text-charcoal">{s.term}</h4>
+                <p class="mt-1.5 text-sm text-charcoal-600">{s.desc}</p>
+              </li>
+            ))
+          }
+        </ol>
+
+        <h3 class="mt-12 font-heading text-lg font-bold text-charcoal" data-reveal>
+          Delivery Coverage
+        </h3>
+        <div class="mt-6 grid gap-5 lg:grid-cols-2" data-reveal-group>
+          <div class="rounded border border-industrial-300 bg-industrial-100 p-5">
+            <h4 class="font-heading text-base font-bold text-charcoal">
+              Dubai (Hub) &mdash; 24-Hour Dispatch
+            </h4>
+            <p class="mt-2 text-sm text-charcoal-600">
+              Same-day loading for {dubaiDistricts.join(', ')} and every other Dubai community.
+            </p>
+          </div>
+          <div class="rounded border border-industrial-300 bg-industrial-100 p-5">
+            <h4 class="font-heading text-base font-bold text-charcoal">
+              All Emirates &mdash; Within 48 Hours
+            </h4>
+            <p class="mt-2 text-sm text-charcoal-600">
+              Direct dispatch to {w6erEmirates.join(', ')}.
+            </p>
+          </div>
+        </div>
+
+        <ul class="mt-6 flex flex-wrap gap-2.5" data-reveal-group>
+          {
+            coverageAreas.map((area) => (
+              <li class="inline-flex items-center gap-1.5 rounded border border-industrial-300 bg-industrial-100 px-3 py-1.5 text-sm font-medium text-charcoal">
+                <svg {...svgAttrs} class="h-4 w-4 text-amber-700" set:html={icon['map-pin']} aria-hidden="true" />
+                {area}
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </section>
+
+    {/* ─── 9. FAQ — accordion (native <details>, zero-JS) ─────────────────── */}
+    <section aria-labelledby="faq-h" class={`${sectionShell} bg-industrial-100`}>
+      <div class={container}>
+        <h2 id="faq-h" class={h2} data-reveal>Frequently Asked Questions</h2>
+        <div
+          class="mt-6 max-w-3xl divide-y divide-industrial-300 border-y border-industrial-300"
+          data-reveal-group
+        >
+          {
+            faqs.map((f, i) => (
+              <details class="group" open={i === 0}>
+                <summary class="flex cursor-pointer items-center justify-between gap-4 py-4 font-heading text-base font-semibold text-charcoal marker:content-none [&::-webkit-details-marker]:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700">
+                  <span>{f.question}</span>
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    class="h-5 w-5 shrink-0 text-amber-700 transition-transform duration-200 group-open:-rotate-180"
+                    aria-hidden="true"
+                  >
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m6 9 6 6 6-6" />
+                  </svg>
+                </summary>
+                <p class="pb-4 text-charcoal-600">{f.answer}</p>
+              </details>
+            ))
+          }
+        </div>
+
+        {/* Internal link: spoke → hub + paver sibling, keyword anchor text */}
+        <p class="mt-8 max-w-3xl text-sm text-charcoal-600" data-reveal>
+          ZainPavers Dog Bone is part of Rukn Al Zain&rsquo;s{' '}
+          <a
+            href="/outdoor-pavers"
+            class="rounded font-semibold text-amber-700 hover:text-amber-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700"
+          >
+            outdoor rubber paver range
+          </a>. For decorative villa-garden and landscape pathways, see the geometric{' '}
+          <a
+            href="/outdoor-pavers/hexagon"
+            class="rounded font-semibold text-amber-700 hover:text-amber-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700"
+          >
+            Zain Hexagon Pavers
+          </a>.
+        </p>
+      </div>
+    </section>
+
+    {/* Combined BreadcrumbList + Product + FAQPage structured data (@graph).
+        Kept in-body to match the sibling spoke pages (BaseLayout exposes no
+        <head> slot); crawlers parse it identically. Organization JSON-LD is
+        emitted sitewide by BaseLayout. */}
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(graphSchema)} />
+
+    {/* ─── 10. LEAD CAPTURE & BOTTOM CTA ──────────────────────────────────── */}
+    <section
+      id="lead-capture"
+      aria-labelledby="cta-h"
+      class="border-t border-industrial-300 bg-charcoal-700 text-white"
+    >
+      <div class={`${container} py-16`}>
+        <div class="grid gap-10 lg:grid-cols-[1fr_1.05fr] lg:items-start">
+          <div data-reveal>
+            <h2 id="cta-h" class="text-2xl font-bold text-white">
+              Upgrade Your Property with ZainPavers Dog Bone
+            </h2>
+            <p class="mt-4 max-w-xl text-industrial-200">
+              Request a free physical sample kit, layout consultation or competitive quotation from
+              our Dubai supply team today.
+            </p>
+            <dl class="mt-6 space-y-3 text-sm">
+              <div class="flex flex-wrap gap-x-2">
+                <dt class="font-semibold text-white">Phone / WhatsApp:</dt>
+                <dd>
+                  <a
+                    href="tel:+971505698195"
+                    class="rounded font-medium text-amber-400 hover:text-amber-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+                  >
+                    +971 50 569 8195
+                  </a>
+                </dd>
+              </div>
+              <div class="flex flex-wrap gap-x-2">
+                <dt class="font-semibold text-white">Location:</dt>
+                <dd class="text-industrial-200">
+                  Rukn Al Zain General Trading LLC, P.O. Box 36528, Dubai, United Arab Emirates
+                </dd>
+              </div>
+            </dl>
+
+            <div class="mt-6">
+              <a
+                href={WHATSAPP_PLAIN}
+                target="_blank"
+                rel="noopener"
+                class={`${waCta} focus-visible:ring-offset-charcoal-700`}
+              >
+                <svg {...svgAttrs} fill="currentColor" stroke="none" class="h-5 w-5" set:html={waGlyph} />
+                WhatsApp Now (+971 50 569 8195)
+              </a>
+            </div>
+          </div>
+
+          {/*
+            Standard HTML POST form wired for Netlify Forms (zero JS): captured
+            automatically on a Netlify deploy. Locally (`astro preview`) the POST
+            has no handler — that is expected. Mirrors src/pages/outdoor-pavers/hexagon.astro.
+            TODO: add a branded /thank-you success page and point `action` at it.
+          */}
+          <div class="rounded border border-industrial-300 bg-white p-6 text-charcoal" data-reveal>
+            <form
+              name="dogbone-pavers-quote"
+              method="POST"
+              action={PATH}
+              data-netlify="true"
+              netlify-honeypot="bot-field"
+              class="space-y-5"
+            >
+              <input type="hidden" name="form-name" value="dogbone-pavers-quote" />
+              <input type="hidden" name="product" value="ZainPavers Dog Bone" />
+              <p class="hidden">
+                <label>Leave this field empty if you are human: <input name="bot-field" /></label>
+              </p>
+
+              <div class="grid gap-5 sm:grid-cols-2">
+                <div>
+                  <label class={labelClass} for="name">
+                    Full Name <span class="text-amber-700">*</span>
+                  </label>
+                  <input
+                    class={fieldClass}
+                    type="text"
+                    id="name"
+                    name="name"
+                    autocomplete="name"
+                    required
+                  />
+                </div>
+                <div>
+                  <label class={labelClass} for="email">Email Address</label>
+                  <input
+                    class={fieldClass}
+                    type="email"
+                    id="email"
+                    name="email"
+                    autocomplete="email"
+                  />
+                </div>
+                <div>
+                  <label class={labelClass} for="phone">
+                    Phone / WhatsApp Number <span class="text-amber-700">*</span>
+                  </label>
+                  <input
+                    class={fieldClass}
+                    type="tel"
+                    id="phone"
+                    name="phone"
+                    autocomplete="tel"
+                    inputmode="tel"
+                    required
+                  />
+                </div>
+                <div>
+                  <label class={labelClass} for="location">
+                    Project Location (Emirate) <span class="text-amber-700">*</span>
+                  </label>
+                  <select class={fieldClass} id="location" name="location" required>
+                    <option value="" selected disabled>Select an emirate</option>
+                    {emirates.map((e) => <option value={e}>{e}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label class={labelClass} for="area">Required Area (sq. metres)</label>
+                  <input
+                    class={fieldClass}
+                    type="number"
+                    id="area"
+                    name="area"
+                    min="1"
+                    inputmode="numeric"
+                    placeholder="e.g. 120"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label class={labelClass} for="message">Project Details / Sample Request</label>
+                <textarea
+                  class={fieldClass}
+                  id="message"
+                  name="message"
+                  rows="4"
+                  placeholder="Tell us about your project — path / area (m²), sub-base type, timeline, sample request"
+                ></textarea>
+              </div>
+
+              <div class="flex flex-wrap gap-3">
+                <button
+                  type="submit"
+                  class="inline-flex items-center justify-center rounded bg-amber-400 px-5 py-3 font-semibold text-charcoal-900 transition-colors hover:bg-amber-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700 focus-visible:ring-offset-2"
+                >
+                  Request Free Sample &amp; Quote
+                </button>
+                <a
+                  href={WHATSAPP_PLAIN}
+                  target="_blank"
+                  rel="noopener"
+                  class="inline-flex items-center justify-center gap-2 rounded border border-charcoal-300 px-5 py-3 font-semibold text-charcoal transition-colors hover:border-charcoal-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700"
+                >
+                  <svg {...svgAttrs} class="h-5 w-5 text-emerald-600" fill="currentColor" stroke="none" set:html={waGlyph} />
+                  WhatsApp Now
+                </a>
+              </div>
+              <p class="text-xs text-charcoal-400">
+                Submissions are handled by Netlify Forms on the live site.
+              </p>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {/* ─── SUBTLE MOTION ──────────────────────────────────────────────────────
+        One-shot CSS load-in for the hero and a staggered scroll-reveal for
+        headings, card groups, figures and the spec table. Progressive
+        enhancement only — content is fully visible without JS, and every effect
+        is disabled under prefers-reduced-motion. Mirrors hexagon.astro. */}
+    <style is:global>
+      .db-js .db-page [data-hero] {
+        animation: db-rise 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      @keyframes db-rise {
+        from {
+          opacity: 0;
+          transform: translateY(16px);
+        }
+      }
+
+      .db-js .db-page [data-reveal],
+      .db-js .db-page [data-reveal-group] > * {
+        opacity: 0;
+        transform: translateY(14px);
+        transition:
+          opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+          transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .db-js .db-page [data-reveal].in,
+      .db-js .db-page [data-reveal-group].in > * {
+        opacity: 1;
+        transform: none;
+      }
+      .db-js .db-page [data-reveal-group].in > *:nth-child(2) { transition-delay: 0.06s; }
+      .db-js .db-page [data-reveal-group].in > *:nth-child(3) { transition-delay: 0.12s; }
+      .db-js .db-page [data-reveal-group].in > *:nth-child(4) { transition-delay: 0.18s; }
+      .db-js .db-page [data-reveal-group].in > *:nth-child(5) { transition-delay: 0.24s; }
+      .db-js .db-page [data-reveal-group].in > *:nth-child(n + 6) { transition-delay: 0.3s; }
+
+      .db-page .card-lift {
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
+      }
+      .db-page .card-lift:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 24px -6px rgb(42 45 52 / 0.18);
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .db-js .db-page [data-hero] {
+          animation: none;
+        }
+        .db-js .db-page [data-reveal],
+        .db-js .db-page [data-reveal-group] > * {
+          opacity: 1;
+          transform: none;
+          transition: none;
+        }
+        .db-page .card-lift,
+        .db-page .card-lift:hover {
+          transition: none;
+          transform: none;
+        }
+      }
+    </style>
+
+    <script>
+      const targets = document.querySelectorAll(
+        '.db-page [data-reveal], .db-page [data-reveal-group]',
+      );
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const revealAll = () => targets.forEach((el) => el.classList.add('in'));
+
+      if (reduce || !('IntersectionObserver' in window)) {
+        revealAll();
+      } else {
+        const io = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (!entry.isIntersecting) continue;
+              entry.target.classList.add('in');
+              io.unobserve(entry.target);
+            }
+          },
+          { rootMargin: '0px 0px -8% 0px' },
+        );
+        targets.forEach((el) => io.observe(el));
+        window.addEventListener('load', () => setTimeout(revealAll, 1200));
+      }
+    </script>
+  </article>
+</BaseLayout>

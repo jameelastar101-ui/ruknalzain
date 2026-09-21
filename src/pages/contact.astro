@@ -1,0 +1,423 @@
+---
+/**
+ * /contact — direct contact / HQ details, a Netlify-wired quote + sample
+ * request form, a physical sample kit section, UAE-wide delivery coverage,
+ * and a 3-step inquiry process. Brief §5 "/contact-request-quote/"
+ * (URL shortened to /contact for this build).
+ *
+ * The form is a standard HTML POST form wired for Netlify Forms (zero JS): on a
+ * Netlify deploy the submission is captured automatically. Locally
+ * (`astro preview`) the POST has no handler — that is expected.
+ *
+ * Images: per the build request these use native <img> elements (not
+ * astro:assets <Image />) with explicit width/height, loading and decoding
+ * attributes. Files live in /public/images/contact-us/.
+ *
+ * TODO: Missing spec from brief — exact GPS coordinates / Google Maps embed URL
+ * for the Al Quoz hub and published business hours. The geo block below uses
+ * Dubai city-level coordinates as an interim value (CLAUDE.md §6).
+ */
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Breadcrumbs from '@components/Breadcrumbs.astro';
+
+const SITE = (Astro.site ?? new URL('https://ruknalzain.ae')).origin;
+const PATH = '/contact';
+
+/** Standard NAP — keep identical here, in Footer.astro and BaseLayout.astro. */
+const PHONE = '+971505698195';
+const PHONE_DISPLAY = '+971 50 569 8195';
+const WHATSAPP = 'https://wa.me/971505698195';
+
+const emirates = [
+  'Dubai',
+  'Abu Dhabi',
+  'Sharjah',
+  'Ajman',
+  'Ras Al Khaimah',
+  'Fujairah',
+  'Umm Al Quwain',
+];
+
+const productCategories = [
+  'Acoustic & Soundproofing Underlay',
+  'Gym & Fitness Flooring',
+  'Agricultural & Animal Mats',
+];
+
+const coverage = [
+  {
+    area: 'Dubai (Primary Hub)',
+    body:
+      'Al Quoz, Meydan, Al Khawaneej, Nad Al Sheba, Al Barsha, Dubai Hills Estate, Arabian Ranches, Jumeirah, Downtown Dubai, JLT, Palm Jumeirah, DIFC, and surrounding areas.',
+  },
+  {
+    area: 'Abu Dhabi & Al Ain',
+    body: 'Commercial gyms, residential towers, fitness centers, and equine facilities.',
+  },
+  {
+    area: 'Sharjah',
+    body: 'Educational facilities, sports venues, and industrial complexes.',
+  },
+  {
+    area: 'Northern Emirates (Ajman, RAK, Fujairah, UAQ)',
+    body: 'Agricultural farms, equestrian centers, and commercial fit-outs.',
+  },
+];
+
+const steps = [
+  {
+    n: '1',
+    title: 'Consult & Quote',
+    body:
+      'Share your project dimensions and site requirements for an immediate tailored recommendation.',
+  },
+  {
+    n: '2',
+    title: 'Free Physical Samples',
+    body:
+      'Receive physical material samples and technical spec sheets straight to your office or job site.',
+  },
+  {
+    n: '3',
+    title: 'Direct Site Dispatch',
+    body:
+      'Fast fulfillment loaded directly from our local hub with 24-to-48-hour delivery.',
+  },
+];
+
+const fieldClass =
+  'mt-1.5 block w-full rounded border border-charcoal-300 bg-white px-3 py-2.5 text-charcoal shadow-sm focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-700';
+const labelClass = 'block text-sm font-medium text-charcoal';
+
+/**
+ * LocalBusiness JSON-LD for the contact page (CLAUDE.md §5). The sitewide
+ * Organization node is emitted by BaseLayout; this page-level node adds the
+ * physical location, geo block and areaServed. A distinct @id keeps it from
+ * colliding with BaseLayout's #localbusiness node.
+ */
+const localBusinessSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'LocalBusiness',
+  '@id': `${SITE}${PATH}#localbusiness`,
+  name: 'Rukn Al Zain General Trading LLC',
+  url: `${SITE}/`,
+  logo: `${SITE}/logo.jpg`,
+  image: `${SITE}/images/contact-us/contact-hero-banner.jpg`,
+  description:
+    'Dubai-based supplier of engineered acoustic underlay systems, commercial rubber gym flooring, and agricultural and animal rubber matting. Technical quotes, free physical sample kits and UAE-wide site delivery.',
+  telephone: PHONE,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: 'Al Quoz',
+    addressLocality: 'Dubai',
+    addressRegion: 'Dubai',
+    postOfficeBoxNumber: '36528',
+    addressCountry: 'AE',
+  },
+  // TODO: Missing spec from brief — replace with the exact hub GPS coordinates.
+  geo: {
+    '@type': 'GeoCoordinates',
+    latitude: 25.2048,
+    longitude: 55.2708,
+  },
+  areaServed: {
+    '@type': 'Country',
+    name: 'United Arab Emirates',
+  },
+  contactPoint: {
+    '@type': 'ContactPoint',
+    telephone: PHONE,
+    contactType: 'sales',
+    areaServed: 'AE',
+    availableLanguage: ['en', 'ar'],
+  },
+};
+---
+<BaseLayout
+  title="Contact Us | Rukn Al Zain General Trading LLC - Dubai, UAE"
+  description="Get in touch with Rukn Al Zain General Trading LLC in Dubai for technical quotes, free physical sample kits, and site delivery of rubber flooring, acoustic underlays, and agricultural mats."
+  canonical="/contact"
+  ogImage="/images/contact-us/contact-hero-banner.jpg"
+  ogImageAlt="Rukn Al Zain General Trading headquarters and customer service facility in Dubai"
+>
+  {/* ---- Breadcrumb strip ---- */}
+  <div class="border-b border-industrial-300 bg-industrial-100">
+    <div class="mx-auto max-w-content px-4 py-4 sm:px-6 lg:px-8">
+      <Breadcrumbs trail={[{ name: 'Home', href: '/' }, { name: 'Contact' }]} />
+    </div>
+  </div>
+
+  {/* ============ 1. Hero / Introduction ============ */}
+  <header class="bg-charcoal-700 text-white">
+    <div class="mx-auto max-w-content px-4 py-16 sm:px-6 lg:px-8">
+      <h1 class="max-w-3xl text-4xl font-extrabold leading-tight text-white sm:text-[2.75rem]">
+        Contact Rukn Al Zain General Trading LLC
+      </h1>
+      <p class="mt-5 max-w-2xl text-lg text-industrial-100">
+        Partner with Dubai&rsquo;s leading supplier of engineered acoustic systems, commercial
+        rubber flooring, and agricultural matting. Reach out to our technical team for site
+        consultations, direct factory quotes, or physical sample kits.
+      </p>
+    </div>
+  </header>
+
+  <div class="mx-auto max-w-content px-4 sm:px-6 lg:px-8">
+    <img
+      src="/images/contact-us/contact-hero-banner.jpg"
+      alt="Rukn Al Zain General Trading headquarters and customer service facility in Dubai"
+      width={1200}
+      height={675}
+      loading="eager"
+      decoding="async"
+      class="-mt-8 w-full rounded border border-industrial-300 object-cover shadow-lift sm:-mt-10"
+    />
+  </div>
+
+  {/* ============ 2. Main Contact Grid ============ */}
+  <section aria-labelledby="contact-grid-heading" class="mx-auto max-w-content px-4 py-16 sm:px-6 lg:px-8">
+    <h2 id="contact-grid-heading" class="sr-only">Contact details and quote request form</h2>
+
+    <div class="grid gap-12 lg:grid-cols-[22rem_1fr]">
+      {/* ---- Left: direct contact + HQ ---- */}
+      <aside class="space-y-6">
+        <div class="rounded border border-industrial-300 bg-industrial-100 p-6">
+          <h3 class="font-heading text-lg font-semibold text-charcoal">
+            Rukn Al Zain General Trading LLC
+          </h3>
+
+          <dl class="mt-4 space-y-4 text-sm leading-relaxed text-charcoal-600">
+            <div>
+              <dt class="font-semibold uppercase tracking-wide text-charcoal">Central hub</dt>
+              <dd class="mt-0.5">Al Quoz, Dubai, United Arab Emirates</dd>
+            </div>
+            <div>
+              <dt class="font-semibold uppercase tracking-wide text-charcoal">Mailing address</dt>
+              <dd class="mt-0.5">P.O. Box 36528, Dubai, UAE</dd>
+            </div>
+            <div>
+              <dt class="font-semibold uppercase tracking-wide text-charcoal">Phone / WhatsApp</dt>
+              <dd class="mt-0.5">
+                <a
+                  href={`tel:${PHONE}`}
+                  class="rounded font-medium text-amber-700 hover:text-amber-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700"
+                >
+                  {PHONE_DISPLAY}
+                </a>
+              </dd>
+            </div>
+            <div>
+              <dt class="font-semibold uppercase tracking-wide text-charcoal">Fulfillment times</dt>
+              <dd class="mt-0.5">24-hour delivery in Dubai; 48 hours across all other Emirates.</dd>
+            </div>
+          </dl>
+
+          <div class="mt-6 flex flex-col gap-3">
+            <a
+              href={WHATSAPP}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="rounded bg-amber-400 px-4 py-2.5 text-center text-sm font-semibold text-charcoal-900 transition-colors hover:bg-amber-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700 focus-visible:ring-offset-2"
+            >
+              WhatsApp Us ({PHONE_DISPLAY})
+            </a>
+            <a
+              href={`tel:${PHONE}`}
+              class="rounded border border-charcoal-300 px-4 py-2.5 text-center text-sm font-semibold text-charcoal transition-colors hover:border-charcoal-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700"
+            >
+              Call {PHONE_DISPLAY}
+            </a>
+          </div>
+        </div>
+      </aside>
+
+      {/* ---- Right: quote + sample request form ---- */}
+      <div>
+        <h3 class="text-2xl font-bold">Request a technical quote &amp; free sample kit</h3>
+        <p class="mt-2 max-w-2xl text-charcoal-600">
+          Fields marked <span class="text-amber-700">*</span> are required. Our technical team
+          usually replies within one business day.
+        </p>
+
+        <form
+          name="contact"
+          method="POST"
+          action="/contact"
+          data-netlify="true"
+          netlify-honeypot="bot-field"
+          class="mt-6 max-w-2xl space-y-5"
+        >
+          <input type="hidden" name="form-name" value="contact" />
+          <p class="hidden">
+            <label>Leave this field empty if you are human: <input name="bot-field" /></label>
+          </p>
+
+          <div class="grid gap-5 sm:grid-cols-2">
+            <div>
+              <label class={labelClass} for="full-name">Full name <span class="text-amber-700">*</span></label>
+              <input
+                class={fieldClass}
+                type="text"
+                id="full-name"
+                name="full-name"
+                autocomplete="name"
+                required
+              />
+            </div>
+            <div>
+              <label class={labelClass} for="email">Email address <span class="text-amber-700">*</span></label>
+              <input
+                class={fieldClass}
+                type="email"
+                id="email"
+                name="email"
+                autocomplete="email"
+                required
+              />
+            </div>
+            <div>
+              <label class={labelClass} for="phone">
+                Phone / WhatsApp number <span class="text-amber-700">*</span>
+              </label>
+              <input
+                class={fieldClass}
+                type="tel"
+                id="phone"
+                name="phone"
+                autocomplete="tel"
+                inputmode="tel"
+                required
+              />
+            </div>
+            <div>
+              <label class={labelClass} for="emirate">
+                Emirate / location <span class="text-amber-700">*</span>
+              </label>
+              <select class={fieldClass} id="emirate" name="emirate" required>
+                <option value="" selected disabled>Select an emirate</option>
+                {emirates.map((e) => <option value={e}>{e}</option>)}
+              </select>
+            </div>
+            <div>
+              <label class={labelClass} for="product-category">Product category</label>
+              <select class={fieldClass} id="product-category" name="product-category">
+                <option value="" selected disabled>Select a category (optional)</option>
+                {productCategories.map((c) => <option value={c}>{c}</option>)}
+              </select>
+            </div>
+            <div>
+              <label class={labelClass} for="floor-area">Estimated floor area (m&sup2;)</label>
+              <input
+                class={fieldClass}
+                type="number"
+                id="floor-area"
+                name="floor-area"
+                min="0"
+                step="1"
+                inputmode="numeric"
+                placeholder="e.g. 250"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label class={labelClass} for="message">Project details &amp; sample request</label>
+            <textarea
+              class={fieldClass}
+              id="message"
+              name="message"
+              rows="5"
+              placeholder="Tell us about the space, the finish going on top, any acoustic or load targets, and which samples you would like."
+            ></textarea>
+          </div>
+
+          <button
+            type="submit"
+            class="inline-flex items-center rounded bg-amber-400 px-5 py-3 font-semibold text-charcoal-900 transition-colors hover:bg-amber-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700 focus-visible:ring-offset-2"
+          >
+            Request Free Sample &amp; Quote
+          </button>
+          <p class="text-xs text-charcoal-400">
+            Submissions are handled by Netlify Forms on the live site.
+          </p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  {/* ============ 3. Material Sample Kit ============ */}
+  <section aria-labelledby="sample-kit-heading" class="bg-industrial-100">
+    <div class="mx-auto grid max-w-content items-center gap-10 px-4 py-16 sm:px-6 lg:grid-cols-2 lg:px-8">
+      <div>
+        <h2 id="sample-kit-heading" class="text-2xl font-bold">
+          Request a Free Physical Sample Kit
+        </h2>
+        <p class="mt-3 text-charcoal-600">
+          We provide physical material sample kits and technical datasheets delivered directly to
+          your project site or office across the UAE. Test product density, texture, and durability
+          before committing to your order.
+        </p>
+        <a
+          href="#contact-grid-heading"
+          class="mt-6 inline-flex items-center rounded bg-amber-400 px-5 py-3 text-sm font-semibold text-charcoal-900 transition-colors hover:bg-amber-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700 focus-visible:ring-offset-2"
+        >
+          Request your sample kit
+        </a>
+      </div>
+      <img
+        src="/images/contact-us/rukn-al-zain-sample-kit.jpg"
+        alt="Rukn Al Zain physical product sample box with rubber flooring and acoustic underlayment samples"
+        width={800}
+        height={450}
+        loading="lazy"
+        decoding="async"
+        class="w-full rounded border border-industrial-300 object-cover shadow-card"
+      />
+    </div>
+  </section>
+
+  {/* ============ 4. Delivery & Site Dispatch Coverage ============ */}
+  <section aria-labelledby="coverage-heading" class="mx-auto max-w-content px-4 py-16 sm:px-6 lg:px-8">
+    <h2 id="coverage-heading" class="text-2xl font-bold">UAE-Wide Logistics &amp; Site Coverage</h2>
+    <p class="mt-3 max-w-3xl text-charcoal-600">
+      Operating from our central logistics hub in Dubai, we provide direct site delivery and
+      logistics support across all seven Emirates:
+    </p>
+
+    <ul class="mt-8 grid gap-5 sm:grid-cols-2">
+      {
+        coverage.map((c) => (
+          <li class="rounded border border-industrial-300 bg-white p-6 shadow-card">
+            <h3 class="font-heading text-lg font-semibold text-charcoal">{c.area}</h3>
+            <p class="mt-2 text-sm leading-relaxed text-charcoal-600">{c.body}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  {/* ============ 5. Our 3-Step Process ============ */}
+  <section aria-labelledby="process-heading" class="bg-charcoal-700 text-white">
+    <div class="mx-auto max-w-content px-4 py-16 sm:px-6 lg:px-8">
+      <h2 id="process-heading" class="text-2xl font-bold text-white">How We Process Your Inquiry</h2>
+
+      <ol class="mt-8 grid gap-6 md:grid-cols-3">
+        {
+          steps.map((s) => (
+            <li class="rounded border border-charcoal-500 bg-charcoal-800 p-6">
+              <span class="inline-flex h-10 w-10 items-center justify-center rounded bg-amber-400 font-heading text-lg font-bold text-charcoal-900">
+                {s.n}
+              </span>
+              <h3 class="mt-4 font-heading text-lg font-semibold text-white">
+                Step {s.n}: {s.title}
+              </h3>
+              <p class="mt-2 text-sm leading-relaxed text-industrial-200">{s.body}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  {/* ---- LocalBusiness / Organization structured data ---- */}
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(localBusinessSchema)} />
+</BaseLayout>

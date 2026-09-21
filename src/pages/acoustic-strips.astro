@@ -1,0 +1,1141 @@
+---
+/**
+ * /acoustic-strips — "Zain Acoustic Strip — Perimeter & Decking Isolation Dubai"
+ * conversion + SEO / AEO / GEO product landing page.
+ *
+ * Bespoke page (not the YAML-driven generic ProductPage), built to mirror the
+ * sibling spokes src/pages/screed-isolation.astro, src/pages/acoustic-underlay.astro
+ * and src/pages/sports-track-underlay.astro — same class helpers, progressive-
+ * enhancement scroll-reveal motion, hand-rolled breadcrumb and combined JSON-LD
+ * @graph (prefix `as-`).
+ *
+ * ─── ROUTING ─────────────────────────────────────────────────────────────
+ * The content entry src/content/products/acoustic-strips.yaml carries
+ * `path: /acoustic-strips` (child of the `acoustic` hub — already listed in that
+ * hub's `children`). To avoid a duplicate-route build error the matching branch
+ * is filtered out of getStaticPaths in src/pages/[...slug].astro — the same
+ * pattern already used for acoustic-underlay, sports-track-underlay,
+ * screed-isolation, zainfit, zainsquare, zainduo, zainactive-rolls and
+ * curb-stone. The YAML entry stays as data (still referenced by the acoustic
+ * hub nav / children list); this file serves the URL.
+ *
+ * ─── DECISIONS TAKEN / FLAGS (CLAUDE.md §0 "Data Integrity" + §6) ─────────
+ *  - PARENT HUB: the build request's breadcrumb JSON-LD names the parent
+ *    "Acoustics & Construction Systems" at /acoustics-construction-systems on
+ *    host rukanalzain.com. That route does not exist in this project — the real
+ *    acoustic hub is /acoustic-soundproofing-flooring (acoustic-strips.yaml
+ *    `hub: acoustic`, and the hub already lists this page under `children`).
+ *    Both the visible breadcrumb and the BreadcrumbList JSON-LD below use the
+ *    real path with the label "Acoustic & Soundproofing Flooring" — the same
+ *    substitution already made on the acoustic-underlay, sports-track-underlay
+ *    and screed-isolation siblings. TODO: confirm the intended hub label / slug
+ *    with the client.
+ *  - CANONICAL HOST: the request shows "rukanalzain.com"; the configured site is
+ *    "ruknalzain.ae" (astro.config.mjs). Canonical + all schema URLs are
+ *    built from the configured site via BaseLayout `canonical={PATH}` (same
+ *    choice as the siblings). TODO: confirm the production domain.
+ *  - DESIGN SYSTEM: the request describes React / Lucide-React / a generic
+ *    Tailwind palette. This is a static Astro site (zero-JS). The page follows
+ *    the live charcoal / industrial-grey design system with a single amber
+ *    action accent and bordered "ghost" WhatsApp buttons; Lucide icons are
+ *    inlined as raw SVG path data (no runtime). The FAQ accordion uses native
+ *    <details>/<summary>.
+ *  - H1 / METADATA: the request's H1 ("Zain Acoustic Strip — Perimeter &
+ *    Decking Isolation Dubai") and title/description supersede the shorter copy
+ *    in acoustic-strips.yaml ("Zain Acoustic Strip — Self-Adhesive Vibration
+ *    Isolation"), the same way the sibling pages diverged from their YAML
+ *    records. The YAML stays as-is for the hub nav.
+ *  - TECHNICAL SPECIFICATIONS: acoustic-strips.yaml lists Width options (mm),
+ *    Thickness (mm) and Roll length (m) as null "to collect". Every spec row
+ *    rendered below is the descriptive text supplied in the page-build request,
+ *    NOT numeric data from Rukn_Al_Zain_SEO_Content_Brief V2.docx. Treat as
+ *    PROVISIONAL and confirm against real product data / manufacturer
+ *    certificates before go-live.
+ *  - STRUCTURED DATA: a single combined @graph (BreadcrumbList + Product +
+ *    FAQPage) is emitted inline. The request supplied BreadcrumbList only; the
+ *    FAQPage node is generated 1:1 from the on-page FAQ and the Product node is
+ *    added per CLAUDE.md §5. Organization JSON-LD is emitted sitewide by
+ *    BaseLayout.
+ *
+ * ─── IMAGE ASSETS ───────────────────────────────────────────────────────
+ * public/images/acoustic-strips/ — intrinsic dimensions wired below to prevent
+ * layout shift. public/ images use plain <img> (astro:assets <Image /> only
+ * optimises src/assets):
+ *   - zain-acoustic-strip-hero-product.jpg          (1408×768)
+ *   - zain-acoustic-strip-problem-solution-dubai.jpg (1376×768)
+ *       ↳ SUBSTITUTE: no strip-specific problem/solution render exists yet; this
+ *         reuses the acoustic flanking-noise comparison diagram
+ *         (zainacoustic-problem-solution-comparison.jpg). Flagged — commission a
+ *         strip-specific floor-to-wall joint cross-section.
+ *   - zain-acoustic-strip-benefits.jpg              (1376×768)
+ *   - zain-acoustic-strip-tech-spec-diagram.jpg     (1376×768)
+ *   - zain-acoustic-strip-ideal-applications.jpg    (1376×768)
+ *   - zain-acoustic-strip-dubai-skyline.jpg         (1376×768)
+ * TODO: convert to optimised WebP; add a purpose-built 1200×630 OG card
+ * (og:image currently falls back to the hero file).
+ */
+import BaseLayout from '@layouts/BaseLayout.astro';
+
+const SITE = (Astro.site ?? new URL('https://ruknalzain.ae')).origin;
+const IMG = '/images/acoustic-strips';
+const PATH = '/acoustic-strips';
+
+const HERO_IMG = `${IMG}/zain-acoustic-strip-hero-product.jpg`; // 1408×768
+const HERO_ALT =
+  'Zain Acoustic Strip self-adhesive rubber roll displayed with official Rukn Al Zain product label sleeve in a Dubai commercial showroom';
+const PS_IMG = `${IMG}/zain-acoustic-strip-problem-solution-dubai.jpg`; // 1376×768 (see IMAGE ASSETS note)
+const PS_ALT =
+  'Architectural 3D cross-section diagram showing Zain Acoustic Strip eliminating flanking sound transmission at the floor-to-wall joint in a Dubai high-rise';
+const BENEFITS_IMG = `${IMG}/zain-acoustic-strip-benefits.jpg`; // 1376×768
+const BENEFITS_ALT =
+  'Close-up display highlighting key structural benefits of Zain Acoustic Strip for perimeter and decking isolation in Dubai';
+const SPEC_IMG = `${IMG}/zain-acoustic-strip-tech-spec-diagram.jpg`; // 1376×768
+const SPEC_ALT =
+  'Architectural 3D technical breakdown diagram detailing the layer composition, dimensions, and adhesive backing of Zain Acoustic Strip';
+const APPS_IMG = `${IMG}/zain-acoustic-strip-ideal-applications.jpg`; // 1376×768
+const APPS_ALT =
+  'Four-panel architectural diagram displaying key site applications for Zain Acoustic Strip including perimeter walls, decking joists, partition framing, and underlay joint sealing in Dubai';
+const GEO_IMG = `${IMG}/zain-acoustic-strip-dubai-skyline.jpg`; // 1376×768
+const GEO_ALT =
+  'Zain Acoustic Strip perimeter isolation installed along floor-to-wall joints in a Dubai high-rise apartment with skyline views';
+const OG_IMG = HERO_IMG; // fallback share image — no purpose-built 1200×630 card yet
+
+const WHATSAPP_HERO =
+  'https://wa.me/971505698195?text=Hello%20Rukn%20Al%20Zain,%20I%20would%20like%20a%20free%20sample%20and%20project%20quote%20for%20the%20Zain%20Acoustic%20Strip';
+const WHATSAPP_PLAIN = 'https://wa.me/971505698195';
+
+/* ─── Inline Lucide icon path data (24×24, currentColor stroke) ─────────── */
+const icon: Record<string, string> = {
+  'sticky-note':
+    '<path d="M15.5 3H5a2 2 0 0 0-2 2v14c0 1.1.9 2 2 2h14a2 2 0 0 0 2-2V8.5L15.5 3Z"/><path d="M15 3v6h6"/>',
+  recycle:
+    '<path d="M7 19H4.815a1.83 1.83 0 0 1-1.57-.881 1.785 1.785 0 0 1-.004-1.784L7.196 9.5"/><path d="M11 19h8.203a1.83 1.83 0 0 0 1.556-.89 1.784 1.784 0 0 0 0-1.775l-1.226-2.12"/><path d="m14 16-3 3 3 3"/><path d="M8.293 13.596 7.196 9.5 3.1 10.598"/><path d="m9.344 5.811 1.093-1.892A1.83 1.83 0 0 1 11.985 3a1.784 1.784 0 0 1 1.546.888l3.943 6.843"/><path d="m13.378 9.633 4.096 1.098 1.097-4.096"/>',
+  'shield-alert':
+    '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="M12 8v4"/><path d="M12 16h.01"/>',
+  warehouse:
+    '<path d="M22 8.35V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8.35A2 2 0 0 1 3.26 6.5l8-3.2a2 2 0 0 1 1.48 0l8 3.2A2 2 0 0 1 22 8.35Z"/><path d="M6 18h12"/><path d="M6 14h12"/><rect width="12" height="12" x="6" y="10"/>',
+  waves:
+    '<path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/>',
+  rows:
+    '<rect width="18" height="18" x="3" y="3" rx="2"/><path d="M21 9H3"/><path d="M21 15H3"/>',
+  thermometer:
+    '<path d="M14 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0Z"/>',
+  leaf:
+    '<path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>',
+  zap:
+    '<path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/>',
+  'brick-wall':
+    '<path d="M12 9v6"/><path d="M16 15v6"/><path d="M16 3v6"/><path d="M3 15h18"/><path d="M3 9h18"/><path d="M8 15v6"/><path d="M8 3v6"/><rect x="3" y="3" width="18" height="18" rx="2"/>',
+  'scan-line':
+    '<path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M7 12h10"/>',
+  'columns-2':
+    '<rect width="18" height="18" x="3" y="3" rx="2"/><path d="M12 3v18"/>',
+  search: '<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',
+  package:
+    '<path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"/><path d="M12 22V12"/><polyline points="3.29 7 12 12 20.71 7"/><path d="m7.5 4.27 9 5.15"/>',
+  truck:
+    '<path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/>',
+  'map-pin':
+    '<path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/>',
+};
+
+/* ─── 2. Trust bar (verbatim from the request) ────────────────────────── */
+const trustCards = [
+  {
+    icon: 'sticky-note',
+    term: 'Self-Adhesive Backing',
+    desc: 'Pressure-sensitive peel-and-stick backing ensures rapid attachment to wood, metal studs, and masonry.',
+  },
+  {
+    icon: 'recycle',
+    term: '100% Recycled Tire Rubber',
+    desc: 'Made from durable recycled SBR rubber, contributing to green building standards in Dubai.',
+  },
+  {
+    icon: 'shield-alert',
+    term: 'Flanking Sound Barrier',
+    desc: 'Eliminates rigid contact joints between floor slabs, decking, and perimeter walls to prevent lateral sound transmission.',
+  },
+  {
+    icon: 'warehouse',
+    term: 'Centrally Stocked in Dubai',
+    desc: 'Ready inventory stored locally for 24-to-48-hour delivery across all Dubai construction sites.',
+  },
+];
+
+/* ─── 3. Problem / Solution — paired blocks (verbatim from the request) ── */
+const problemPoints = [
+  {
+    term: 'Rigid Contact Joints',
+    desc: 'Rigid contact between floor finishes, floating screeds, or decking joists and adjacent walls creates acoustic flanking paths.',
+  },
+  {
+    term: 'Lateral Impact & Vibration Travel',
+    desc: 'In multi-story towers across Dubai, impact noise and structural vibrations travel laterally around high-performance underlays through uninsulated wall joints.',
+  },
+  {
+    term: 'Compromised Sound Ratings',
+    desc: 'When the border is left uninsulated, the overall system loses acoustic performance no matter how good the field underlay is — the total sound rating is compromised.',
+  },
+];
+const solutionPoints = [
+  {
+    term: 'Elastomeric Decoupling',
+    desc: 'Zain Acoustic Strip acts as an elastomeric isolator that decouples horizontal elements from vertical boundaries.',
+  },
+  {
+    term: 'Sealed Perimeters & Cushioned Joists',
+    desc: 'By sealing perimeter edges and cushioning joists with self-adhesive recycled tire rubber, it absorbs dynamic vibrations at the border.',
+  },
+  {
+    term: 'No Sound Bridging',
+    desc: 'Absorbing vibration at the edge prevents sound waves from bridging into wall structures, protecting the rated performance of the floor build-up.',
+  },
+];
+
+/* ─── 4. Key product benefits (verbatim from the request) ─────────────── */
+const benefits = [
+  {
+    icon: 'waves',
+    term: 'Flanking Noise Mitigation',
+    desc: 'Blocks structural sound travel along edge perimeters and wall junctions.',
+  },
+  {
+    icon: 'zap',
+    term: 'Fast Self-Adhesive Install',
+    desc: 'High-tack adhesive backing speeds up job site application without needing external glues.',
+  },
+  {
+    icon: 'rows',
+    term: 'Decking Joint Cushioning',
+    desc: 'Dampens impact footstep noise when placed directly underneath wooden decking panels and joist frames.',
+  },
+  {
+    icon: 'thermometer',
+    term: 'GCC Climate Stability',
+    desc: 'Formulated to maintain elasticity and adhesive bonding despite intense indoor AC thermal cycles.',
+  },
+  {
+    icon: 'leaf',
+    term: 'Sustainable Material',
+    desc: 'Manufactured from recycled tire rubber, supporting eco-friendly construction initiatives in Dubai.',
+  },
+];
+
+/* ─── 5. Technical specifications — PROVISIONAL (see data-integrity flags) */
+const specRows: [string, string][] = [
+  ['Material Composition', 'Recycled Tire Rubber (SBR Granules)'],
+  ['Backing Type', 'High-Tack Self-Adhesive Backing'],
+  ['Format', 'Continuous Pre-Cut Strip Rolls'],
+  ['Primary Function', 'Perimeter Isolation & Decking Joint Dampening'],
+  ['Width Options', 'Standard and Custom Strip Widths'],
+  ['Subfloor Compatibility', 'Concrete Slabs, Masonry, Drywall Studs, Wooden Joists'],
+  ['Environmental Features', '100% Recycled Content & Rot-Proof Matrix'],
+];
+
+/* ─── 6. Ideal applications — text cards + one composite image (request §6) */
+const applications = [
+  {
+    icon: 'brick-wall',
+    term: 'Perimeter Wall Isolation',
+    desc: 'Installed vertically along drywall and concrete perimeters before laying floor underlays or screeds.',
+  },
+  {
+    icon: 'rows',
+    term: 'Timber & Composite Decking',
+    desc: 'Placed under decking wooden panels and sub-joist frames to isolate outdoor or indoor raised decking.',
+  },
+  {
+    icon: 'scan-line',
+    term: 'Acoustic Underlay Edge Sealing',
+    desc: 'Seals gaps between acoustic underlayment edges and perimeter walls to prevent acoustic bridging.',
+  },
+  {
+    icon: 'columns-2',
+    term: 'Partition Wall Decoupling',
+    desc: 'Placed under track framing in metal or timber stud partition walls to mute room-to-room vibration.',
+  },
+];
+
+/* ─── 8. About Rukn Al Zain — 3-step order flow (verbatim from request) ── */
+const processSteps = [
+  {
+    n: '01',
+    icon: 'search',
+    term: 'Material Request',
+    desc: 'Request sample rolls and specification sheets for project approval.',
+  },
+  {
+    n: '02',
+    icon: 'package',
+    term: 'Order Fulfillment',
+    desc: 'Direct packing from our local Dubai central warehouse.',
+  },
+  {
+    n: '03',
+    icon: 'truck',
+    term: 'Site Delivery',
+    desc: '24-to-48-hour delivery across all project sites in Dubai and the UAE.',
+  },
+];
+
+const coverageAreas = [
+  'Dubai',
+  'Abu Dhabi',
+  'Sharjah',
+  'Ajman',
+  'Ras Al Khaimah',
+  'Umm Al Quwain',
+  'Fujairah',
+];
+
+/* Project-location dropdown for the lead form. */
+const emirates = [...coverageAreas, 'Outside the UAE'];
+
+/* Request type dropdown for the lead form. */
+const requestTypes = [
+  'Custom project quote',
+  'Free sample kit',
+  'Technical datasheet',
+  'Speak to an acoustic specialist',
+  'All of the above',
+];
+
+/* ─── 9. FAQ (AEO) — self-contained answers, 1:1 with the JSON-LD below ── */
+const faqs = [
+  {
+    question: 'Why do I need perimeter acoustic strips if I already have an acoustic underlay?',
+    answer:
+      'Without perimeter strips, hard floor finishes or floating screeds come into direct contact with surrounding walls, creating a rigid bridge. Impact noise bypasses the underlay and travels straight into the building structure via flanking pathways.',
+  },
+  {
+    question: 'How does the self-adhesive backing perform on concrete or drywall?',
+    answer:
+      'The high-tack pressure-sensitive adhesive is formulated to stick instantly to concrete, timber joists, drywall tracks, and masonry without requiring extra adhesives or mechanical fixings.',
+  },
+  {
+    question: 'Can Zain Acoustic Strip be used under outdoor wooden decking?',
+    answer:
+      'Yes, the recycled tire rubber composition is rot-proof, weather-resistant, and ideal for dampening dynamic foot traffic noise underneath outdoor or indoor wooden decking frames.',
+  },
+];
+
+/* ─── Structured data — single combined @graph ───────────────────────────
+   BreadcrumbList (from the build request) + a Product node per CLAUDE.md §5 +
+   FAQPage generated 1:1 from the on-page FAQ. The visible breadcrumb trail is
+   hand-rolled below (not the <Breadcrumbs /> component) so the BreadcrumbList
+   is declared exactly once. The build request's breadcrumb named a non-existent
+   parent (/acoustics-construction-systems on host rukanalzain.com); this uses
+   the real hub /acoustic-soundproofing-flooring on the configured host — see
+   FLAGS. Organization JSON-LD is emitted sitewide by BaseLayout. */
+const breadcrumbSchema = {
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE}/` },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: 'Acoustic & Soundproofing Flooring',
+      item: `${SITE}/acoustic-soundproofing-flooring`,
+    },
+    { '@type': 'ListItem', position: 3, name: 'Zain Acoustic Strip', item: `${SITE}${PATH}` },
+  ],
+};
+
+const productSchema = {
+  '@type': 'Product',
+  name: 'Zain Acoustic Strip',
+  description:
+    'Self-adhesive acoustic isolation strip made from recycled tire rubber (SBR granules). Laid under timber decking joists and battens to isolate them from the structure, and run around the room perimeter so a floating floor or screed does not bridge to the surrounding walls. Both uses cut transmitted sound and structural vibration, protecting the rated acoustic performance of the floor build-up across Dubai and UAE developments.',
+  image: `${SITE}${OG_IMG}`,
+  sku: 'RZ-ACOUSTIC-STRIP',
+  category: 'Acoustic Perimeter & Decking Isolation Strip',
+  url: `${SITE}${PATH}`,
+  brand: { '@type': 'Brand', name: 'Rukn Al Zain' },
+  manufacturer: { '@type': 'Organization', name: 'Rukn Al Zain General Trading LLC' },
+  material: 'Recycled tire rubber (SBR granules) with high-tack self-adhesive backing',
+  areaServed: 'United Arab Emirates',
+};
+
+const faqSchema = {
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((f) => ({
+    '@type': 'Question',
+    name: f.question,
+    acceptedAnswer: { '@type': 'Answer', text: f.answer },
+  })),
+};
+
+const graphSchema = {
+  '@context': 'https://schema.org',
+  '@graph': [breadcrumbSchema, productSchema, faqSchema],
+};
+
+/* Shared class helpers — mirrors src/pages/screed-isolation.astro. */
+const sectionShell = 'border-t border-industrial-300 py-14 sm:py-16';
+const container = 'mx-auto max-w-content px-4 sm:px-6 lg:px-8';
+const h2 = 'text-2xl font-bold text-charcoal';
+const lede = 'mt-4 max-w-3xl text-charcoal-600';
+const primaryCta =
+  'inline-flex items-center justify-center rounded bg-amber-400 px-5 py-3 font-semibold text-charcoal-900 transition-colors hover:bg-amber-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2';
+const ghostCta =
+  'inline-flex items-center justify-center rounded border border-white/25 px-5 py-3 font-semibold text-white transition-colors hover:border-white/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400';
+const iconChip =
+  'mb-3 grid h-11 w-11 place-items-center rounded bg-white text-amber-700 ring-1 ring-industrial-300';
+const crumbLink =
+  'rounded hover:text-amber-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700';
+const fieldClass =
+  'mt-1.5 block w-full rounded border border-charcoal-300 bg-white px-3 py-2.5 text-charcoal shadow-sm focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-700';
+const labelClass = 'block text-sm font-medium text-charcoal';
+---
+
+<BaseLayout
+  title="Acoustic Strips Dubai | Self-Adhesive Rubber Isolation | Rukn Al Zain"
+  description="Self-adhesive acoustic strips made from recycled tire rubber, used beneath decking and as perimeter isolation to reduce sound and vibration transfer across Dubai developments."
+  canonical={PATH}
+  ogImage={OG_IMG}
+  ogImageAlt="Zain Acoustic Strip self-adhesive recycled tire rubber isolation strip by Rukn Al Zain, Dubai UAE."
+>
+  <article class="as-page">
+    {/*
+      Mark the document as JS-capable ASAP so scroll-reveal elements start hidden
+      only when the animation engine is available. A failsafe timer guarantees
+      content becomes visible even if the observer below never runs, and
+      reduced-motion visitors skip the effect entirely.
+    */}
+    <script is:inline>
+      (function () {
+        document.documentElement.classList.add('as-js');
+        var sel = '.as-page [data-reveal], .as-page [data-reveal-group]';
+        var showAll = function () {
+          document.querySelectorAll(sel).forEach(function (el) {
+            el.classList.add('in');
+          });
+        };
+        var reduce =
+          window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (reduce) {
+          if (document.readyState === 'loading')
+            document.addEventListener('DOMContentLoaded', showAll);
+          else showAll();
+        } else {
+          setTimeout(showAll, 1600);
+        }
+      })();
+    </script>
+
+    {/* Breadcrumb strip — Home > Acoustic & Soundproofing Flooring > Zain Acoustic Strip.
+        Hand-rolled (not <Breadcrumbs />) so the BreadcrumbList JSON-LD is
+        declared once, in the combined @graph at the foot of this file. */}
+    <div class="border-b border-industrial-300 bg-industrial-100">
+      <div class={`${container} py-4`}>
+        <nav aria-label="Breadcrumb" class="text-sm">
+          <ol class="flex flex-wrap items-center gap-x-2 gap-y-1 text-charcoal-500">
+            <li class="flex items-center gap-x-2">
+              <a href="/" class={crumbLink}>Home</a>
+            </li>
+            <li class="flex items-center gap-x-2">
+              <span aria-hidden="true" class="text-charcoal-300">/</span>
+              <a href="/acoustic-soundproofing-flooring" class={crumbLink}>
+                Acoustic &amp; Soundproofing Flooring
+              </a>
+            </li>
+            <li class="flex items-center gap-x-2">
+              <span aria-hidden="true" class="text-charcoal-300">/</span>
+              <span aria-current="page" class="font-medium text-charcoal">Zain Acoustic Strip</span>
+            </li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+
+    {/* ─── 1. HERO ─────────────────────────────────────────────────────────── */}
+    <header class="bg-charcoal-700 text-white">
+      <div class={`${container} py-14 sm:py-16`}>
+        <div class="grid items-center gap-10 lg:grid-cols-2">
+          <div data-hero>
+            <p class="font-heading text-sm font-semibold uppercase tracking-wide text-amber-400">
+              Perimeter &amp; Decking Isolation Strip
+            </p>
+            <h1 class="mt-3 text-4xl font-extrabold leading-tight text-white sm:text-5xl">
+              Zain Acoustic Strip — Perimeter &amp; Decking Isolation Dubai
+            </h1>
+
+            {/* AEO direct-answer block — sits immediately under the H1 */}
+            <p class="mt-5 max-w-xl border-l-[3px] border-amber-400 pl-4 text-lg text-industrial-100">
+              Heavy-duty, self-adhesive recycled tire rubber strips engineered to isolate acoustic
+              flanking and dampen structural vibration in Dubai developments. Rukn Al Zain General
+              Trading LLC supplies the Zain Acoustic Strip from central Dubai stock — laid under
+              decking joists and run around floor perimeters so floating floors and screeds never
+              bridge to the surrounding walls.
+            </p>
+
+            <div class="mt-8 flex flex-wrap gap-3">
+              <a href="#lead-capture" class={`${primaryCta} focus-visible:ring-offset-charcoal-700`}>
+                Request Free Sample
+              </a>
+              <a
+                href={WHATSAPP_HERO}
+                target="_blank"
+                rel="noopener"
+                class={`${ghostCta} focus-visible:ring-offset-charcoal-700`}
+              >
+                WhatsApp Now (+971 50 569 8195)
+              </a>
+            </div>
+          </div>
+
+          <figure class="m-0" data-hero>
+            <img
+              src={HERO_IMG}
+              alt={HERO_ALT}
+              title="Zain Acoustic Strip self-adhesive recycled tire rubber roll — Rukn Al Zain, Dubai"
+              width="1408"
+              height="768"
+              loading="eager"
+              fetchpriority="high"
+              decoding="async"
+              class="h-auto w-full rounded border border-white/10"
+            />
+          </figure>
+        </div>
+      </div>
+    </header>
+
+    {/* ─── 2. TRUST BAR ───────────────────────────────────────────────────── */}
+    <section aria-labelledby="trust-h" class={`${sectionShell} bg-white`}>
+      <div class={container}>
+        <h2 id="trust-h" class={h2} data-reveal>
+          Self-Adhesive Acoustic Strips Stocked in Dubai
+        </h2>
+        <dl class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4" data-reveal-group>
+          {
+            trustCards.map((it) => (
+              <div class="card-lift rounded border border-industrial-300 border-l-[3px] border-l-amber-400 bg-industrial-100 p-5">
+                <span class={iconChip} aria-hidden="true">
+                  <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" set:html={icon[it.icon]} />
+                </span>
+                <dt class="font-heading font-semibold text-charcoal">{it.term}</dt>
+                <dd class="mt-1.5 text-sm text-charcoal-600">{it.desc}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+    </section>
+
+    {/* ─── 3. PROBLEM & SOLUTION ──────────────────────────────────────────── */}
+    <section aria-labelledby="ps-h" class={`${sectionShell} bg-industrial-100`}>
+      <div class={container}>
+        <h2 id="ps-h" class={h2} data-reveal>
+          Stopping Acoustic Flanking at the Floor-to-Wall Joint in Dubai Towers
+        </h2>
+
+        <div class="mt-8 grid gap-6 lg:grid-cols-2" data-reveal-group>
+          {/* The Problem */}
+          <div class="rounded border border-industrial-300 border-l-[3px] border-l-danger bg-white p-6">
+            <h3 class="font-heading text-lg font-bold text-charcoal">
+              The Problem: Rigid Edges Create Flanking Paths
+            </h3>
+            <p class="mt-3 text-sm text-charcoal-600">
+              Rigid contact between floor finishes, floating screeds, or decking joists and adjacent
+              walls creates acoustic flanking paths. In multi-story towers across Dubai, impact noise
+              and structural vibrations travel laterally around high-performance underlays through
+              uninsulated wall joints, compromising total sound ratings.
+            </p>
+            <dl class="mt-4 space-y-4">
+              {
+                problemPoints.map((p) => (
+                  <div>
+                    <dt class="flex gap-2 font-heading text-sm font-semibold text-charcoal">
+                      <span class="mt-0.5 text-danger" aria-hidden="true">&#10007;</span>
+                      <span>{p.term}</span>
+                    </dt>
+                    <dd class="mt-1 pl-6 text-sm text-charcoal-600">{p.desc}</dd>
+                  </div>
+                ))
+              }
+            </dl>
+          </div>
+
+          {/* The Solution */}
+          <div class="rounded border border-industrial-300 border-l-[3px] border-l-success bg-white p-6">
+            <h3 class="font-heading text-lg font-bold text-charcoal">
+              The Solution: Zain Acoustic Strip Decouples the Border
+            </h3>
+            <p class="mt-3 text-sm text-charcoal-600">
+              Zain Acoustic Strip acts as an elastomeric isolator that decouples horizontal elements
+              from vertical boundaries. By sealing perimeter edges and cushioning joists with
+              self-adhesive recycled tire rubber, it absorbs dynamic vibrations at the border,
+              preventing sound waves from bridging into wall structures.
+            </p>
+            <dl class="mt-4 space-y-4">
+              {
+                solutionPoints.map((s) => (
+                  <div>
+                    <dt class="flex gap-2 font-heading text-sm font-semibold text-charcoal">
+                      <span class="mt-0.5 text-success" aria-hidden="true">&#10003;</span>
+                      <span>{s.term}</span>
+                    </dt>
+                    <dd class="mt-1 pl-6 text-sm text-charcoal-600">{s.desc}</dd>
+                  </div>
+                ))
+              }
+            </dl>
+          </div>
+        </div>
+
+        <figure class="m-0 mt-10" data-reveal>
+          <img
+            src={PS_IMG}
+            alt={PS_ALT}
+            title="Zain Acoustic Strip eliminating flanking sound transmission at the floor-to-wall joint in a Dubai high-rise"
+            width="1376"
+            height="768"
+            loading="lazy"
+            decoding="async"
+            class="h-auto w-full rounded border border-industrial-300"
+          />
+        </figure>
+      </div>
+    </section>
+
+    {/* ─── 4. KEY PRODUCT BENEFITS ────────────────────────────────────────── */}
+    <section aria-labelledby="benefits-h" class={`${sectionShell} bg-white`}>
+      <div class={container}>
+        <h2 id="benefits-h" class={h2} data-reveal>Key Product Benefits</h2>
+        <dl class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3" data-reveal-group>
+          {
+            benefits.map((it) => (
+              <div class="card-lift rounded border border-industrial-300 bg-industrial-100 p-5">
+                <span class={iconChip} aria-hidden="true">
+                  <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" set:html={icon[it.icon]} />
+                </span>
+                <dt class="font-heading font-semibold text-charcoal">{it.term}</dt>
+                <dd class="mt-1.5 text-sm text-charcoal-600">{it.desc}</dd>
+              </div>
+            ))
+          }
+        </dl>
+
+        <figure class="m-0 mt-10" data-reveal>
+          <img
+            src={BENEFITS_IMG}
+            alt={BENEFITS_ALT}
+            title="Key structural benefits of Zain Acoustic Strip for perimeter and decking isolation in Dubai"
+            width="1376"
+            height="768"
+            loading="lazy"
+            decoding="async"
+            class="h-auto w-full rounded border border-industrial-300"
+          />
+        </figure>
+      </div>
+    </section>
+
+    {/* ─── 5. TECHNICAL SPECIFICATIONS ────────────────────────────────────── */}
+    <section aria-labelledby="specs-h" class={`${sectionShell} bg-industrial-100`}>
+      <div class={container}>
+        <h2 id="specs-h" class={h2} data-reveal>Technical Specifications</h2>
+        <p class={lede} data-reveal>
+          Material composition, backing, format, function, width options and subfloor compatibility
+          for the Zain Acoustic Strip. Details are
+          <span class="font-semibold text-amber-700"> provisional</span> pending confirmation against
+          manufacturer product data and acoustic test certificates.
+        </p>
+
+        <div class="mt-8 grid gap-10 lg:grid-cols-2 lg:items-start" data-reveal-group>
+          <div class="overflow-x-auto">
+            <table class="w-full border-collapse text-left text-sm tabular-nums">
+              <caption class="sr-only">
+                Zain Acoustic Strip technical specifications
+              </caption>
+              <thead>
+                <tr class="border-b-2 border-charcoal-300">
+                  <th scope="col" class="w-2/5 px-4 py-3 font-heading font-bold text-charcoal">
+                    Specification
+                  </th>
+                  <th scope="col" class="px-4 py-3 font-heading font-bold text-charcoal">
+                    Details / Value
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {
+                  specRows.map(([label, value], i) => (
+                    <tr class:list={['border-b border-industrial-300', i % 2 === 1 && 'bg-white']}>
+                      <th scope="row" class="w-2/5 px-4 py-3 align-top font-semibold text-charcoal">
+                        {label}
+                      </th>
+                      <td class="px-4 py-3 align-top text-charcoal-600">{value}</td>
+                    </tr>
+                  ))
+                }
+              </tbody>
+            </table>
+          </div>
+
+          <figure class="m-0">
+            <img
+              src={SPEC_IMG}
+              alt={SPEC_ALT}
+              title="Layer composition, dimensions and adhesive backing of Zain Acoustic Strip"
+              width="1376"
+              height="768"
+              loading="lazy"
+              decoding="async"
+              class="h-auto w-full rounded border border-industrial-300"
+            />
+          </figure>
+        </div>
+
+        {/* TODO: Missing spec from brief — acoustic-strips.yaml lists Width
+            options (mm), Thickness (mm) and Roll length (m) as null "to
+            collect". Confirm the rubber composition, strip width range,
+            thickness, roll length and any tested sound / vibration reduction
+            figures against real product data / manufacturer certificates before
+            go-live. */}
+        <p class="mt-3 text-xs text-charcoal-500" data-reveal>
+          Specifications are provisional pending final manufacturer product data and acoustic test
+          certificates. Request the current Zain Acoustic Strip technical datasheet for confirmed
+          width, thickness and roll-length figures.
+        </p>
+      </div>
+    </section>
+
+    {/* ─── 6. BEST FOR / IDEAL APPLICATIONS ───────────────────────────────── */}
+    <section aria-labelledby="apps-h" class={`${sectionShell} bg-white`}>
+      <div class={container}>
+        <h2 id="apps-h" class={h2} data-reveal>Best For / Ideal Applications</h2>
+        <dl class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4" data-reveal-group>
+          {
+            applications.map((it) => (
+              <div class="card-lift rounded border border-industrial-300 border-l-[3px] border-l-amber-400 bg-industrial-100 p-5">
+                <span class={iconChip} aria-hidden="true">
+                  <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" set:html={icon[it.icon]} />
+                </span>
+                <dt class="font-heading font-semibold text-charcoal">{it.term}</dt>
+                <dd class="mt-1.5 text-sm text-charcoal-600">{it.desc}</dd>
+              </div>
+            ))
+          }
+        </dl>
+
+        <figure class="m-0 mt-10" data-reveal>
+          <img
+            src={APPS_IMG}
+            alt={APPS_ALT}
+            title="Zain Acoustic Strip applications — perimeter walls, decking joists, partition framing and underlay joint sealing in Dubai"
+            width="1376"
+            height="768"
+            loading="lazy"
+            decoding="async"
+            class="h-auto w-full rounded border border-industrial-300"
+          />
+        </figure>
+      </div>
+    </section>
+
+    {/* ─── 7. GEOGRAPHIC SIGNALS ──────────────────────────────────────────── */}
+    <section aria-labelledby="geo-h" class={`${sectionShell} bg-industrial-100`}>
+      <div class={container}>
+        <h2 id="geo-h" class={h2} data-reveal>
+          Engineered for Dubai High-Rise Construction Standards
+        </h2>
+
+        <div class="mt-8 grid gap-10 lg:grid-cols-2 lg:items-center">
+          <figure class="m-0" data-reveal>
+            <img
+              src={GEO_IMG}
+              alt={GEO_ALT}
+              title="Zain Acoustic Strip perimeter isolation installed along floor-to-wall joints in a Dubai high-rise apartment"
+              width="1376"
+              height="768"
+              loading="lazy"
+              decoding="async"
+              class="h-auto w-full rounded border border-industrial-300"
+            />
+          </figure>
+
+          <div
+            class="rounded border border-industrial-300 border-l-[3px] border-l-amber-400 bg-white p-6"
+            data-reveal
+          >
+            <p class="text-charcoal-600">
+              High-density urban living in Dubai demands stringent acoustic control to satisfy local
+              building regulations and resident expectations. Temperature drops from intensive indoor
+              AC usage can cause materials to expand or contract, breaking low-quality seals at
+              perimeter joints. Zain Acoustic Strip utilizes heavy-duty recycled tire rubber bound
+              with GCC-grade binders, ensuring the strip remains flexible, sticky, and dimensionally
+              stable against all wall borders across Dubai developments.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {/* ─── 8. ABOUT RUKN AL ZAIN & DELIVERY ───────────────────────────────── */}
+    <section aria-labelledby="rzn-h" class={`${sectionShell} bg-white`}>
+      <div class={container}>
+        <h2 id="rzn-h" class={h2} data-reveal>About Rukn Al Zain &amp; Delivery</h2>
+        <p class={lede} data-reveal>
+          Rukn Al Zain General Trading LLC is a major supplier of technical acoustic insulation and
+          elastomeric rubber products across Dubai. We supply contractors, fit-out specialists, and
+          acoustic consultants with fully compliant isolation systems.
+        </p>
+
+        <h3 class="mt-10 font-heading text-lg font-bold text-charcoal" data-reveal>
+          Fast Dispatch Process
+        </h3>
+        <ol class="mt-6 grid gap-5 sm:grid-cols-3" data-reveal-group>
+          {
+            processSteps.map((s) => (
+              <li class="card-lift flex h-full flex-col rounded border border-industrial-300 bg-industrial-100 p-5">
+                <div class="flex items-center justify-between">
+                  <span class="grid h-11 w-11 place-items-center rounded bg-white text-amber-700 ring-1 ring-industrial-300" aria-hidden="true">
+                    <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" set:html={icon[s.icon]} />
+                  </span>
+                  <span class="font-heading text-2xl font-extrabold text-industrial-400" aria-hidden="true">
+                    {s.n}
+                  </span>
+                </div>
+                <h4 class="mt-3 font-heading text-base font-bold text-charcoal">{s.term}</h4>
+                <p class="mt-1.5 text-sm text-charcoal-600">{s.desc}</p>
+              </li>
+            ))
+          }
+        </ol>
+
+        <h3 class="mt-12 font-heading text-lg font-bold text-charcoal" data-reveal>
+          Delivery Coverage Across the UAE
+        </h3>
+        <p class="mt-4 max-w-3xl text-charcoal-600" data-reveal>
+          24 to 48-hour site delivery to {coverageAreas.slice(0, -1).join(', ')}, and{' '}
+          {coverageAreas.at(-1)}.
+        </p>
+        <ul class="mt-5 flex flex-wrap gap-2.5" data-reveal-group>
+          {
+            coverageAreas.map((area) => (
+              <li class="inline-flex items-center gap-1.5 rounded border border-industrial-300 bg-industrial-100 px-3 py-1.5 text-sm font-medium text-charcoal">
+                <svg class="h-4 w-4 text-amber-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" set:html={icon['map-pin']} aria-hidden="true" />
+                {area}
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </section>
+
+    {/* ─── 9. FAQ — accordion (native <details>, zero-JS) ─────────────────── */}
+    <section aria-labelledby="faq-h" class={`${sectionShell} bg-industrial-100`}>
+      <div class={container}>
+        <h2 id="faq-h" class={h2} data-reveal>Frequently Asked Questions</h2>
+        <div
+          class="mt-6 max-w-3xl divide-y divide-industrial-300 border-y border-industrial-300"
+          data-reveal-group
+        >
+          {
+            faqs.map((f, i) => (
+              <details class="group" open={i === 0}>
+                <summary class="flex cursor-pointer items-center justify-between gap-4 py-4 font-heading text-base font-semibold text-charcoal marker:content-none [&::-webkit-details-marker]:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700">
+                  <span>{f.question}</span>
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    class="h-5 w-5 shrink-0 text-amber-700 transition-transform duration-200 group-open:-rotate-180"
+                    aria-hidden="true"
+                  >
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m6 9 6 6 6-6" />
+                  </svg>
+                </summary>
+                <p class="pb-4 text-charcoal-600">{f.answer}</p>
+              </details>
+            ))
+          }
+        </div>
+
+        {/* Internal link: spoke → hub + acoustic siblings, keyword anchor text */}
+        <p class="mt-8 max-w-3xl text-sm text-charcoal-600" data-reveal>
+          The Zain Acoustic Strip is part of Rukn Al Zain's{' '}
+          <a
+            href="/acoustic-soundproofing-flooring"
+            class="rounded font-semibold text-amber-700 hover:text-amber-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700"
+          >
+            acoustic &amp; soundproofing flooring range
+          </a>. For impact sound control directly beneath tile, marble and wood finishes see{' '}
+          <a
+            href="/acoustic-underlay"
+            class="rounded font-semibold text-amber-700 hover:text-amber-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700"
+          >
+            Zain Acoustic Underlay
+          </a>; for high-load isolation under wet screeds, see{' '}
+          <a
+            href="/screed-isolation"
+            class="rounded font-semibold text-amber-700 hover:text-amber-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700"
+          >
+            ZainSilence
+          </a>.
+        </p>
+      </div>
+    </section>
+
+    {/* Combined BreadcrumbList + Product + FAQPage structured data (@graph).
+        Kept in-body to match the sibling spoke pages (BaseLayout exposes no
+        <head> slot); crawlers parse it identically. Organization JSON-LD is
+        emitted sitewide by BaseLayout. */}
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(graphSchema)} />
+
+    {/* ─── 10. LEAD CAPTURE & BOTTOM CTA ──────────────────────────────────── */}
+    <section
+      id="lead-capture"
+      aria-labelledby="cta-h"
+      class="border-t border-industrial-300 bg-charcoal-700 text-white"
+    >
+      <div class={`${container} py-16`}>
+        <div class="grid gap-10 lg:grid-cols-[1fr_1.05fr] lg:items-start">
+          <div data-reveal>
+            <h2 id="cta-h" class="text-2xl font-bold text-white">
+              Eliminate Flanking Noise on Your Dubai Project
+            </h2>
+            <p class="mt-4 max-w-xl text-industrial-200">
+              Prevent acoustic bridging and meet local isolation requirements with direct local
+              supply of Zain Acoustic Strip.
+            </p>
+            <dl class="mt-6 space-y-3 text-sm">
+              <div class="flex flex-wrap gap-x-2">
+                <dt class="font-semibold text-white">Phone / WhatsApp:</dt>
+                <dd>
+                  <a
+                    href="tel:+971505698195"
+                    class="rounded font-medium text-amber-400 hover:text-amber-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+                  >
+                    +971 50 569 8195
+                  </a>
+                </dd>
+              </div>
+              <div class="flex flex-wrap gap-x-2">
+                <dt class="font-semibold text-white">Location:</dt>
+                <dd class="text-industrial-200">
+                  Rukn Al Zain General Trading LLC, P.O. Box 36528, Dubai, United Arab Emirates
+                </dd>
+              </div>
+            </dl>
+
+            <div class="mt-6">
+              <a
+                href={WHATSAPP_PLAIN}
+                target="_blank"
+                rel="noopener"
+                class={`${ghostCta} focus-visible:ring-offset-charcoal-700`}
+              >
+                Talk to an Acoustic Specialist on WhatsApp (+971 50 569 8195)
+              </a>
+            </div>
+          </div>
+
+          {/*
+            Standard HTML POST form wired for Netlify Forms (zero JS): captured
+            automatically on a Netlify deploy. Locally (`astro preview`) the POST
+            has no handler — that is expected. Mirrors src/pages/screed-isolation.astro.
+            TODO: add a branded /thank-you success page and point `action` at it.
+          */}
+          <div class="rounded border border-industrial-300 bg-white p-6 text-charcoal" data-reveal>
+            <form
+              name="acoustic-strips-quote"
+              method="POST"
+              action={PATH}
+              data-netlify="true"
+              netlify-honeypot="bot-field"
+              class="space-y-5"
+            >
+              <input type="hidden" name="form-name" value="acoustic-strips-quote" />
+              <input type="hidden" name="product" value="Zain Acoustic Strip" />
+              <p class="hidden">
+                <label>Leave this field empty if you are human: <input name="bot-field" /></label>
+              </p>
+
+              <div class="grid gap-5 sm:grid-cols-2">
+                <div>
+                  <label class={labelClass} for="name">
+                    Full Name <span class="text-amber-700">*</span>
+                  </label>
+                  <input
+                    class={fieldClass}
+                    type="text"
+                    id="name"
+                    name="name"
+                    autocomplete="name"
+                    required
+                  />
+                </div>
+                <div>
+                  <label class={labelClass} for="email">
+                    Email <span class="text-amber-700">*</span>
+                  </label>
+                  <input
+                    class={fieldClass}
+                    type="email"
+                    id="email"
+                    name="email"
+                    autocomplete="email"
+                    required
+                  />
+                </div>
+                <div>
+                  <label class={labelClass} for="phone">
+                    Phone / WhatsApp <span class="text-amber-700">*</span>
+                  </label>
+                  <input
+                    class={fieldClass}
+                    type="tel"
+                    id="phone"
+                    name="phone"
+                    autocomplete="tel"
+                    inputmode="tel"
+                    required
+                  />
+                </div>
+                <div>
+                  <label class={labelClass} for="location">Project Location / Emirate</label>
+                  <select class={fieldClass} id="location" name="location">
+                    <option value="" selected disabled>Select an emirate</option>
+                    {emirates.map((e) => <option value={e}>{e}</option>)}
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label class={labelClass} for="request-type">What do you need?</label>
+                <select class={fieldClass} id="request-type" name="request-type">
+                  <option value="" selected disabled>Select a request type</option>
+                  {requestTypes.map((t) => <option value={t}>{t}</option>)}
+                </select>
+              </div>
+
+              <div>
+                <label class={labelClass} for="message">Message / Project Details</label>
+                <textarea
+                  class={fieldClass}
+                  id="message"
+                  name="message"
+                  rows="4"
+                  placeholder="Tell us about your project — perimeter run length (m), decking area, floor build-up, target acoustic rating, timeline"
+                ></textarea>
+              </div>
+
+              <div class="flex flex-wrap gap-3">
+                <button
+                  type="submit"
+                  class="inline-flex items-center justify-center rounded bg-amber-400 px-5 py-3 font-semibold text-charcoal-900 transition-colors hover:bg-amber-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700 focus-visible:ring-offset-2"
+                >
+                  Request a Custom Quote
+                </button>
+                <a
+                  href={WHATSAPP_PLAIN}
+                  target="_blank"
+                  rel="noopener"
+                  class="inline-flex items-center justify-center rounded border border-charcoal-300 px-5 py-3 font-semibold text-charcoal transition-colors hover:border-charcoal-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700"
+                >
+                  Order Free Sample Kit on WhatsApp
+                </a>
+              </div>
+              <p class="text-xs text-charcoal-400">
+                Submissions are handled by Netlify Forms on the live site.
+              </p>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {/* ─── SUBTLE MOTION ──────────────────────────────────────────────────────
+        One-shot CSS load-in for the hero and a staggered scroll-reveal for
+        headings, card groups, figures and the spec table. Progressive
+        enhancement only — content is fully visible without JS, and every effect
+        is disabled under prefers-reduced-motion. Mirrors screed-isolation.astro. */}
+    <style is:global>
+      .as-js .as-page [data-hero] {
+        animation: as-rise 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      @keyframes as-rise {
+        from {
+          opacity: 0;
+          transform: translateY(16px);
+        }
+      }
+
+      .as-js .as-page [data-reveal],
+      .as-js .as-page [data-reveal-group] > * {
+        opacity: 0;
+        transform: translateY(14px);
+        transition:
+          opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+          transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .as-js .as-page [data-reveal].in,
+      .as-js .as-page [data-reveal-group].in > * {
+        opacity: 1;
+        transform: none;
+      }
+      .as-js .as-page [data-reveal-group].in > *:nth-child(2) { transition-delay: 0.06s; }
+      .as-js .as-page [data-reveal-group].in > *:nth-child(3) { transition-delay: 0.12s; }
+      .as-js .as-page [data-reveal-group].in > *:nth-child(4) { transition-delay: 0.18s; }
+      .as-js .as-page [data-reveal-group].in > *:nth-child(5) { transition-delay: 0.24s; }
+      .as-js .as-page [data-reveal-group].in > *:nth-child(n + 6) { transition-delay: 0.3s; }
+
+      .as-page .card-lift {
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
+      }
+      .as-page .card-lift:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 24px -6px rgb(42 45 52 / 0.18);
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .as-js .as-page [data-hero] {
+          animation: none;
+        }
+        .as-js .as-page [data-reveal],
+        .as-js .as-page [data-reveal-group] > * {
+          opacity: 1;
+          transform: none;
+          transition: none;
+        }
+        .as-page .card-lift,
+        .as-page .card-lift:hover {
+          transition: none;
+          transform: none;
+        }
+      }
+    </style>
+
+    <script>
+      const targets = document.querySelectorAll(
+        '.as-page [data-reveal], .as-page [data-reveal-group]',
+      );
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const revealAll = () => targets.forEach((el) => el.classList.add('in'));
+
+      if (reduce || !('IntersectionObserver' in window)) {
+        revealAll();
+      } else {
+        const io = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (!entry.isIntersecting) continue;
+              entry.target.classList.add('in');
+              io.unobserve(entry.target);
+            }
+          },
+          { rootMargin: '0px 0px -8% 0px' },
+        );
+        targets.forEach((el) => io.observe(el));
+        window.addEventListener('load', () => setTimeout(revealAll, 1200));
+      }
+    </script>
+  </article>
+</BaseLayout>

@@ -1,0 +1,192 @@
+---
+/**
+ * Header.astro — sticky, high-contrast primary navigation on charcoal.
+ * Zero JS: the desktop submenu is a CSS hover / focus-within disclosure and the
+ * mobile menu is a native <details> disclosure.
+ * Active state uses the brand "spec rule" — a 3px amber rule on the item edge.
+ */
+type NavLink = {
+  label: string;
+  href: string;
+  /** Optional submenu — rendered as a hover/focus dropdown on desktop and an
+   *  indented group on mobile. */
+  children?: { label: string; href: string }[];
+};
+
+const navLinks: NavLink[] = [
+  { label: 'Shop', href: '/shop' },
+  { label: 'Acoustic', href: '/acoustic-soundproofing-flooring' },
+  {
+    label: 'Gym Flooring',
+    href: '/gym-fitness-flooring',
+    children: [
+      { label: 'Rubber Gym Tiles', href: '/rubber-gym-tiles' },
+      { label: 'Gym Flooring Rolls', href: '/gym-flooring-rolls' },
+      { label: 'Gym Safety Accessories', href: '/gym-safety-accessories' },
+    ],
+  },
+  { label: 'Animal & Agricultural', href: '/animal-agricultural-flooring' },
+  { label: 'About', href: '/about-us' },
+  { label: 'Contact', href: '/contact' },
+];
+
+const path = Astro.url.pathname.replace(/\/+$/, '') || '/';
+const isActive = (href: string) => path === href || path.startsWith(`${href}/`);
+/** A grouped item is active when its own route or any child route is active. */
+const isGroupActive = (link: NavLink) =>
+  isActive(link.href) || !!link.children?.some((c) => isActive(c.href));
+
+const linkBase =
+  'rounded text-sm font-medium text-industrial-200 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400';
+---
+<header class="sticky top-0 z-40 border-b border-white/10 bg-charcoal-700 text-white">
+  <div class="mx-auto flex max-w-content items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
+    <a
+      href="/"
+      class="inline-flex items-center gap-2.5 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+      aria-label="Rukn Al Zain General Trading LLC — home"
+    >
+      <span class="grid h-9 w-9 place-items-center rounded bg-amber-400 font-heading text-lg font-extrabold leading-none text-charcoal-900">
+        RZ
+      </span>
+      <span class="font-heading text-base font-bold uppercase tracking-[0.14em]">Rukn Al Zain</span>
+    </a>
+
+    {/* Desktop navigation */}
+    <nav class="hidden items-center gap-1 md:flex" aria-label="Primary">
+      {
+        navLinks.map((link) =>
+          link.children ? (
+            <div class="group relative">
+              <a
+                href={link.href}
+                aria-current={isGroupActive(link) ? 'page' : undefined}
+                aria-haspopup="true"
+                class:list={[
+                  'relative flex items-center gap-1 px-3 py-2',
+                  linkBase,
+                  isGroupActive(link) && 'text-white',
+                ]}
+              >
+                {link.label}
+                <svg
+                  class="h-3.5 w-3.5 transition-transform duration-200 group-hover:-rotate-180 group-focus-within:-rotate-180"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  aria-hidden="true"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" d="m6 9 6 6 6-6" />
+                </svg>
+                {isGroupActive(link) && (
+                  <span class="absolute inset-x-3 -bottom-px h-[3px] bg-amber-400" aria-hidden="true" />
+                )}
+              </a>
+              <ul
+                class="absolute left-0 top-full z-50 hidden min-w-[13rem] rounded border border-white/10 bg-charcoal-800 p-2 shadow-lift group-hover:block group-focus-within:block"
+              >
+                {link.children.map((c) => (
+                  <li>
+                    <a
+                      href={c.href}
+                      aria-current={isActive(c.href) ? 'page' : undefined}
+                      class:list={[
+                        'block rounded px-3 py-2 text-sm',
+                        linkBase,
+                        isActive(c.href) ? 'bg-white/5 text-white' : 'hover:bg-white/5',
+                      ]}
+                    >
+                      {c.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : (
+            <a
+              href={link.href}
+              aria-current={isActive(link.href) ? 'page' : undefined}
+              class:list={['relative px-3 py-2', linkBase, isActive(link.href) && 'text-white']}
+            >
+              {link.label}
+              {isActive(link.href) && (
+                <span class="absolute inset-x-3 -bottom-px h-[3px] bg-amber-400" aria-hidden="true" />
+              )}
+            </a>
+          )
+        )
+      }
+    </nav>
+
+    <a
+      href="/contact"
+      class="hidden items-center rounded bg-amber-400 px-4 py-2 text-sm font-semibold text-charcoal-900 transition-colors hover:bg-amber-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-charcoal-700 md:inline-flex"
+    >
+      Request a Quote
+    </a>
+
+    {/* Mobile navigation — zero-JS native disclosure */}
+    <details class="group relative md:hidden">
+      <summary
+        class="flex h-10 w-10 cursor-pointer list-none items-center justify-center rounded border border-white/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 [&::-webkit-details-marker]:hidden"
+        aria-label="Toggle navigation menu"
+      >
+        <svg class="h-5 w-5 group-open:hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path stroke-linecap="round" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+        <svg class="hidden h-5 w-5 group-open:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path stroke-linecap="round" d="M6 6l12 12M18 6 6 18" />
+        </svg>
+      </summary>
+
+      <nav
+        class="absolute right-0 top-12 w-64 rounded border border-white/10 bg-charcoal-800 p-2 shadow-lift"
+        aria-label="Primary"
+      >
+        {
+          navLinks.map((link) => (
+            <Fragment>
+              <a
+                href={link.href}
+                aria-current={isActive(link.href) ? 'page' : undefined}
+                class:list={[
+                  'block px-3 py-2.5',
+                  linkBase,
+                  'hover:bg-white/5',
+                  isActive(link.href) && 'border-l-[3px] border-amber-400 pl-[9px] text-white',
+                ]}
+              >
+                {link.label}
+              </a>
+              {link.children && (
+                <div class="ml-3 border-l border-white/10 pl-2">
+                  {link.children.map((c) => (
+                    <a
+                      href={c.href}
+                      aria-current={isActive(c.href) ? 'page' : undefined}
+                      class:list={[
+                        'block px-3 py-2 text-sm',
+                        linkBase,
+                        'hover:bg-white/5',
+                        isActive(c.href) && 'border-l-[3px] border-amber-400 pl-[9px] text-white',
+                      ]}
+                    >
+                      {c.label}
+                    </a>
+                  ))}
+                </div>
+              )}
+            </Fragment>
+          ))
+        }
+        <a
+          href="/contact"
+          class="mt-1 block rounded bg-amber-400 px-3 py-2.5 text-center text-sm font-semibold text-charcoal-900 hover:bg-amber-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+        >
+          Request a Quote
+        </a>
+      </nav>
+    </details>
+  </div>
+</header>

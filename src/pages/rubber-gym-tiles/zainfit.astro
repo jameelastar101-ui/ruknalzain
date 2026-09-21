@@ -1,0 +1,949 @@
+---
+/**
+ * /rubber-gym-tiles/zainfit — "ZainFit — Easy-Install Interlocking Rubber Gym
+ * Tiles" conversion + SEO / AEO / GEO product page.
+ *
+ * Bespoke page (not the YAML-driven generic ProductPage), built to mirror the
+ * structure, class helpers and progressive-enhancement motion of
+ * src/pages/rubber-gym-tiles.astro.
+ *
+ * ─── ROUTING ─────────────────────────────────────────────────────────────
+ * The content entry src/content/products/zainfit.yaml still carries
+ * `path: /rubber-gym-tiles/zainfit`. To avoid a duplicate-route build error the
+ * matching branch is filtered out of getStaticPaths in src/pages/[...slug].astro
+ * (same pattern already used for the three bespoke hub pages). The YAML entry
+ * stays as data — it is a child of the `gym` hub — and this file serves the URL.
+ *
+ * ─── DATA INTEGRITY FLAGS (CLAUDE.md §0 "Data Integrity" + §6) ────────────
+ * The technical figures below (material base, tile dimensions, 15/20/25 mm
+ * thickness options, surface finishes, install method, and every impact /
+ * acoustic / heat-resistance claim) were supplied in the page-build request,
+ * NOT in Rukn_Al_Zain_SEO_Content_Brief.docx. Treat as PROVISIONAL and confirm
+ * against real product test data / manufacturer certificates before go-live.
+ *
+ * Images: client-supplied ZainFit photography, converted to optimised WebP
+ * (sharp, q80) at /images/rubber-gym-tiles/ and the source JPEGs deleted —
+ * zainfit-product-standalone.webp (1200×896), zainfit-solution.webp,
+ * zainfit-specifications.webp, zainfit-applications.webp and
+ * why-rubber-flooring-best-dubai.webp (all 1376×768). The 1200×630 share card
+ * zainfit-og.jpg is a composited brand card (charcoal field + product panel +
+ * Montserrat-fallback headline) generated with sharp; JPEG for the widest
+ * unfurler support.
+ *
+ * Decisions still open:
+ *   - Primary CTA target: the brief says "/contact-us/". The live route is
+ *     "/contact" (memory: all CTAs site-wide point there), used here.
+ *   - Canonical host: the brief shows "rukanalzain.com"; the configured site is
+ *     "ruknalzain.ae" (astro.config.mjs) — canonical is built from that.
+ */
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Breadcrumbs from '@components/Breadcrumbs.astro';
+
+const SITE = (Astro.site ?? new URL('https://ruknalzain.ae')).origin;
+const IMG = '/images/rubber-gym-tiles';
+
+/* Client-supplied ZainFit photography, converted to optimised WebP (sharp, q80). */
+const HERO_IMG = `${IMG}/zainfit-product-standalone.webp`; // 1200×896
+const HERO_ALT =
+  'ZainFit interlocking rubber gym tile sample with official Rukn Al Zain branding.';
+const SOLUTION_IMG = `${IMG}/zainfit-solution.webp`; // 1376×768
+const SPEC_IMG = `${IMG}/zainfit-specifications.webp`; // 1376×768
+const APPS_IMG = `${IMG}/zainfit-applications.webp`; // 1376×768
+const GEO_IMG = `${IMG}/why-rubber-flooring-best-dubai.webp`; // 1376×768
+const OG_IMG = `${IMG}/zainfit-og.jpg`; // 1200×630 composited share card
+
+const CONTACT = '/contact';
+const WHATSAPP = 'https://wa.me/971505698195';
+
+/* ─── Inline Lucide icon path data (24×24, currentColor stroke) ─────────── */
+const icon: Record<string, string> = {
+  warehouse:
+    '<path d="M22 8.35V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8.35A2 2 0 0 1 3.26 6.5l8-3.2a2 2 0 0 1 1.48 0l8 3.2A2 2 0 0 1 22 8.35Z"/><path d="M6 18h12"/><path d="M6 14h12"/><path d="M6 10h12"/>',
+  puzzle:
+    '<path d="M15.39 4.39a1 1 0 0 0 1.68-.474 2.5 2.5 0 1 1 3.014 3.015 1 1 0 0 0-.474 1.68l1.683 1.682a2.414 2.414 0 0 1 0 3.414L19.61 19.39a1 1 0 0 1-1.68-.474 2.5 2.5 0 1 0-3.014 3.015 1 1 0 0 1 .474 1.68l-1.683 1.682a2.414 2.414 0 0 1-3.414 0L8.61 19.61a1 1 0 0 0-1.68.474 2.5 2.5 0 1 1-3.014-3.015 1 1 0 0 0 .474-1.68l-1.683-1.682a2.414 2.414 0 0 1 0-3.414L4.39 8.61a1 1 0 0 1 1.68.474 2.5 2.5 0 1 0 3.014-3.015 1 1 0 0 1-.474-1.68l1.683-1.682a2.414 2.414 0 0 1 3.414 0z"/>',
+  sun:
+    '<circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>',
+  'shield-check':
+    '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/>',
+  'volume-x':
+    '<path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"/><path d="m22 9-6 6"/><path d="m16 9 6 6"/>',
+  wind:
+    '<path d="M12.8 19.6A2 2 0 1 0 14 16H2"/><path d="M17.5 8a2.5 2.5 0 1 1 2 4H2"/><path d="M9.8 4.4A2 2 0 1 1 11 8H2"/>',
+  layers:
+    '<path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"/><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"/><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"/>',
+  truck:
+    '<path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/>',
+  package:
+    '<path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"/><path d="M12 22V12"/><polyline points="3.29 7 12 12 20.71 7"/><path d="m7.5 4.27 9 5.15"/>',
+  search:
+    '<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',
+  wrench:
+    '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>',
+  'file-text':
+    '<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/>',
+  'map-pin':
+    '<path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/>',
+};
+
+/* ─── 2. Trust bar ────────────────────────────────────────────────────── */
+const trustCards = [
+  {
+    icon: 'warehouse',
+    term: 'Direct Local Inventory',
+    desc: 'Large stock reserves held centrally in Dubai, enabling 24-to-48-hour direct site dispatch across all seven Emirates.',
+  },
+  {
+    icon: 'puzzle',
+    term: 'Rapid Interlocking Assembly',
+    desc: 'Precision puzzle-edge connection allows clean, adhesive-free installation, effortless removal, and full reusability without damaging subfloors.',
+  },
+  {
+    icon: 'sun',
+    term: 'Heat & AC Stability',
+    desc: 'Bound with non-degrading polyurethane binders engineered to withstand severe UAE indoor AC cycling and high ambient heat without warping or off-gassing.',
+  },
+];
+
+/* ─── 3. Problem / Solution pairs ─────────────────────────────────────── */
+const problemSolution = [
+  {
+    problem: 'Subfloor & Property Damage',
+    problemDesc:
+      'Chemical glues bond permanently to subfloors, causing costly repairs upon lease end.',
+    solution: '100% Damage-Free Protection',
+    solutionDesc:
+      'Loose-lay interlocking tiles sit flat without adhesive, preserving underlying leased surfaces.',
+  },
+  {
+    problem: 'High Installation Costs',
+    problemDesc:
+      'Adhesive-bound systems require multi-day curing and specialist labor.',
+    solution: 'Effortless DIY Setup',
+    solutionDesc:
+      'Interlocking tabs snap together tightly by hand or with a rubber mallet in minutes.',
+  },
+  {
+    problem: 'Zero Layout Flexibility',
+    problemDesc:
+      'Glued tiles cannot be lifted or relocated without destroying the material.',
+    solution: 'High-Density Shock Isolation',
+    solutionDesc:
+      'Modular SBR tiles absorb barbell drop impact and isolate kinetic vibration.',
+  },
+];
+
+/* ─── 4. Key product benefits ────────────────────────────────────────── */
+const benefits = [
+  {
+    icon: 'puzzle',
+    term: 'Tool-Free Modular Installation',
+    desc: 'Snap-together puzzle edges interlock seamlessly without specialized labor, liquid glues, or floor fasteners.',
+  },
+  {
+    icon: 'shield-check',
+    term: 'Clean Subfloor Protection & Zero Lease Penalty',
+    desc: 'Loose-lay placement shields underlying tiles, parquet, or raw concrete from impact cracking and scratches.',
+  },
+  {
+    icon: 'volume-x',
+    term: 'Vibration & Acoustic Impact Suppression',
+    desc: 'High-density recycled SBR rubber attenuates kinetic shock from dropped dumbbells while dampening footfall noise.',
+  },
+  {
+    icon: 'sun',
+    term: 'GCC Heat & Humidity Resilience',
+    desc: 'Bound with non-degrading polyurethane agents that prevent tile warping, edge curling, or off-gassing.',
+  },
+  {
+    icon: 'package',
+    term: '100% Removable & Reusable',
+    desc: 'Lift up, stack, move, and re-lay the floor at a new location whenever your facility expands.',
+  },
+];
+
+/* ─── 5. Technical specifications — PROVISIONAL (see data-integrity flags) */
+const specRows: [string, string][] = [
+  ['Material Base', 'High-density recycled SBR rubber granules bonded with polyurethane binders'],
+  ['Format & Connection', 'Modular loose-lay tiles with precision puzzle-cut interlocking edges'],
+  ['Standard Dimensions', '500mm × 500mm / 1000mm × 1000mm'],
+  ['Thickness Options', '15mm, 20mm, 25mm'],
+  ['Surface Finish', 'Non-slip textured matte finish (Solid Black or with EPDM flecks)'],
+  ['Installation Method', '100% adhesive-free, tool-free loose-lay assembly'],
+  ['Acoustic & Vibration Isolation', 'Attenuates dynamic shock impact and reduces sound transmission through floor slabs'],
+  ['GCC Climate Performance', 'Heat-resistant binder formulation prevents warping and off-gassing under UAE AC cycling'],
+];
+
+/* ─── 6. Ideal applications ──────────────────────────────────────────── */
+const applications = [
+  {
+    term: 'Villa & Garage Gyms',
+    desc: 'Fast DIY setup over raw concrete or screed. Protects subfloors from heavy dumbbell drops without permanent adhesives.',
+  },
+  {
+    term: 'High-Rise Apartment Workout Areas',
+    desc: 'Structural impact isolation that stops vibration transfer through building floor slabs, keeping neighbors undisturbed.',
+  },
+  {
+    term: 'Temporary Fit-Outs & Pop-Up Events',
+    desc: 'Assembles instantly without specialist labor and can be disassembled, stacked, and re-laid with zero material waste.',
+  },
+];
+
+/* ─── 7. Geographic signals — Dubai / UAE ────────────────────────────── */
+const geoSignals = [
+  {
+    icon: 'volume-x',
+    term: 'Mitigating Concrete Slab Shock & High-Rise Acoustic Transfer',
+    desc: 'Isolates heavy free-weight impact noise and stops structural concrete cracking in high-rise towers across Downtown Dubai and Business Bay.',
+  },
+  {
+    icon: 'sun',
+    term: 'Thermal Stability Against GCC Heat & Air Conditioning Cycles',
+    desc: 'Polyurethane binders prevent seam curling or off-gassing during intense thermal swings between ambient summer heat and continuous AC.',
+  },
+  {
+    icon: 'shield-check',
+    term: 'Slippage Prevention in High-Humidity Environments',
+    desc: 'Textured SBR surface maintains multi-directional traction under coastal humidity in Palm Jumeirah and intense workout perspiration.',
+  },
+  {
+    icon: 'puzzle',
+    term: 'Hassle-Free Protection for Leased UAE Fit-Outs',
+    desc: 'Adhesive-free loose-lay placement protects original subfloors, helping tenants avoid lease penalties upon property handover.',
+  },
+];
+
+/* ─── 8. Why Rukn Al Zain — USP cards + process + delivery ────────────── */
+const uspCards = [
+  {
+    icon: 'warehouse',
+    term: 'Direct UAE Stock & Instant Dispatch',
+    desc: 'Stocked centrally in Dubai for 24-to-48-hour delivery across all seven Emirates.',
+  },
+  {
+    icon: 'sun',
+    term: 'GCC-Engineered Resilience',
+    desc: 'Heat-resistant binders designed for harsh UAE indoor climate transitions.',
+  },
+  {
+    icon: 'layers',
+    term: 'Complete Subfloor Protection',
+    desc: 'Prevents concrete cracking and preserves leased floor integrity.',
+  },
+];
+const processSteps = [
+  {
+    n: '01',
+    icon: 'search',
+    term: 'Space & Layout Assessment',
+    desc: 'Recommending proper tile thickness based on equipment load.',
+  },
+  {
+    n: '02',
+    icon: 'package',
+    term: 'Free Physical Sample Provision',
+    desc: 'Delivering samples directly to your villa, office, or site.',
+  },
+  {
+    n: '03',
+    icon: 'truck',
+    term: 'Direct Site Dispatch',
+    desc: 'Prompt dispatch straight from our Dubai central distribution hub.',
+  },
+  {
+    n: '04',
+    icon: 'wrench',
+    term: 'Easy DIY Installation Support',
+    desc: 'Providing seamless layout cutting and snap-assembly guidance.',
+  },
+];
+const deliveryAreas = [
+  {
+    term: 'Dubai',
+    desc: 'Downtown Dubai, Business Bay, Al Quoz, Dubai Marina, JLT, Palm Jumeirah, Dubai Hills Estate, Sheikh Zayed Road, DIFC, and MBR City.',
+    featured: true,
+  },
+  {
+    term: 'Abu Dhabi & Al Ain',
+    desc: 'Fast supply across Yas Island, Reem Island, and Al Ain.',
+    featured: false,
+  },
+  {
+    term: 'Sharjah, Ajman, RAK, Fujairah, UAQ',
+    desc: 'Direct delivery to commercial gyms, athletic venues, and residential fit-outs.',
+    featured: false,
+  },
+];
+
+/* ─── 9. FAQ (AEO) — self-contained answers ──────────────────────────── */
+const faqs = [
+  {
+    question: 'What service and support options does Rukn Al Zain offer across the UAE?',
+    answer:
+      'Rukn Al Zain provides complete rubber gym tile solutions, including custom density selection, physical sample dispatch, technical subfloor guidance, and direct site delivery across all seven Emirates.',
+  },
+  {
+    question: 'Where is Rukn Al Zain located, and how fast is local order fulfillment?',
+    answer:
+      'Rukn Al Zain is headquartered in Dubai, maintaining direct local inventory to fulfill and dispatch orders across Dubai within 24 hours and to all other Emirates within 48 hours.',
+  },
+  {
+    question:
+      'What are the primary structural differences between ZainFit, ZainSquare, and ZainExtreme tiles?',
+    answer:
+      'ZainFit features precision puzzle interlocking edges for glue-free assembly; ZainSquare offers straight square edges designed for full glue-down commercial setups; and ZainExtreme consists of heavy-density SBR tiles engineered specifically for maximum kinetic shock absorption.',
+  },
+  {
+    question: 'Which tile thickness is recommended for free-weight zones versus cardio zones?',
+    answer:
+      'A thickness of 15mm to 20mm is ideal for light dumbbell zones and cardio equipment, while 30mm to 40mm heavy-duty tiles are required to prevent concrete subfloor cracking under heavy barbell drops.',
+  },
+  {
+    question: 'How do high-density rubber tiles suppress sound transfer in high-rise buildings?',
+    answer:
+      'The dense SBR rubber matrix traps structural impact energy directly at the point of weight contact, isolating acoustic noise and stopping kinetic vibrations from traveling through building slabs into lower floors.',
+  },
+  {
+    question: 'What is the proper cleaning and maintenance process for commercial rubber tiles?',
+    answer:
+      'Daily maintenance requires basic sweeping or vacuuming, while routine cleaning requires mopping with warm water and a neutral pH floor cleaner over the non-porous rubber surface.',
+  },
+  {
+    question:
+      'How do Rukn Al Zain rubber gym tiles withstand high UAE heat and air conditioning cycles?',
+    answer:
+      'Formulated with non-gassing, heat-resistant polyurethane binders, our SBR rubber tiles remain dimensionally stable and flat without warping, curling, or off-gassing under GCC thermal changes.',
+  },
+  {
+    question:
+      'How does textured rubber flooring maintain slip resistance under Dubai’s high humidity?',
+    answer:
+      'The textured surface structure of SBR and EPDM rubber provides high multi-directional traction under dry conditions, heavy sweat, or ambient coastal humidity, keeping athletes safe during dynamic movements.',
+  },
+];
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((f) => ({
+    '@type': 'Question',
+    name: f.question,
+    acceptedAnswer: { '@type': 'Answer', text: f.answer },
+  })),
+};
+
+/* Product JSON-LD (CLAUDE.md §5 item 3). No price asserted. */
+const productSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Product',
+  name: 'ZainFit — Easy-Install Interlocking Rubber Gym Tiles',
+  description:
+    'Tool-free interlocking rubber gym tiles built with high-density SBR rubber and heat-resistant polyurethane binders for fast, adhesive-free installation, removal, and reuse across UAE residential and commercial fitness spaces.',
+  image: `${SITE}${HERO_IMG}`,
+  sku: 'RZ-ZAINFIT',
+  category: 'Interlocking Rubber Gym Tiles',
+  url: `${SITE}/rubber-gym-tiles/zainfit`,
+  brand: { '@type': 'Brand', name: 'Rukn Al Zain' },
+  manufacturer: { '@type': 'Organization', name: 'Rukn Al Zain General Trading LLC' },
+  material: 'Recycled SBR rubber with polyurethane binders',
+  areaServed: 'United Arab Emirates',
+};
+
+/* Shared class helpers — mirrors src/pages/rubber-gym-tiles.astro. */
+const sectionShell = 'border-t border-industrial-300 py-14 sm:py-16';
+const container = 'mx-auto max-w-content px-4 sm:px-6 lg:px-8';
+const h2 = 'text-2xl font-bold text-charcoal';
+const lede = 'mt-4 max-w-3xl text-charcoal-600';
+const primaryCta =
+  'inline-flex items-center justify-center rounded bg-amber-400 px-5 py-3 font-semibold text-charcoal-900 transition-colors hover:bg-amber-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2';
+const ghostCta =
+  'inline-flex items-center justify-center rounded border border-white/25 px-5 py-3 font-semibold text-white transition-colors hover:border-white/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400';
+const iconChip =
+  'mb-3 grid h-11 w-11 place-items-center rounded bg-white text-amber-700 ring-1 ring-industrial-300';
+---
+
+<BaseLayout
+  title="Easy Install Rubber Gym Tiles UAE | DIY Gym Flooring Dubai | Rukn Al Zain"
+  description="Simple, tool-free interlocking rubber tiles for fast installation, removal, and reuse. Ideal for home gyms, multi-use spaces, and temporary UAE fit-outs."
+  canonical="/rubber-gym-tiles/zainfit"
+  ogImage={OG_IMG}
+  ogImageAlt="ZainFit easy-install interlocking rubber gym tiles by Rukn Al Zain, Dubai UAE."
+>
+  <article class="zf-page">
+    {/*
+      Mark the document as JS-capable ASAP so scroll-reveal elements start hidden
+      only when the animation engine is available. A failsafe timer guarantees
+      content becomes visible even if the observer below never runs, and
+      reduced-motion visitors skip the effect entirely.
+    */}
+    <script is:inline>
+      (function () {
+        document.documentElement.classList.add('zf-js');
+        var sel = '.zf-page [data-reveal], .zf-page [data-reveal-group]';
+        var showAll = function () {
+          document.querySelectorAll(sel).forEach(function (el) {
+            el.classList.add('in');
+          });
+        };
+        var reduce =
+          window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (reduce) {
+          if (document.readyState === 'loading')
+            document.addEventListener('DOMContentLoaded', showAll);
+          else showAll();
+        } else {
+          setTimeout(showAll, 1600);
+        }
+      })();
+    </script>
+
+    {/* Breadcrumb strip — Home > Gym & Fitness Flooring > Rubber Gym Tiles > ZainFit */}
+    <div class="border-b border-industrial-300 bg-industrial-100">
+      <div class={`${container} py-4`}>
+        <Breadcrumbs
+          trail={[
+            { name: 'Home', href: '/' },
+            { name: 'Gym & Fitness Flooring', href: '/gym-fitness-flooring' },
+            { name: 'Rubber Gym Tiles', href: '/rubber-gym-tiles' },
+            { name: 'ZainFit' },
+          ]}
+        />
+      </div>
+    </div>
+
+    {/* ─── 1. HERO ─────────────────────────────────────────────────────────── */}
+    <header class="bg-charcoal-700 text-white">
+      <div class={`${container} py-14 sm:py-16`}>
+        <div class="grid items-center gap-10 lg:grid-cols-2">
+          <div data-hero>
+            <p class="font-heading text-sm font-semibold uppercase tracking-wide text-amber-400">
+              Interlocking Rubber Gym Tiles
+            </p>
+            <h1 class="mt-3 text-4xl font-extrabold leading-tight text-white sm:text-5xl">
+              ZainFit — Easy-Install Interlocking Rubber Gym Tiles
+            </h1>
+
+            {/* AEO direct-answer block — sits immediately under the H1 */}
+            <p class="mt-5 max-w-xl border-l-[3px] border-amber-400 pl-4 text-lg text-industrial-100">
+              Rukn Al Zain provides ZainFit interlocking rubber gym tiles engineered for fast,
+              tool-free layout and clean subfloor protection across residential and commercial
+              fitness spaces in the UAE. Built with high-density SBR rubber and heat-resistant
+              polyurethane binders, these modular puzzle tiles deliver durable impact absorption and
+              effortless reusability without permanent glues or specialist tools.
+            </p>
+
+            <div class="mt-7 flex flex-wrap gap-3">
+              <a href={CONTACT} class={`${primaryCta} focus-visible:ring-offset-charcoal-700`}>
+                Request Free Sample
+              </a>
+              <a
+                href={WHATSAPP}
+                target="_blank"
+                rel="noopener"
+                class={`${ghostCta} focus-visible:ring-offset-charcoal-700`}
+              >
+                WhatsApp Now
+              </a>
+            </div>
+          </div>
+
+          <figure class="m-0" data-hero>
+            <img
+              src={HERO_IMG}
+              alt={HERO_ALT}
+              title="ZainFit interlocking rubber gym tile — Rukn Al Zain"
+              width="1200"
+              height="896"
+              fetchpriority="high"
+              decoding="async"
+              class="h-auto w-full rounded border border-white/10"
+            />
+          </figure>
+        </div>
+      </div>
+    </header>
+
+    {/* ─── 2. TRUST BAR ───────────────────────────────────────────────────── */}
+    <section aria-labelledby="trust-h" class={`${sectionShell} bg-white`}>
+      <div class={container}>
+        <h2 id="trust-h" class={h2} data-reveal>
+          Trusted Local Rubber Flooring Supplier Across Dubai &amp; UAE
+        </h2>
+        <dl class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3" data-reveal-group>
+          {
+            trustCards.map((it) => (
+              <div class="card-lift rounded border border-industrial-300 border-l-[3px] border-l-amber-400 bg-industrial-100 p-5">
+                <span class={iconChip} aria-hidden="true">
+                  <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" set:html={icon[it.icon]} />
+                </span>
+                <dt class="font-heading font-semibold text-charcoal">{it.term}</dt>
+                <dd class="mt-1.5 text-sm text-charcoal-600">{it.desc}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+    </section>
+
+    {/* ─── 3. PROBLEM & SOLUTION ──────────────────────────────────────────── */}
+    <section aria-labelledby="ps-h" class={`${sectionShell} bg-industrial-100`}>
+      <div class={container}>
+        <h2 id="ps-h" class={h2} data-reveal>
+          Solving standard flooring damage and high installation costs for UAE spaces
+        </h2>
+        <p class={lede} data-reveal>
+          Traditional rubber gym flooring often demands costly professional labor, chemical
+          adhesives, and permanent subfloor bonding. For home gym owners, commercial fitness
+          operators, and temporary fit-out tenants across Dubai and the Emirates, standard glue-down
+          tiles create long-term structural and financial challenges.
+        </p>
+
+        <div class="mt-8 grid gap-5 lg:grid-cols-3" data-reveal-group>
+          {
+            problemSolution.map((row) => (
+              <div class="card-lift flex h-full flex-col rounded border border-industrial-300 bg-white p-5">
+                <p class="text-xs font-semibold uppercase tracking-wide text-danger">The problem</p>
+                <h3 class="mt-1 font-heading text-base font-bold text-charcoal">{row.problem}</h3>
+                <p class="mt-1.5 text-sm text-charcoal-600">{row.problemDesc}</p>
+                <hr class="my-4 border-industrial-300" />
+                <p class="text-xs font-semibold uppercase tracking-wide text-success">
+                  The ZainFit solution
+                </p>
+                <h4 class="mt-1 font-heading text-base font-bold text-charcoal">{row.solution}</h4>
+                <p class="mt-1.5 flex-1 text-sm text-charcoal-600">{row.solutionDesc}</p>
+              </div>
+            ))
+          }
+        </div>
+
+        <figure class="m-0 mt-10" data-reveal>
+          <img
+            src={SOLUTION_IMG}
+            alt="Architectural 3D cross-section diagram showing a 20mm ZainFit interlocking rubber gym tile absorbing a barbell bumper plate drop on a Dubai luxury ceramic subfloor to prevent damage and shock vibration."
+            title="ZainFit 20mm interlocking tile absorbing a bumper-plate drop over a ceramic subfloor"
+            width="1376"
+            height="768"
+            loading="lazy"
+            decoding="async"
+            class="h-auto w-full rounded border border-industrial-300"
+          />
+        </figure>
+      </div>
+    </section>
+
+    {/* ─── 4. KEY PRODUCT BENEFITS ────────────────────────────────────────── */}
+    <section aria-labelledby="benefits-h" class={`${sectionShell} bg-white`}>
+      <div class={container}>
+        <h2 id="benefits-h" class={h2} data-reveal>Engineered Performance for UAE Fitness Spaces</h2>
+        <dl class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3" data-reveal-group>
+          {
+            benefits.map((it) => (
+              <div class="card-lift rounded border border-industrial-300 bg-industrial-100 p-5">
+                <span class={iconChip} aria-hidden="true">
+                  <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" set:html={icon[it.icon]} />
+                </span>
+                <dt class="font-heading font-semibold text-charcoal">{it.term}</dt>
+                <dd class="mt-1.5 text-sm text-charcoal-600">{it.desc}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+    </section>
+
+    {/* ─── 5. TECHNICAL SPECIFICATIONS ────────────────────────────────────── */}
+    <section aria-labelledby="specs-h" class={`${sectionShell} bg-industrial-100`}>
+      <div class={container}>
+        <h2 id="specs-h" class={h2} data-reveal>ZainFit Technical Specifications &amp; Material Options</h2>
+        <p class={lede} data-reveal>
+          Material composition, tile format, thickness options, and installation method for the
+          ZainFit interlocking tile line. Figures are
+          <span class="font-semibold text-amber-700"> provisional</span> pending confirmation against
+          product test data.
+        </p>
+
+        <div class="mt-8 grid gap-10 lg:grid-cols-[1fr_1.1fr] lg:items-start">
+          <figure class="m-0" data-reveal>
+            <img
+              src={SPEC_IMG}
+              alt="Technical diagram detailing the interlocking puzzle edge, dimensions, and SBR rubber granule texture of a ZainFit tile."
+              title="ZainFit tile — puzzle edge, dimensions and SBR granule texture"
+              width="1376"
+              height="768"
+              loading="lazy"
+              decoding="async"
+              class="h-auto w-full rounded border border-industrial-300"
+            />
+          </figure>
+
+          <div class="overflow-x-auto" data-reveal>
+            <table class="w-full border-collapse text-left text-sm">
+              <caption class="sr-only">
+                ZainFit interlocking rubber gym tile technical specifications
+              </caption>
+              <tbody>
+                {
+                  specRows.map(([label, value], i) => (
+                    <tr class:list={['border-b border-industrial-300', i % 2 === 1 && 'bg-white']}>
+                      <th
+                        scope="row"
+                        class="w-2/5 px-4 py-3 align-top font-semibold text-charcoal"
+                      >
+                        {label}
+                      </th>
+                      <td class="px-4 py-3 align-top text-charcoal-600">{value}</td>
+                    </tr>
+                  ))
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+        {/* TODO: Missing spec from brief — confirm material base, tile dimensions, thickness
+            options, surface finishes and install method against real product test data. */}
+        <p class="mt-3 text-xs text-charcoal-500" data-reveal>
+          Specifications are provisional pending final manufacturer product data and test
+          certificates.
+        </p>
+      </div>
+    </section>
+
+    {/* ─── 6. IDEAL APPLICATIONS ──────────────────────────────────────────── */}
+    <section aria-labelledby="apps-h" class={`${sectionShell} bg-white`}>
+      <div class={container}>
+        <h2 id="apps-h" class={h2} data-reveal>Where to Use ZainFit Interlocking Gym Tiles</h2>
+
+        <figure class="m-0 mt-8" data-reveal>
+          <img
+            src={APPS_IMG}
+            alt="Grid collage showcasing ZainFit interlocking rubber tiles installed in a Dubai garage gym, high-rise apartment, and pop-up fitness studio."
+            title="ZainFit installed in a Dubai garage gym, high-rise apartment and pop-up studio"
+            width="1376"
+            height="768"
+            loading="lazy"
+            decoding="async"
+            class="h-auto w-full rounded border border-industrial-300"
+          />
+        </figure>
+
+        <dl class="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3" data-reveal-group>
+          {
+            applications.map((it) => (
+              <div class="card-lift rounded border border-industrial-300 border-l-[3px] border-l-amber-400 bg-industrial-100 p-5">
+                <dt class="font-heading font-semibold text-charcoal">{it.term}</dt>
+                <dd class="mt-1.5 text-sm text-charcoal-600">{it.desc}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+    </section>
+
+    {/* ─── 7. GEOGRAPHIC SIGNALS ──────────────────────────────────────────── */}
+    <section aria-labelledby="geo-h" class={`${sectionShell} bg-industrial-100`}>
+      <div class={container}>
+        <h2 id="geo-h" class={h2} data-reveal>Why Rubber Flooring is Best for Dubai &amp; UAE Gyms</h2>
+
+        <dl class="mt-8 grid gap-5 sm:grid-cols-2" data-reveal-group>
+          {
+            geoSignals.map((it) => (
+              <div class="card-lift rounded border border-industrial-300 bg-white p-5">
+                <div class="flex items-start gap-3">
+                  <span
+                    class="grid h-11 w-11 shrink-0 place-items-center rounded bg-industrial-100 text-amber-700 ring-1 ring-industrial-300"
+                    aria-hidden="true"
+                  >
+                    <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" set:html={icon[it.icon]} />
+                  </span>
+                  <div>
+                    <dt class="font-heading font-semibold text-charcoal">{it.term}</dt>
+                    <dd class="mt-1.5 text-sm text-charcoal-600">{it.desc}</dd>
+                  </div>
+                </div>
+              </div>
+            ))
+          }
+        </dl>
+
+        <figure class="m-0 mt-10" data-reveal>
+          <img
+            src={GEO_IMG}
+            alt="ZainFit interlocking rubber tiles installed in a modern Dubai fitness studio with floor-to-ceiling skyline views."
+            title="ZainFit tiles in a modern Dubai fitness studio with skyline views"
+            width="1376"
+            height="768"
+            loading="lazy"
+            decoding="async"
+            class="h-auto w-full rounded border border-industrial-300"
+          />
+        </figure>
+      </div>
+    </section>
+
+    {/* ─── 8. ABOUT COMPANY & DELIVERY ────────────────────────────────────── */}
+    <section aria-labelledby="rzn-h" class={`${sectionShell} bg-white`}>
+      <div class={container}>
+        <h2 id="rzn-h" class={h2} data-reveal>Why Choose Rukn Al Zain?</h2>
+        <p class={lede} data-reveal>
+          Rukn Al Zain General Trading LLC is a Dubai-based rubber flooring supplier (P.O. Box 36528,
+          Dubai, UAE). We stock and deliver ZainFit interlocking gym tiles direct to residential and
+          commercial fit-out sites across all seven Emirates.
+        </p>
+
+        <dl class="mt-8 grid gap-5 lg:grid-cols-3" data-reveal-group>
+          {
+            uspCards.map((it) => (
+              <div class="card-lift rounded border border-industrial-300 bg-industrial-100 p-5">
+                <span class={iconChip} aria-hidden="true">
+                  <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" set:html={icon[it.icon]} />
+                </span>
+                <dt class="font-heading font-semibold text-charcoal">{it.term}</dt>
+                <dd class="mt-1.5 text-sm text-charcoal-600">{it.desc}</dd>
+              </div>
+            ))
+          }
+        </dl>
+
+        <h3 class="mt-12 font-heading text-lg font-bold text-charcoal" data-reveal>
+          Our Ordering &amp; Work Process
+        </h3>
+        <ol class="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-4" data-reveal-group>
+          {
+            processSteps.map((s) => (
+              <li class="card-lift flex h-full flex-col rounded border border-industrial-300 bg-industrial-100 p-5">
+                <div class="flex items-center justify-between">
+                  <span
+                    class="grid h-11 w-11 place-items-center rounded bg-white text-amber-700 ring-1 ring-industrial-300"
+                    aria-hidden="true"
+                  >
+                    <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" set:html={icon[s.icon]} />
+                  </span>
+                  <span class="font-heading text-2xl font-extrabold text-industrial-400" aria-hidden="true">
+                    {s.n}
+                  </span>
+                </div>
+                <h4 class="mt-3 font-heading text-base font-bold text-charcoal">{s.term}</h4>
+                <p class="mt-1.5 text-sm text-charcoal-600">{s.desc}</p>
+              </li>
+            ))
+          }
+        </ol>
+
+        <h3 class="mt-12 font-heading text-lg font-bold text-charcoal" data-reveal>
+          Our UAE Delivery Coverage
+        </h3>
+        <dl class="mt-6 grid gap-5 lg:grid-cols-3" data-reveal-group>
+          {
+            deliveryAreas.map((a) => (
+              <div
+                class:list={[
+                  'card-lift rounded border border-industrial-300 bg-industrial-100 p-5',
+                  a.featured && 'border-l-[3px] border-l-amber-400',
+                ]}
+              >
+                <span
+                  class="grid h-11 w-11 place-items-center rounded bg-white text-amber-700 ring-1 ring-industrial-300"
+                  aria-hidden="true"
+                >
+                  <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" set:html={icon['map-pin']} />
+                </span>
+                <dt class="mt-3 font-heading font-semibold text-charcoal">{a.term}</dt>
+                <dd class="mt-1.5 text-sm text-charcoal-600">{a.desc}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+    </section>
+
+    {/* ─── 9. FAQ — accordion (native <details>, zero-JS) ─────────────────── */}
+    <section aria-labelledby="faq-h" class={`${sectionShell} bg-industrial-100`}>
+      <div class={container}>
+        <h2 id="faq-h" class={h2} data-reveal>
+          Frequently Asked Questions About ZainFit Gym Flooring
+        </h2>
+        <div
+          class="mt-6 max-w-3xl divide-y divide-industrial-300 border-y border-industrial-300"
+          data-reveal-group
+        >
+          {
+            faqs.map((f, i) => (
+              <details class="group" open={i === 0}>
+                <summary class="flex cursor-pointer items-center justify-between gap-4 py-4 font-heading text-base font-semibold text-charcoal marker:content-none [&::-webkit-details-marker]:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700">
+                  <span>{f.question}</span>
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    class="h-5 w-5 shrink-0 text-amber-700 transition-transform duration-200 group-open:-rotate-180"
+                    aria-hidden="true"
+                  >
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m6 9 6 6 6-6" />
+                  </svg>
+                </summary>
+                <p class="pb-4 text-charcoal-600">{f.answer}</p>
+              </details>
+            ))
+          }
+        </div>
+
+        {/* Internal link: spoke → hub, keyword anchor text */}
+        <p class="mt-8 max-w-3xl text-sm text-charcoal-600" data-reveal>
+          ZainFit is part of Rukn Al Zain's{' '}
+          <a
+            href="/rubber-gym-tiles"
+            class="rounded font-semibold text-amber-700 hover:text-amber-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700"
+          >
+            commercial rubber gym tile range
+          </a>. For permanent glue-down commercial floors see ZainSquare, and for heavy barbell drop
+          zones see ZainExtreme.
+        </p>
+      </div>
+    </section>
+
+    {/* FAQPage + Product structured data — kept in-body to match the sibling hub
+        pages (BaseLayout exposes no <head> slot); crawlers parse it identically.
+        BreadcrumbList JSON-LD is emitted by the <Breadcrumbs /> component above. */}
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(faqSchema)} />
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(productSchema)} />
+
+    {/* ─── 10. CLOSING CTA BAND ───────────────────────────────────────────── */}
+    <section aria-labelledby="cta-h" class="border-t border-industrial-300 bg-charcoal-700 text-white">
+      <div class={`${container} py-16`}>
+        <div class="grid gap-8 lg:grid-cols-[1.3fr_1fr] lg:items-center">
+          <div data-reveal>
+            <h2 id="cta-h" class="text-2xl font-bold text-white">
+              Request a free ZainFit sample or a project quote
+            </h2>
+            <p class="mt-4 max-w-xl text-industrial-200">
+              Send your emirate, floor area, and preferred thickness and the technical sales team
+              will confirm current tile sizes, finishes, and a delivered price. Samples ship direct
+              to your villa, office, or site.
+            </p>
+            <dl class="mt-6 space-y-3 text-sm">
+              <div class="flex flex-wrap gap-x-2">
+                <dt class="font-semibold text-white">Phone / WhatsApp:</dt>
+                <dd>
+                  <a
+                    href="tel:+971505698195"
+                    class="rounded font-medium text-amber-400 hover:text-amber-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+                  >
+                    +971 50 569 8195
+                  </a>
+                </dd>
+              </div>
+              <div class="flex flex-wrap gap-x-2">
+                <dt class="font-semibold text-white">Address:</dt>
+                <dd class="text-industrial-200">
+                  Rukn Al Zain General Trading LLC, P.O. Box 36528, Dubai, UAE
+                </dd>
+              </div>
+            </dl>
+          </div>
+
+          <div class="flex flex-wrap gap-3 lg:justify-end" data-reveal>
+            <a href={CONTACT} class={`${primaryCta} focus-visible:ring-offset-charcoal-700`}>
+              Request Free Sample
+            </a>
+            <a
+              href={WHATSAPP}
+              target="_blank"
+              rel="noopener"
+              class={`${ghostCta} focus-visible:ring-offset-charcoal-700`}
+            >
+              WhatsApp Now
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {/* ─── SUBTLE MOTION ──────────────────────────────────────────────────────
+        One-shot CSS load-in for the hero and a staggered scroll-reveal for
+        headings, card groups, figures and the spec table. Progressive
+        enhancement only — content is fully visible without JS, and every effect
+        is disabled under prefers-reduced-motion. Mirrors rubber-gym-tiles.astro. */}
+    <style is:global>
+      .zf-js .zf-page [data-hero] {
+        animation: zf-rise 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      @keyframes zf-rise {
+        from {
+          opacity: 0;
+          transform: translateY(16px);
+        }
+      }
+
+      .zf-js .zf-page [data-reveal],
+      .zf-js .zf-page [data-reveal-group] > * {
+        opacity: 0;
+        transform: translateY(14px);
+        transition:
+          opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+          transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .zf-js .zf-page [data-reveal].in,
+      .zf-js .zf-page [data-reveal-group].in > * {
+        opacity: 1;
+        transform: none;
+      }
+      .zf-js .zf-page [data-reveal-group].in > *:nth-child(2) { transition-delay: 0.06s; }
+      .zf-js .zf-page [data-reveal-group].in > *:nth-child(3) { transition-delay: 0.12s; }
+      .zf-js .zf-page [data-reveal-group].in > *:nth-child(4) { transition-delay: 0.18s; }
+      .zf-js .zf-page [data-reveal-group].in > *:nth-child(5) { transition-delay: 0.24s; }
+      .zf-js .zf-page [data-reveal-group].in > *:nth-child(n + 6) { transition-delay: 0.3s; }
+
+      .zf-page .card-lift {
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
+      }
+      .zf-page .card-lift:hover {
+        transform: translateY(-3px);
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .zf-js .zf-page [data-hero] {
+          animation: none;
+        }
+        .zf-js .zf-page [data-reveal],
+        .zf-js .zf-page [data-reveal-group] > * {
+          opacity: 1;
+          transform: none;
+          transition: none;
+        }
+        .zf-page .card-lift,
+        .zf-page .card-lift:hover {
+          transition: none;
+          transform: none;
+        }
+      }
+    </style>
+
+    <script>
+      const targets = document.querySelectorAll(
+        '.zf-page [data-reveal], .zf-page [data-reveal-group]',
+      );
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const revealAll = () => targets.forEach((el) => el.classList.add('in'));
+
+      if (reduce || !('IntersectionObserver' in window)) {
+        revealAll();
+      } else {
+        const io = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (!entry.isIntersecting) continue;
+              entry.target.classList.add('in');
+              io.unobserve(entry.target);
+            }
+          },
+          { rootMargin: '0px 0px -8% 0px' },
+        );
+        targets.forEach((el) => io.observe(el));
+        window.addEventListener('load', () => setTimeout(revealAll, 1200));
+      }
+    </script>
+  </article>
+</BaseLayout>

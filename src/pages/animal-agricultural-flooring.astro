@@ -1,0 +1,925 @@
+---
+/**
+ * /animal-agricultural-flooring — Animal & Agricultural Rubber Flooring hub (UAE).
+ *
+ * Bespoke page (not the YAML-driven generic HubPage), built to mirror the
+ * structure and styling of src/pages/acoustic-soundproofing-flooring.astro and
+ * src/pages/gym-fitness-flooring.astro. The `animal` hub is excluded from
+ * getStaticPaths in src/pages/[...slug].astro to avoid a route collision;
+ * src/content/hubs/animal.yaml stays as data for the child products.
+ *
+ * ─── IMPLEMENTATION NOTES ─────────────────────────────────────────────────
+ *  - Images use plain <img> from /public (not astro:assets <Image />) to match
+ *    the two reference hub pages and the explicit build-brief instruction:
+ *    every <img> carries verbatim alt text, explicit width/height and
+ *    loading="lazy" (hero is eager + fetchpriority). This knowingly supersedes
+ *    the CLAUDE.md "<Image /> mandatory" line for parity with the sibling hubs.
+ *  - Brand tokens (charcoal / industrial / amber from tailwind.config.mjs) are
+ *    used throughout rather than raw neutral-* utilities, so the page stays
+ *    consistent with the acoustic + gym hubs and the design system. The result
+ *    is the same dark-accent + amber-highlight + subtle-border aesthetic the
+ *    brief describes.
+ *  - "Lucide" icons are rendered as inline SVG (Lucide path data) — the project
+ *    has no icon dependency and CLAUDE.md forbids zero-JS-breaking adds.
+ *  - Per this task's brief: NO page-level JSON-LD (no FAQPage / Product /
+ *    LocalBusiness). The visible breadcrumb still uses <Breadcrumbs>, whose
+ *    BreadcrumbList JSON-LD is an inherent side-effect of that shared nav
+ *    component (kept for structural + a11y parity with the sibling hubs).
+ *
+ * ─── DATA INTEGRITY FLAGS (CLAUDE.md §0 + §6) — confirm before go-live ─────
+ *  - Image assets supplied 2026-08-29 and re-encoded in place with sharp
+ *    (mozjpeg q80, progressive) — dimensions unchanged: hero + why-use +
+ *    dubai-desert are 1408×768; the four product photos and the tech-spec
+ *    infographic are 1024×1024. Originals backed up to the session scratchpad.
+ *  - Zain Linkmats: dropped from this hub for now (per client 2026-08-29). The
+ *    product route /outdoor-pavers/linkmats still exists and is noindex +
+ *    sitemap-excluded; re-add a card here when it is ready.
+ *  - Hero CTA: brief says -> /contact-request-quote/. Site-wide convention (see
+ *    memory + both sibling hubs) is the in-page #request-quote anchor + a form
+ *    posting to /contact. Followed the convention to keep "0 dead links".
+ *  - Canonical: the brief's rukanalzain.com host is replaced by the production
+ *    domain https://ruknalzain.ae; the path is passed relative so Seo.astro
+ *    builds the absolute URL from astro.config's `site` (no trailing slash).
+ *  - Netlify Forms handler / CRM endpoint, success page and privacy-policy link
+ *    still TODO (shared with the other hub forms).
+ * ──────────────────────────────────────────────────────────────────────────
+ */
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Breadcrumbs from '@components/Breadcrumbs.astro';
+
+const IMG = '/images/animal-agricultural-flooring';
+const HERO_IMG = `${IMG}/horse-stable-rubber-mats-dubai.jpg`;
+const HERO_ALT =
+  'Heavy-duty rubber stable mats installed in an equestrian stall in Dubai, UAE.';
+
+/* Inline Lucide icon path data (24×24, currentColor stroke). */
+const icon: Record<string, string> = {
+  'shield-check':
+    '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/>',
+  sun:
+    '<circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>',
+  droplets:
+    '<path d="M7 16.3c2.2 0 4-1.83 4-4.05 0-1.16-.57-2.26-1.71-3.19S7.29 4.24 7 2C6.71 4.24 5.45 7.13 4.71 9.06 3.57 9.99 3 11.09 3 12.25c0 2.22 1.8 4.05 4 4.05z"/><path d="M12.56 6.6A10.97 10.97 0 0 0 14 3.02c.5 2.5 2 4.9 4 6.5s3 3.5 3 5.5a6.98 6.98 0 0 1-11.91 4.97"/>',
+  layers:
+    '<path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"/><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"/>',
+  footprints:
+    '<path d="M4 16v-2.38C4 11.5 2.97 10.5 3 8c.03-2.72 1.49-6 4.5-6C9.37 2 10 3.8 10 5.5c0 3.11-2 5.66-2 8.68V16a2 2 0 1 1-4 0Z"/><path d="M20 20v-2.38c0-2.12 1.03-3.12 1-5.62-.03-2.72-1.49-6-4.5-6C14.63 6 14 7.8 14 9.5c0 3.11 2 5.66 2 8.68V20a2 2 0 1 0 4 0Z"/><path d="M16 17h4"/><path d="M4 13h4"/>',
+  'clipboard-list':
+    '<rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/>',
+  'package-check':
+    '<path d="m16 16 2 2 4-4"/><path d="M21 10V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l2-1.14"/><path d="M16.5 9.4 7.55 4.24"/><polyline points="3.29 7 12 12 20.71 7"/><line x1="12" x2="12" y1="22" y2="12"/>',
+  truck:
+    '<path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/>',
+  wrench:
+    '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>',
+  'building-2':
+    '<path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/>',
+  landmark:
+    '<line x1="3" x2="21" y1="22" y2="22"/><line x1="6" x2="6" y1="18" y2="11"/><line x1="10" x2="10" y1="18" y2="11"/><line x1="14" x2="14" y1="18" y2="11"/><line x1="18" x2="18" y1="18" y2="11"/><polygon points="12 2 20 7 4 7"/>',
+  trees:
+    '<path d="M10 10v.2A3 3 0 0 1 8.9 16H5a3 3 0 0 1-1-5.8V10a3 3 0 0 1 6 0Z"/><path d="M7 16v6"/><path d="M13 19v3"/><path d="M12 19h8.3a1 1 0 0 0 .7-1.7L18 14h.3a1 1 0 0 0 .7-1.7L16 9h.2a1 1 0 0 0 .8-1.7L13 3l-1.4 1.5"/>',
+  'map-pin':
+    '<path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/>',
+};
+
+/* ─── 2. Trust & value indicators ─────────────────────────────────────── */
+const trustBar = [
+  {
+    icon: 'shield-check',
+    term: 'Anti-Fatigue & Animal Safety',
+    desc: 'Cushioned shock absorption protects horse joints, hooves, and livestock during rest and transit.',
+  },
+  {
+    icon: 'sun',
+    term: 'Thermal Insulation',
+    desc: 'Excellent temperature regulation isolates animals from harsh concrete surface heat during UAE summer months.',
+  },
+  {
+    icon: 'droplets',
+    term: 'Low Maintenance & Non-Slip',
+    desc: 'Water-resistant, non-slippery surfaces designed for quick, effortless washdowns and stall hygiene.',
+  },
+];
+
+/* ─── 3. Concrete subfloor challenges (problem vs. solution) ───────────── */
+const challenges = [
+  {
+    problem: 'Hard Concrete Joint Impact & Animal Stress',
+    problemDesc:
+      'Standing or resting on unyielding concrete exerts continuous stress on hooves, joints, and tendons.',
+    solutionDesc:
+      'Heavy-duty rubber mats (like Zain Horse Mats) provide anti-fatigue cushioning and shock absorption.',
+  },
+  {
+    problem: 'Extreme Concrete Surface Heat Retention',
+    problemDesc:
+      'Concrete slabs absorb and radiate extreme heat back into stalls and enclosures during UAE summers.',
+    solutionDesc:
+      'High-density rubber matting acts as an insulating thermal barrier that isolates animals from surface heat.',
+  },
+  {
+    problem: 'Slippery Subfloors & Washdown Moisture Hazards',
+    problemDesc:
+      'Wet concrete creates dangerous, slick surfaces where livestock and horses can slip.',
+    solutionDesc:
+      'Textured surfaces (Zain Hammer Top) and interlocking pavers (Dog Bone/Hexagon) provide multi-directional non-slip grip.',
+  },
+  {
+    problem: 'Moisture Absorption, Bacteria & Heavy Bedding Expenses',
+    problemDesc:
+      'Porous concrete absorbs waste, trapping bacteria and creating foul odors.',
+    solutionDesc:
+      'Non-porous, water-resistant rubber flooring stops absorption, permitting quick washdowns and reducing bedding costs.',
+  },
+];
+
+/* ─── 4. Geographic location & regional need ──────────────────────────── */
+const regional = [
+  {
+    icon: 'sun',
+    term: 'Extreme Desert Heat & Thermal Retention',
+    desc: 'Isolates animals from concrete subfloor heat absorption in facilities across Al Khawaneej, Meydan, and Al Marmoom.',
+  },
+  {
+    icon: 'layers',
+    term: 'Stabilizing Desert Sand & Fine Dust Subgrades',
+    desc: 'Interlocking rubber pavers bridge shifting sand subsoils to provide a stable footway.',
+  },
+  {
+    icon: 'droplets',
+    term: 'High Coastal Humidity & Bacterial Control',
+    desc: 'Non-porous SBR rubber stops liquid absorption to eliminate ammonia buildup and bacteria in Arabian Gulf humidity.',
+  },
+  {
+    icon: 'footprints',
+    term: 'Combating Washdown Moisture Slickness',
+    desc: 'Multi-directional textured surfaces ensure firm footing following daily high-pressure washdowns.',
+  },
+];
+
+/* ─── 5. Product range ────────────────────────────────────────────────── */
+const products = [
+  {
+    name: 'Zain Horse Mats',
+    img: `${IMG}/zain-horse-mats-stable-flooring.jpg`,
+    alt: 'Zain Horse Mats non-slip rubber stable flooring displayed in a Dubai equine stall.',
+    desc: 'Designed specifically for horse stables, dairy farms, and animal enclosures. Anti-fatigue, non-slip, and highly insulating under heavy daily use.',
+    bestFor: 'Horse stalls, dairy pens, livestock wash bays',
+    href: '/horse-mats',
+  },
+  {
+    name: 'Zain Hammer Top',
+    img: `${IMG}/zain-hammer-top-rubber-mats.jpg`,
+    alt: 'Zain Hammer Top textured heavy-duty rubber mat for livestock enclosures.',
+    desc: 'Features a specialized textured hammer-top pattern providing maximum grip, extreme durability, and effortless washdown hygiene under heavy livestock use.',
+    bestFor: 'Heavy-use stable stalls, high-traffic farm pens',
+    href: '/hammer-top',
+  },
+  {
+    name: 'ZainPavers Dog Bone',
+    img: `${IMG}/zainpavers-dog-bone-rubber-pavers.jpg`,
+    alt: 'ZainPavers Dog Bone interlocking rubber pavers for farm walkways and paddocks.',
+    desc: 'Dense interlocking rubber pavers designed for high-traffic walkways, dairy paths, and paddocks. Easy to handle and install.',
+    bestFor: 'Animal walkways, dairy paths, garden paddocks',
+    href: '/outdoor-pavers/dogbone',
+  },
+  {
+    name: 'Zain Hexagon Pavers',
+    img: `${IMG}/zain-hexagon-rubber-pavers.jpg`,
+    alt: 'Zain Hexagon geometric rubber pavers for outdoor farm paths and equine walkways.',
+    desc: 'Geometric rubber pavers offering a durable, visually appealing, and practical alternative to traditional concrete pathways.',
+    bestFor: 'Horse stables, garden walkways, farm paths',
+    href: '/outdoor-pavers/hexagon',
+  },
+  // Zain Linkmats intentionally omitted for now (client 2026-08-29).
+];
+
+/* ─── 6. Technical specifications comparison ──────────────────────────── */
+const comparisonHead = [
+  'Product Line',
+  'Format Type',
+  'Primary Features',
+  'Key Benefit',
+  'Primary Application',
+];
+const comparisonRows = [
+  [
+    'Zain Horse Mats',
+    'Rubber Mat',
+    'Anti-fatigue surface, thermal insulation',
+    'Joint cushioning & heat/cold barrier',
+    'Horse stalls, dairy enclosures',
+  ],
+  [
+    'Zain Hammer Top',
+    'Textured Rubber Mat',
+    'Heavy-duty grip, anti-slip surface',
+    'Withstands extreme livestock wear',
+    'High-traffic stable sections, farms',
+  ],
+  [
+    'ZainPavers Dog Bone',
+    'Dense Interlocking Paver',
+    'Compact, high-density construction',
+    'Easy handling, extreme durability',
+    'Equine walkways, dairy farm paths',
+  ],
+  [
+    'Zain Hexagon',
+    'Geometric Paver',
+    'Visually appealing geometric layout',
+    'Versatile alternative to concrete',
+    'Paddocks, garden animal walkways',
+  ],
+];
+
+/* ─── 7. Segment use cases ────────────────────────────────────────────── */
+const segments = [
+  {
+    icon: 'shield-check',
+    term: 'Equestrian Stables & Barns',
+    desc: 'Seamless mats protect horses from hard subfloors, reduce bedding expenses, and absorb impact.',
+  },
+  {
+    icon: 'droplets',
+    term: 'Dairy Farms & Enclosures',
+    desc: 'Non-porous, slip-resistant flooring maintains hygienic milking stalls and resting areas while preventing livestock injuries.',
+  },
+  {
+    icon: 'footprints',
+    term: 'Outdoor Walkways & Paddock Paths',
+    desc: 'Dense rubber pavers withstand heavy animal foot traffic to create safe, non-slip outdoor paths.',
+  },
+];
+
+/* ─── 8. How we work ─────────────────────────────────────────────────── */
+const process = [
+  {
+    n: '01',
+    icon: 'clipboard-list',
+    term: 'Requirement & Area Consultation',
+    desc: 'We map each stall, pen and walkway to the right mat or paver, and confirm quantities from your drawings or site measurements.',
+  },
+  {
+    n: '02',
+    icon: 'package-check',
+    term: 'Sample & Technical Specs Provision',
+    desc: 'Physical rubber samples plus the specification sheet for every product line so you can approve grip, thickness and finish before ordering.',
+  },
+  {
+    n: '03',
+    icon: 'truck',
+    term: 'Direct UAE Site Logistics & Delivery',
+    desc: 'Bulk orders dispatched to farms and stables across all seven Emirates, scheduled around your build or fit-out programme.',
+  },
+  {
+    n: '04',
+    icon: 'wrench',
+    term: 'Layout Advice & Support',
+    desc: 'Setting-out guidance for stalls and pavers, edge and drainage recommendations, and follow-up support after the floor is down.',
+  },
+];
+
+/* ─── 9. Service area coverage ───────────────────────────────────────── */
+const serviceArea = [
+  {
+    icon: 'building-2',
+    term: 'Dubai',
+    desc: 'Equestrian centers and stables across Al Khawaneej, Meydan, Al Marmoom and Dubai Investments Park.',
+  },
+  {
+    icon: 'landmark',
+    term: 'Abu Dhabi',
+    desc: 'Racing and endurance stables, government farms and large livestock enclosures.',
+  },
+  {
+    icon: 'map-pin',
+    term: 'Sharjah',
+    desc: 'Private stables, riding schools and mixed agricultural holdings.',
+  },
+  {
+    icon: 'trees',
+    term: 'Al Ain',
+    desc: 'Dairy farms, camel facilities and agricultural estates in the Eastern Region.',
+  },
+  {
+    icon: 'map-pin',
+    term: 'Northern Emirates',
+    desc: 'Direct site logistics for farms and stables in Ajman, Ras Al Khaimah, Umm Al Quwain and Fujairah.',
+  },
+];
+
+/* ─── 10. FAQ (AEO) — self-contained answers, no FAQPage schema ───────── */
+const faqs = [
+  {
+    question: 'Why use rubber matting in horse stables and dairy farms in the UAE?',
+    answer:
+      'Rubber stable mats and pavers provide anti-fatigue cushioning to protect animal joints, offer superior non-slip traction on wet subfloors, and supply thermal insulation against concrete heat retention during extreme GCC weather.',
+  },
+  {
+    question: 'Are Zain horse mats and agricultural pavers resistant to UAE summer heat?',
+    answer:
+      'Yes. Rukn Al Zain agricultural mats and dense rubber pavers are specially formulated to withstand extreme UAE heat, direct UV exposure, and heavy livestock wear without warping, degrading, or absorbing liquids.',
+  },
+  {
+    question:
+      'How do rubber pavers compare to continuous rubber mats for outdoor animal walkways?',
+    answer:
+      'Rubber pavers (such as Dog Bone or Hexagon shapes) are denser, highly durable, and easily configured for irregular outdoor walkways, paddocks, and garden areas, whereas mats (like Zain Horse Mats or Hammer Top) provide continuous coverage over large indoor stalls and dairy pens.',
+  },
+];
+
+const productInterest = [
+  'Zain Horse Mats',
+  'Zain Hammer Top',
+  'ZainPavers Dog Bone',
+  'Zain Hexagon Pavers',
+  'Not sure yet — need advice',
+];
+const emirates = [
+  'Dubai',
+  'Abu Dhabi',
+  'Sharjah',
+  'Ajman',
+  'Ras Al Khaimah',
+  'Umm Al Quwain',
+  'Fujairah',
+];
+
+/* Shared class helpers — mirrors the acoustic + gym hub pages. */
+const sectionShell = 'border-t border-industrial-300 py-14 sm:py-16';
+const container = 'mx-auto max-w-content px-4 sm:px-6 lg:px-8';
+const h2 = 'text-2xl font-bold text-charcoal';
+const lede = 'mt-4 max-w-3xl text-charcoal-600';
+const primaryCta =
+  'inline-flex items-center justify-center rounded bg-amber-400 px-5 py-3 font-semibold text-charcoal-900 transition-colors hover:bg-amber-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2';
+const ghostCta =
+  'inline-flex items-center justify-center rounded border border-white/25 px-5 py-3 font-semibold text-white transition-colors hover:border-white/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400';
+const iconChip =
+  'mb-3 grid h-11 w-11 place-items-center rounded bg-white text-amber-700 ring-1 ring-industrial-300';
+const svgAttrs = {
+  viewBox: '0 0 24 24',
+  fill: 'none',
+  stroke: 'currentColor',
+  'stroke-width': '1.75',
+  'stroke-linecap': 'round' as const,
+  'stroke-linejoin': 'round' as const,
+  class: 'h-6 w-6',
+};
+---
+
+<BaseLayout
+  title="Horse Stable Mats & Agricultural Rubber Flooring UAE | Rukn Al Zain"
+  description="Durable, non-slip rubber mats and pavers for horse stables, dairy farms and animal enclosures across the UAE. Built for heavy use and easy maintenance."
+  canonical="/animal-agricultural-flooring"
+  ogImage={HERO_IMG}
+  ogImageAlt={HERO_ALT}
+>
+  <article>
+    {/* Breadcrumb strip — emits BreadcrumbList JSON-LD via the shared component */}
+    <div class="border-b border-industrial-300 bg-industrial-100">
+      <div class={`${container} py-4`}>
+        <Breadcrumbs
+          trail={[{ name: 'Home', href: '/' }, { name: 'Animal & Agricultural Flooring' }]}
+        />
+      </div>
+    </div>
+
+    {/* ─── 1. HERO ─────────────────────────────────────────────────────────── */}
+    <header class="bg-charcoal-700 text-white">
+      <div class={`${container} py-14 sm:py-16`}>
+        <div class="grid items-center gap-10 lg:grid-cols-2">
+          <div>
+            <h1 class="text-4xl font-extrabold leading-tight text-white sm:text-5xl">
+              Animal &amp; Agricultural Rubber Flooring in the UAE
+            </h1>
+
+            {/* AEO direct-answer block */}
+            <p class="mt-5 max-w-xl border-l-[3px] border-amber-400 pl-4 text-lg text-industrial-100">
+              Rukn Al Zain supplies heavy-duty rubber stable mats, dairy farm flooring, and
+              outdoor agricultural pavers across Dubai and the UAE. Specially designed for equine
+              facilities, livestock enclosures, and farm walkways, our rubber flooring solutions
+              deliver anti-fatigue comfort, non-slip traction, thermal insulation, and
+              low-maintenance hygiene under extreme climate conditions.
+            </p>
+
+            <div class="mt-7 flex flex-wrap gap-3">
+              <a href="#request-quote" class={`${primaryCta} focus-visible:ring-offset-charcoal-700`}>
+                Request Bulk / Wholesale Quote
+              </a>
+              <a
+                href="https://wa.me/971505698195"
+                target="_blank"
+                rel="noopener"
+                class={`${ghostCta} focus-visible:ring-offset-charcoal-700`}
+              >
+                Chat on WhatsApp
+              </a>
+            </div>
+          </div>
+
+          <figure class="m-0">
+            <img
+              src={HERO_IMG}
+              alt={HERO_ALT}
+              title="Heavy-duty rubber stable mats in an equestrian stall in Dubai, UAE"
+              width="1408"
+              height="768"
+              fetchpriority="high"
+              decoding="async"
+              class="h-auto w-full rounded border border-white/10"
+            />
+            <figcaption class="mt-2 text-sm text-industrial-300">
+              Heavy-duty recycled-rubber stable mats installed across an equestrian stall in
+              Dubai.
+            </figcaption>
+          </figure>
+        </div>
+      </div>
+    </header>
+
+    {/* ─── 2. TRUST & VALUE INDICATORS ────────────────────────────────────── */}
+    <section aria-labelledby="trust-h" class={`${sectionShell} bg-white`}>
+      <div class={container}>
+        <h2 id="trust-h" class={h2}>Designed for Animal Welfare &amp; UAE Climate Resilience</h2>
+        <dl class="mt-8 grid gap-5 sm:grid-cols-3">
+          {
+            trustBar.map((it) => (
+              <div class="rounded border border-industrial-300 border-l-[3px] border-l-amber-400 bg-industrial-100 p-5">
+                <span class={iconChip} aria-hidden="true">
+                  <svg {...svgAttrs} set:html={icon[it.icon]} />
+                </span>
+                <dt class="font-heading font-semibold text-charcoal">{it.term}</dt>
+                <dd class="mt-1.5 text-sm text-charcoal-600">{it.desc}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+    </section>
+
+    {/* ─── 3. CONCRETE SUBFLOOR CHALLENGES (PROBLEM VS. SOLUTION) ──────────── */}
+    <section aria-labelledby="challenges-h" class={`${sectionShell} bg-industrial-100`}>
+      <div class={container}>
+        <h2 id="challenges-h" class={h2}>
+          Concrete Subfloor Challenges &amp; Agricultural Rubber Flooring Solution
+        </h2>
+        <p class={lede}>
+          Equine facilities, livestock enclosures, and farm walkways across the UAE face severe
+          daily wear, extreme environmental exposure, and health risks to animals when relying on
+          raw concrete floors. Specially engineered rubber mats and pavers deliver a long-lasting
+          protective barrier that addresses every core structural and operational challenge.
+        </p>
+
+        <div class="mt-8 grid gap-6 lg:grid-cols-2">
+          {
+            challenges.map((c) => (
+              <article class="flex flex-col rounded border border-industrial-300 bg-white p-6">
+                <div class="border-l-[3px] border-l-danger pl-4">
+                  <p class="font-heading text-xs font-semibold uppercase tracking-wider text-danger">
+                    The problem
+                  </p>
+                  <h3 class="mt-1 font-heading font-semibold text-charcoal">{c.problem}</h3>
+                  <p class="mt-1.5 text-sm text-charcoal-600">{c.problemDesc}</p>
+                </div>
+                <div class="mt-5 border-l-[3px] border-l-success pl-4">
+                  <p class="font-heading text-xs font-semibold uppercase tracking-wider text-success">
+                    The solution
+                  </p>
+                  <p class="mt-1.5 text-sm text-charcoal-600">{c.solutionDesc}</p>
+                </div>
+              </article>
+            ))
+          }
+        </div>
+
+        <figure class="m-0 mt-10">
+          <img
+            src={`${IMG}/why-use-rubber-flooring-agricultural-solutions.jpg`}
+            alt="Cross-section comparison diagram of concrete subfloor stress versus cushioned rubber mat protection in a Dubai horse stable."
+            title="Concrete subfloor stress vs. cushioned rubber mat protection - Rukn Al Zain"
+            width="1408"
+            height="768"
+            loading="lazy"
+            decoding="async"
+            class="h-auto w-full rounded border border-industrial-300"
+          />
+          <figcaption class="mt-2 text-sm text-charcoal-500">
+            How a resilient rubber layer interrupts joint impact, surface heat, slip risk and
+            moisture absorption between the animal and the slab.
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    {/* ─── 4. GEOGRAPHIC LOCATION & REGIONAL NEED ─────────────────────────── */}
+    <section aria-labelledby="regional-h" class={`${sectionShell} bg-white`}>
+      <div class={container}>
+        <h2 id="regional-h" class={h2}>Why Use Rubber Flooring for Farms &amp; Stables in Dubai</h2>
+
+        <div class="mt-8 grid gap-10 lg:grid-cols-2 lg:items-start">
+          <dl class="grid gap-5 sm:grid-cols-2">
+            {
+              regional.map((it) => (
+                <div class="rounded border border-industrial-300 bg-industrial-100 p-5">
+                  <span
+                    class="grid h-11 w-11 place-items-center rounded bg-white text-amber-700 ring-1 ring-industrial-300"
+                    aria-hidden="true"
+                  >
+                    <svg {...svgAttrs} set:html={icon[it.icon]} />
+                  </span>
+                  <dt class="mt-3 font-heading font-semibold text-charcoal">{it.term}</dt>
+                  <dd class="mt-1.5 text-sm text-charcoal-600">{it.desc}</dd>
+                </div>
+              ))
+            }
+          </dl>
+
+          <figure class="m-0">
+            <img
+              src={`${IMG}/dubai-desert-stable-rubber-flooring-installation.jpg`}
+              alt="Heavy-duty rubber stable flooring installed in a luxury desert equestrian center in Dubai, UAE."
+              title="Rubber stable flooring in a luxury desert equestrian center in Dubai, UAE"
+              width="1376"
+              height="768"
+              loading="lazy"
+              decoding="async"
+              class="h-auto w-full rounded border border-industrial-300"
+            />
+            <figcaption class="mt-2 text-sm text-charcoal-500">
+              Rubber stable flooring laid over a desert-sand subgrade at a Dubai equestrian
+              center.
+            </figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    {/* ─── 5. PRODUCT RANGE GRID ──────────────────────────────────────────── */}
+    <section aria-labelledby="range-h" class={`${sectionShell} bg-industrial-100`}>
+      <div class={container}>
+        <h2 id="range-h" class={h2}>Agricultural Rubber Flooring Range</h2>
+        <p class={lede}>
+          Explore durable mats and dense pavers built for stables, farms, and outdoor animal
+          walkways.
+        </p>
+
+        <div class="mt-8 grid gap-6 sm:grid-cols-2">
+          {
+            products.map((p) => (
+              <article class="flex flex-col overflow-hidden rounded border border-industrial-300 bg-white shadow-card">
+                <img
+                  src={p.img}
+                  alt={p.alt}
+                  title={`${p.name} — Rukn Al Zain`}
+                  width="1024"
+                  height="1024"
+                  loading="lazy"
+                  decoding="async"
+                  class="aspect-[4/3] w-full border-b border-industrial-300 object-cover"
+                />
+                <div class="flex flex-1 flex-col p-5">
+                  <h3 class="font-heading text-lg font-bold text-charcoal">{p.name}</h3>
+                  <p class="mt-2 flex-1 text-sm text-charcoal-600">{p.desc}</p>
+                  <p class="mt-3 text-sm text-charcoal">
+                    <span class="font-semibold">Best for:</span> {p.bestFor}
+                  </p>
+                  <a
+                    href={p.href}
+                    class="mt-4 inline-block rounded text-sm font-semibold text-amber-700 hover:text-amber-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700"
+                  >
+                    View {p.name} details &rarr;
+                  </a>
+                </div>
+              </article>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    {/* ─── 6. TECHNICAL SPECIFICATIONS COMPARISON TABLE ───────────────────── */}
+    <section aria-labelledby="comparison-h" class={`${sectionShell} bg-white`}>
+      <div class={container}>
+        <h2 id="comparison-h" class={h2}>Product Comparison: Agricultural Mats vs. Rubber Pavers</h2>
+        <p class={lede}>
+          Match the format to the job — continuous mats for indoor stalls and pens, dense
+          interlocking pavers for outdoor walkways and paddock routes.
+        </p>
+
+        <div class="mt-6 overflow-x-auto">
+          <table class="w-full min-w-[52rem] border-collapse text-left text-sm tabular-nums">
+            <caption class="sr-only">
+              Comparison of Rukn Al Zain animal and agricultural rubber flooring products by
+              format type, primary features, key benefit and primary application
+            </caption>
+            <thead>
+              <tr class="border-b-2 border-charcoal-300 bg-industrial-100">
+                {
+                  comparisonHead.map((th) => (
+                    <th scope="col" class="px-4 py-3 font-semibold text-charcoal">
+                      {th}
+                    </th>
+                  ))
+                }
+              </tr>
+            </thead>
+            <tbody>
+              {
+                comparisonRows.map((row, i) => (
+                  <tr class:list={['border-b border-industrial-300', i % 2 === 1 && 'bg-industrial-100']}>
+                    <th scope="row" class="px-4 py-3 align-top font-semibold text-charcoal">
+                      {row[0]}
+                    </th>
+                    <td class="px-4 py-3 align-top text-charcoal-600">{row[1]}</td>
+                    <td class="px-4 py-3 align-top text-charcoal-600">{row[2]}</td>
+                    <td class="px-4 py-3 align-top text-charcoal-600">{row[3]}</td>
+                    <td class="px-4 py-3 align-top text-charcoal-600">{row[4]}</td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <figure class="m-0 mt-10">
+          <img
+            src={`${IMG}/agricultural-flooring-technical-specifications.jpg`}
+            alt="Technical specification matrix graphic comparing Rukn Al Zain agricultural rubber mats and pavers."
+            title="Agricultural rubber mats vs. pavers technical specification matrix - Rukn Al Zain"
+            width="1024"
+            height="1024"
+            loading="lazy"
+            decoding="async"
+            class="mx-auto h-auto w-full max-w-2xl rounded border border-industrial-300"
+          />
+          <figcaption class="mt-2 text-sm text-charcoal-500">
+            The agricultural range at a glance — format type, primary features and typical
+            application.
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    {/* ─── 7. SEGMENT USE CASES ───────────────────────────────────────────── */}
+    <section aria-labelledby="segments-h" class={`${sectionShell} bg-industrial-100`}>
+      <div class={container}>
+        <h2 id="segments-h" class={h2}>Segment Use Cases</h2>
+        <dl class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {
+            segments.map((it) => (
+              <div class="rounded border border-industrial-300 bg-white p-6">
+                <span
+                  class="grid h-11 w-11 place-items-center rounded bg-industrial-100 text-amber-700 ring-1 ring-industrial-300"
+                  aria-hidden="true"
+                >
+                  <svg {...svgAttrs} set:html={icon[it.icon]} />
+                </span>
+                <dt class="mt-3 font-heading text-lg font-semibold text-charcoal">{it.term}</dt>
+                <dd class="mt-2 text-sm text-charcoal-600">{it.desc}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+    </section>
+
+    {/* ─── 8. HOW WE WORK ─────────────────────────────────────────────────── */}
+    <section aria-labelledby="process-h" class={`${sectionShell} bg-white`}>
+      <div class={container}>
+        <h2 id="process-h" class={h2}>Our Bulk Supply &amp; Project Delivery Process</h2>
+        <ol class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {
+            process.map((s) => (
+              <li class="flex h-full flex-col rounded border border-industrial-300 bg-industrial-100 p-5">
+                <div class="flex items-center justify-between">
+                  <span
+                    class="grid h-11 w-11 place-items-center rounded bg-white text-amber-700 ring-1 ring-industrial-300"
+                    aria-hidden="true"
+                  >
+                    <svg {...svgAttrs} set:html={icon[s.icon]} />
+                  </span>
+                  <span class="font-heading text-2xl font-extrabold text-industrial-400" aria-hidden="true">
+                    {s.n}
+                  </span>
+                </div>
+                <h3 class="mt-3 font-heading text-base font-bold text-charcoal">{s.term}</h3>
+                <p class="mt-1.5 text-sm text-charcoal-600">{s.desc}</p>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </section>
+
+    {/* ─── 9. SERVICE AREA COVERAGE ───────────────────────────────────────── */}
+    <section aria-labelledby="area-h" class={`${sectionShell} bg-industrial-100`}>
+      <div class={container}>
+        <h2 id="area-h" class={h2}>
+          Supplying Equine &amp; Agricultural Projects Across All 7 Emirates
+        </h2>
+        <p class={lede}>
+          Direct site logistics for farms and stables — bulk mats and pavers delivered to your
+          gate across the UAE.
+        </p>
+        <dl class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {
+            serviceArea.map((a) => (
+              <div class="rounded border border-industrial-300 bg-white p-5">
+                <span
+                  class="grid h-11 w-11 place-items-center rounded bg-industrial-100 text-amber-700 ring-1 ring-industrial-300"
+                  aria-hidden="true"
+                >
+                  <svg {...svgAttrs} set:html={icon[a.icon]} />
+                </span>
+                <dt class="mt-3 font-heading font-semibold text-charcoal">{a.term}</dt>
+                <dd class="mt-1.5 text-sm text-charcoal-600">{a.desc}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+    </section>
+
+    {/* ─── 10. FAQ — accordion (native <details>, zero-JS). No FAQPage schema
+         per this task's brief. Answers stay in the DOM for AEO extraction. ─── */}
+    <section aria-labelledby="faq-h" class={`${sectionShell} bg-white`}>
+      <div class={container}>
+        <h2 id="faq-h" class={h2}>Frequently Asked Questions</h2>
+        <div class="mt-6 max-w-3xl divide-y divide-industrial-300 border-y border-industrial-300">
+          {
+            faqs.map((f, i) => (
+              <details class="group" open={i === 0}>
+                <summary class="flex cursor-pointer items-center justify-between gap-4 py-4 font-heading text-base font-semibold text-charcoal marker:content-none [&::-webkit-details-marker]:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700">
+                  <span>{f.question}</span>
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    class="h-5 w-5 shrink-0 text-amber-700 transition-transform duration-200 group-open:-rotate-180"
+                    aria-hidden="true"
+                  >
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m6 9 6 6 6-6" />
+                  </svg>
+                </summary>
+                <p class="pb-4 text-charcoal-600">{f.answer}</p>
+              </details>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    {/* ─── 11. LEAD CAPTURE & BULK ENQUIRY FORM ───────────────────────────── */}
+    <section
+      id="request-quote"
+      aria-labelledby="request-quote-h"
+      class="border-t border-industrial-300 bg-charcoal-700 text-white"
+    >
+      <div class={`${container} py-16`}>
+        <div class="grid gap-10 lg:grid-cols-[1fr_1.1fr]">
+          <div>
+            <h2 id="request-quote-h" class="text-2xl font-bold text-white">
+              Request Bulk / Wholesale Pricing
+            </h2>
+            <p class="mt-4 max-w-md text-industrial-200">
+              Send your emirate, project area and product interest below, or reach the technical
+              sales team directly. We confirm sizes, thicknesses and available stock and send the
+              specification sheet for each product.
+            </p>
+
+            <dl class="mt-6 space-y-3 text-sm">
+              <div class="flex flex-wrap gap-x-2">
+                <dt class="font-semibold text-white">Phone / WhatsApp:</dt>
+                <dd>
+                  <a
+                    href="tel:+971505698195"
+                    class="rounded font-medium text-amber-400 hover:text-amber-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+                  >
+                    +971 50 569 8195
+                  </a>
+                </dd>
+              </div>
+              <div class="flex flex-wrap gap-x-2">
+                <dt class="font-semibold text-white">Location:</dt>
+                <dd class="text-industrial-200">Dubai, United Arab Emirates</dd>
+              </div>
+            </dl>
+
+            <a
+              href="https://wa.me/971505698195"
+              target="_blank"
+              rel="noopener"
+              class={`mt-6 ${ghostCta} focus-visible:ring-offset-charcoal-700`}
+            >
+              Chat on WhatsApp
+            </a>
+          </div>
+
+          {/*
+            Lead form: Name | Phone / WhatsApp | Emirate / Location | Project Area (Sq. Meters) |
+            Product Interest. Wired to Netlify Forms as a zero-JS default for this stack.
+            TODO: Missing spec from brief — confirm form handler / CRM endpoint, success page and
+            privacy-policy link.
+          */}
+          <form
+            name="animal-agricultural-flooring-quote"
+            method="POST"
+            data-netlify="true"
+            netlify-honeypot="bot-field"
+            action="/contact"
+            class="rounded border border-white/15 bg-charcoal-800 p-6"
+          >
+            <input type="hidden" name="form-name" value="animal-agricultural-flooring-quote" />
+            <p class="hidden">
+              <label>Do not fill this out if you are human: <input name="bot-field" /></label>
+            </p>
+
+            <fieldset class="m-0 space-y-4 border-0 p-0">
+              <legend class="mb-2 font-heading text-lg font-semibold text-white">
+                Request bulk / wholesale pricing
+              </legend>
+
+              <div>
+                <label for="af-name" class="block text-sm font-medium text-industrial-100">Name</label>
+                <input
+                  id="af-name"
+                  name="name"
+                  type="text"
+                  autocomplete="name"
+                  required
+                  class="mt-1 w-full rounded border border-charcoal-300 bg-white px-3 py-2 text-charcoal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+                />
+              </div>
+
+              <div>
+                <label for="af-phone" class="block text-sm font-medium text-industrial-100">
+                  Phone / WhatsApp
+                </label>
+                <input
+                  id="af-phone"
+                  name="phone"
+                  type="tel"
+                  autocomplete="tel"
+                  required
+                  class="mt-1 w-full rounded border border-charcoal-300 bg-white px-3 py-2 text-charcoal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+                />
+              </div>
+
+              <div>
+                <label for="af-location" class="block text-sm font-medium text-industrial-100">
+                  Emirate / Location
+                </label>
+                <select
+                  id="af-location"
+                  name="project-location"
+                  class="mt-1 w-full rounded border border-charcoal-300 bg-white px-3 py-2 text-charcoal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+                >
+                  <option value="" selected>Select an emirate</option>
+                  {emirates.map((e) => <option value={e}>{e}</option>)}
+                </select>
+              </div>
+
+              <div>
+                <label for="af-area" class="block text-sm font-medium text-industrial-100">
+                  Project Area (Sq. Meters)
+                </label>
+                <input
+                  id="af-area"
+                  name="project-area-sqm"
+                  type="number"
+                  min="1"
+                  inputmode="numeric"
+                  placeholder="e.g. 240"
+                  class="mt-1 w-full rounded border border-charcoal-300 bg-white px-3 py-2 text-charcoal tabular-nums placeholder:text-charcoal-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+                />
+              </div>
+
+              <div>
+                <label for="af-product" class="block text-sm font-medium text-industrial-100">
+                  Product Interest
+                </label>
+                <select
+                  id="af-product"
+                  name="product-interest"
+                  class="mt-1 w-full rounded border border-charcoal-300 bg-white px-3 py-2 text-charcoal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+                >
+                  <option value="" selected>Select a product line</option>
+                  {productInterest.map((p) => <option value={p}>{p}</option>)}
+                </select>
+              </div>
+
+              <button
+                type="submit"
+                class="w-full rounded bg-amber-400 px-5 py-3 font-semibold text-charcoal-900 transition-colors hover:bg-amber-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-charcoal-800"
+              >
+                Request Bulk / Wholesale Quote
+              </button>
+            </fieldset>
+          </form>
+        </div>
+      </div>
+    </section>
+  </article>
+</BaseLayout>

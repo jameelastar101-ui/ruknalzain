@@ -1,0 +1,91 @@
+---
+/**
+ * /projects-gallery — placeholder landing so the nav link resolves.
+ * Brief §5 "/projects-gallery/". No real projects yet → noindex + excluded from
+ * the sitemap (see astro.config.mjs). Flip both once real installations are added.
+ *
+ * TODO: Missing spec from brief — real project photos, location (emirate),
+ * product used and outcome for each installation.
+ */
+import BaseLayout from '@layouts/BaseLayout.astro';
+import PageHero from '@components/PageHero.astro';
+
+const segments = ['Acoustic', 'Gym & fitness', 'Animal & agricultural'];
+
+const placeholderProjects = [
+  { segment: 'Acoustic', label: 'High-rise residential — acoustic underlay' },
+  { segment: 'Acoustic', label: 'Hotel fit-out — screed isolation' },
+  { segment: 'Gym & fitness', label: 'Commercial gym — performance flooring' },
+  { segment: 'Gym & fitness', label: 'Boutique studio — rubber rolls' },
+  { segment: 'Animal & agricultural', label: 'Equestrian centre — stable matting' },
+  { segment: 'Animal & agricultural', label: 'Dairy farm — walkway pavers' },
+];
+---
+<BaseLayout
+  title="Project Gallery | Rukn Al Zain Rubber Flooring Installations UAE"
+  description="Browse completed rubber flooring and acoustic underlay installations across the UAE — residential towers, gyms, stables and farms."
+  canonical="/projects-gallery"
+  noindex
+>
+  <PageHero
+    title="Our projects"
+    lede="Completed rubber flooring and acoustic underlay installations across the UAE. This gallery is being built — the layout below shows how projects will be presented."
+    trail={[{ name: 'Home', href: '/' }, { name: 'Projects' }]}
+  />
+
+  <div class="mx-auto max-w-content px-4 py-14 sm:px-6 lg:px-8">
+    <!-- TODO: Missing spec from brief — real project photos, emirate, product used and outcome for each installation. Page is noindex + sitemap-excluded until populated. -->
+    <div class="flex flex-wrap gap-2" aria-hidden="true">
+      {
+        segments.map((s, i) => (
+          <span
+            class:list={[
+              'rounded border px-3 py-1.5 text-sm font-medium',
+              i === 0
+                ? 'border-amber-400 bg-amber-400 text-charcoal-900'
+                : 'border-industrial-300 bg-industrial-100 text-charcoal-500',
+            ]}
+          >
+            {s}
+          </span>
+        ))
+      }
+    </div>
+    <p class="mt-2 text-xs text-charcoal-400">Filtering will be enabled once projects are published.</p>
+
+    <ul class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        placeholderProjects.map((p) => (
+          <li class="flex flex-col overflow-hidden rounded border border-industrial-300 bg-white">
+            <div
+              class="flex aspect-[4/3] items-center justify-center border-b border-industrial-300 bg-charcoal-700"
+              role="img"
+              aria-label="Project photo placeholder"
+            >
+              <span class="font-heading text-xs font-semibold uppercase tracking-[0.2em] text-industrial-300">
+                Photo pending
+              </span>
+            </div>
+            <div class="flex flex-1 flex-col p-5">
+              <span class="text-xs font-semibold uppercase tracking-wide text-amber-700">{p.segment}</span>
+              <span class="mt-1.5 font-heading text-base font-semibold text-charcoal">{p.label}</span>
+              <span class="mt-2 flex-1 text-sm text-charcoal-400">
+                Location, product used and outcome — to be added.
+              </span>
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+
+    <div class="mt-12 rounded border border-industrial-300 bg-industrial-100 p-6">
+      <p class="max-w-2xl text-charcoal-700">
+        Planning a similar installation?{' '}
+        <a href="/contact" class="font-semibold text-amber-700 underline hover:text-amber-800">
+          Start a project enquiry
+        </a>
+        .
+      </p>
+    </div>
+  </div>
+</BaseLayout>

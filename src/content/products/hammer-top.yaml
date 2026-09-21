@@ -1,0 +1,71 @@
+# Re-slugged from /horse-stable-mats/hammer-top → /hammer-top: the bespoke
+# conversion page src/pages/hammer-top.astro owns this URL and is filtered out
+# of src/pages/[...slug].astro getStaticPaths. This entry stays as data (child
+# of the `animal` hub).
+path: /hammer-top
+hub: animal
+hubAnchor: animal & agricultural rubber flooring in the UAE
+image: animal
+imageAlt: "Zain Hammer Top textured heavy-duty rubber mats in a stable aisle"
+h1: Zain Hammer Top — Heavy-Duty Stable & Farm Flooring
+seoTitle: Hammer Top Rubber Mats UAE | Heavy Duty Stable Flooring | Rukn Al Zain
+metaDescription: >-
+  Zain Hammer Top mats are built for heavy use in stables, dairy farms and animal
+  enclosures — durable, non-slip and easy to maintain.
+primaryKeyword: heavy duty stable mats UAE
+secondaryKeywords:
+  - hammer top rubber mats Dubai
+  - farm flooring UAE
+
+tagline: Hammer-textured heavy-duty mats for high-traffic barn and farm areas.
+
+definition: >-
+  Zain Hammer Top mats are heavy-duty rubber mats with a hammered top texture,
+  made for the busiest parts of a stable or farm — aisles, wash bays, feed
+  passages and machinery routes — where the floor takes constant traffic from
+  animals, wheelbarrows and equipment.
+
+benefits:
+  - Built for high-traffic, demanding areas
+  - Hammered top texture for grip underfoot and under wheels
+  - Thermal insulation from the slab
+  - Low maintenance and easy to hose down
+
+applications:
+  - Stable aisles and wash bays
+  - High-traffic dairy and livestock passages
+  - Machinery and barrow routes
+
+specs:
+  # TODO: Missing spec — brief lists these rows as data to collect; no values supplied.
+  - label: Mat size
+    value: null
+    unit: mm
+  - label: Thickness
+    value: null
+    unit: mm
+  - label: Top surface pattern
+    value: Hammered texture
+  - label: Composition
+    value: Recycled rubber
+
+faqs:
+  - question: How is Hammer Top different from Zain Horse Mats?
+    answer: >-
+      Zain Horse Mats are aimed at the stall itself — the surface a single animal
+      stands and lies on. Hammer Top is aimed at shared high-traffic areas —
+      aisles, wash bays and passages — with a hammered top texture built for
+      constant movement of animals, barrows and equipment.
+  - question: Where should Hammer Top be used?
+    answer: >-
+      In the parts of a stable or farm that see the most wear: circulation
+      aisles, wash and grooming bays, feed passages and routes used by
+      wheelbarrows, feed carts and small machinery.
+  - question: Does the texture help with grip?
+    answer: >-
+      Yes. The hammered top pattern gives traction for hooves and wheels,
+      including when the surface is wet in a wash bay.
+  - question: What sizes and thicknesses are available?
+    answer: >-
+      Request the Zain Hammer Top specification sheet for the current mat sizes,
+      thickness options and pattern detail, plus pricing for larger areas.

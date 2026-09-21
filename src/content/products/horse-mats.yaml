@@ -1,0 +1,78 @@
+# Re-slugged from /horse-stable-mats/horse-mats → /horse-mats: the bespoke
+# conversion page src/pages/horse-mats.astro owns this URL and is filtered out
+# of src/pages/[...slug].astro getStaticPaths. This entry stays as data (child
+# of the `animal` hub) — the bespoke page reads none of it, so the copy below is
+# kept only for reference / a possible future fallback.
+path: /horse-mats
+hub: animal
+hubAnchor: animal & agricultural rubber flooring in the UAE
+image: animal
+imageAlt: "Zain non-slip rubber horse stall mats laid in a stable"
+h1: Zain Horse Mats — Comfort & Safety for Stables and Farms
+seoTitle: Horse Stable Mats UAE | Rubber Stall Mats Dubai | Rukn Al Zain
+metaDescription: >-
+  Durable, non-slip rubber mats for horse stables, dairy farms and animal
+  enclosures, offering thermal insulation, comfort and easy cleaning.
+primaryKeyword: horse stable mats UAE
+secondaryKeywords:
+  - horse stall mats Dubai
+  - rubber mats dairy farm UAE
+  - anti-fatigue animal mats
+
+tagline: Non-slip rubber stall mats for stables, dairy sheds and enclosures.
+
+definition: >-
+  Zain Horse Mats are heavy rubber mats laid over concrete or compacted ground in
+  stalls, dairy sheds and animal enclosures. They give animals a non-slip,
+  cushioned, thermally insulated surface to stand and lie on, and they wash down
+  easily for daily cleaning.
+
+benefits:
+  - Non-slip surface, wet or dry
+  - Anti-fatigue cushioning reduces leg and joint strain
+  - Insulates animals from cold or hot slabs
+  - Low maintenance — hoses and sweeps clean
+
+applications:
+  - Horse stables and stalls
+  - Dairy farm standing and holding areas
+  - General animal enclosures
+
+specs:
+  # TODO: Missing spec — brief lists these rows as data to collect; no values supplied.
+  - label: Mat size
+    value: null
+    unit: mm
+  - label: Thickness
+    value: null
+    unit: mm
+  - label: Surface texture options
+    value: null
+  - label: Composition
+    value: Recycled rubber
+
+climateNote: >-
+  Recycled rubber is dimensionally stable and moisture-resistant, and it
+  insulates the animal from the temperature of the slab beneath — useful in
+  un-air-conditioned barns through the UAE summer.
+
+faqs:
+  - question: Why use rubber mats in a horse stall?
+    answer: >-
+      They give the horse a non-slip, cushioned floor over hard concrete. That
+      reduces the risk of slips, lowers leg and joint fatigue when standing for
+      long periods, provides insulation from the slab, and cuts the amount of
+      bedding needed.
+  - question: Can the same mats be used on a dairy farm?
+    answer: >-
+      Yes. The non-slip, anti-fatigue and easy-clean properties that suit horse
+      stalls also suit dairy standing areas, collecting yards and holding pens.
+  - question: How are they cleaned?
+    answer: >-
+      Sweep out bedding and solids, then hose down. The mats do not absorb water
+      and can be lifted for a full wash of the slab underneath when needed.
+  - question: What sizes and thicknesses are available?
+    answer: >-
+      Request the Zain Horse Mats specification sheet for the current mat sizes,
+      thickness options and surface textures, plus bulk pricing for multiple
+      stalls.

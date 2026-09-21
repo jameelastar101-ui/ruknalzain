@@ -1,0 +1,29 @@
+---
+/**
+ * PageHero.astro — shared header band for supporting pages: breadcrumb strip on
+ * light industrial grey, then a charcoal hero with the single <h1> and an
+ * optional lede.
+ */
+import Breadcrumbs from '@components/Breadcrumbs.astro';
+
+export interface Props {
+  title: string;
+  lede?: string;
+  trail: { name: string; href?: string }[];
+}
+const { title, lede, trail } = Astro.props;
+---
+<div class="border-b border-industrial-300 bg-industrial-100">
+  <div class="mx-auto max-w-content px-4 py-4 sm:px-6 lg:px-8">
+    <Breadcrumbs trail={trail} />
+  </div>
+</div>
+
+<header class="bg-charcoal-700 text-white">
+  <div class="mx-auto max-w-content px-4 py-16 sm:px-6 lg:px-8">
+    <h1 class="max-w-3xl text-4xl font-extrabold leading-tight text-white sm:text-[2.75rem]">
+      {title}
+    </h1>
+    {lede && <p class="mt-5 max-w-2xl text-lg text-industrial-100">{lede}</p>}
+  </div>
+</header>

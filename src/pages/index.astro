@@ -1,0 +1,110 @@
+---
+/**
+ * Homepage. Metadata, H1 and segment structure follow
+ * Rukn_Al_Zain_SEO_Content_Brief.docx (§5, "/ (Homepage)").
+ *
+ * TODO: the hero and "why us" copy below is drafted from the brief outline —
+ * have it reviewed against final approved marketing copy before launch. Featured
+ * projects strip and trust signals are pending the Projects Gallery page.
+ */
+import BaseLayout from '@layouts/BaseLayout.astro';
+
+const segments = [
+  {
+    title: 'Acoustic & soundproofing flooring',
+    body: 'Rubber acoustic underlay, screed isolation and perimeter strips for high-rise, hospitality and sports projects.',
+    href: '/acoustic-soundproofing-flooring',
+    anchor: 'Explore acoustic flooring solutions',
+  },
+  {
+    title: 'Gym & fitness rubber flooring',
+    body: 'Tiles, rolls and the Zain Duo performance system for commercial gyms, studios and home gyms.',
+    href: '/gym-fitness-flooring',
+    anchor: 'Explore gym & fitness flooring',
+  },
+  {
+    title: 'Animal & agricultural rubber flooring',
+    body: 'Non-slip mats and interlocking pavers for horse stables, dairy farms, enclosures and garden walkways.',
+    href: '/animal-agricultural-flooring',
+    anchor: 'Explore animal & agricultural flooring',
+  },
+];
+---
+<BaseLayout
+  title="Rubber Flooring & Acoustic Underlay Supplier in Dubai, UAE | Rukn Al Zain"
+  description="Rukn Al Zain supplies rubber acoustic underlay, gym flooring and stable mats across the UAE. Durable, sustainable rubber flooring solutions for every project."
+  canonical="/"
+  businessSchema
+>
+  <section class="bg-charcoal-700 text-white">
+    <div class="mx-auto max-w-content px-4 py-20 sm:px-6 lg:px-8">
+      <h1 class="max-w-3xl text-4xl font-extrabold leading-tight text-white sm:text-5xl">
+        Rukn Al Zain General Trading LLC — Rubber Flooring & Acoustic Solutions, Dubai
+      </h1>
+      <p class="mt-5 max-w-2xl text-lg text-industrial-200">
+        Rukn Al Zain General Trading LLC supplies rubber acoustic underlay, gym and
+        fitness flooring, and animal and agricultural rubber mats and pavers to
+        contractors, fit-out firms and facility managers across all seven emirates
+        of the UAE. Every product is made from recycled rubber.
+      </p>
+      <div class="mt-8 flex flex-wrap gap-3">
+        <a
+          href="/contact"
+          class="inline-flex items-center rounded bg-amber-400 px-5 py-3 font-semibold text-charcoal-900 transition-colors hover:bg-amber-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-charcoal-700"
+        >
+          Request a Quote
+        </a>
+        <a
+          href="https://wa.me/971505698195"
+          target="_blank"
+          rel="noopener"
+          class="inline-flex items-center rounded border border-white/20 px-5 py-3 font-semibold transition-colors hover:border-white/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+        >
+          Message us on WhatsApp
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="bg-white">
+    <div class="mx-auto max-w-content px-4 py-16 sm:px-6 lg:px-8">
+      <h2 class="text-2xl font-bold">Three flooring segments, one supplier</h2>
+      <ul class="mt-8 grid gap-6 md:grid-cols-3">
+        {
+          segments.map((s) => (
+            <li class="flex flex-col rounded border border-industrial-300 bg-industrial-100 p-6">
+              <h3 class="text-lg font-semibold">{s.title}</h3>
+              <p class="mt-2 flex-1 text-sm text-charcoal-500">{s.body}</p>
+              <a
+                href={s.href}
+                class="mt-4 inline-flex items-center gap-1 rounded text-sm font-semibold text-amber-700 hover:text-amber-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700"
+              >
+                {s.anchor}
+                <span aria-hidden="true">&rarr;</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+
+      <div class="mt-14 max-w-3xl">
+        <h2 class="text-2xl font-bold">Why Rukn Al Zain</h2>
+        <ul class="mt-4 space-y-2 text-charcoal-700">
+          <li class="flex gap-3">
+            <span aria-hidden="true" class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-400"></span>
+            <span>Products made from recycled and recyclable rubber, diverting end-of-life tyre and industrial rubber from landfill.</span>
+          </li>
+          <li class="flex gap-3">
+            <span aria-hidden="true" class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-400"></span>
+            <span>UAE-based supply and delivery to all seven emirates: Dubai, Abu Dhabi, Sharjah, Ajman, Ras Al Khaimah, Umm Al Quwain and Fujairah.</span>
+          </li>
+          <li class="flex gap-3">
+            <span aria-hidden="true" class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-400"></span>
+            <span>One range across construction acoustics, sports and fitness, and agriculture and equestrian use.</span>
+          </li>
+        </ul>
+        <!-- TODO: Missing spec from brief — years in business, certifications and featured project references for trust signals. -->
+      </div>
+    </div>
+  </section>
+</BaseLayout>

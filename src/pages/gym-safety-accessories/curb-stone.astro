@@ -1,0 +1,1141 @@
+---
+/**
+ * /gym-safety-accessories/curb-stone — "Zain Curb Stone — Gym Safety & Protection
+ * Barriers" conversion + SEO / AEO / GEO product page.
+ *
+ * Bespoke page (not the YAML-driven generic ProductPage), built to mirror the
+ * structure, class helpers and progressive-enhancement motion of the sibling
+ * spokes src/pages/gym-flooring-rolls/zainduo.astro,
+ * src/pages/rubber-gym-tiles/zainfit.astro and
+ * src/pages/rubber-gym-tiles/zainsquare.astro, and the parent hub
+ * src/pages/gym-safety-accessories.astro.
+ *
+ * ─── ROUTING ─────────────────────────────────────────────────────────────
+ * The content entry src/content/products/curb-stone.yaml still carries
+ * `path: /gym-safety-accessories/curb-stone` (a child of the `gym` hub). To
+ * avoid a duplicate-route build error the matching branch is filtered out of
+ * getStaticPaths in src/pages/[...slug].astro — the same pattern already used
+ * for zainfit, zainsquare, zainduo and zainactive-rolls. The YAML entry stays
+ * as data; this file serves the URL.
+ *
+ * ─── STACK DEVIATION FROM THE BUILD REQUEST ─────────────────────────────
+ * The request named React / Next.js (App Router) + lucide-react. This project
+ * is a static Astro site (output: 'static', zero-JS by default, no
+ * @astrojs/react) deployed to Netlify — see CLAUDE.md. To keep the page
+ * zero-JS and consistent with every sibling spoke:
+ *   - Icons: the SAME Lucide glyphs are inlined below as 24×24 stroke path
+ *     data — identical rendered output, no client runtime.
+ *   - "App Router metadata" → Astro <head> metadata via BaseLayout/Seo props.
+ *   - The BreadcrumbList schema from the request is emitted (host normalised to
+ *     the configured canonical domain — see CANONICAL HOST note) together with
+ *     Product + FAQPage in one combined @graph, matching the sibling spokes and
+ *     CLAUDE.md §5.
+ *
+ * ─── CANONICAL HOST ─────────────────────────────────────────────────────
+ * The request shows "rukanalzain.com"; the configured site is
+ * "ruknalzain.ae" (astro.config.mjs). Canonical + schema URLs are built
+ * from the configured host via the BaseLayout `canonical` prop — same choice as
+ * the zainduo / zainsquare siblings. trailingSlash: 'never' (astro.config.mjs),
+ * so no trailing slashes on internal item URLs.
+ *
+ * ─── IMAGE ASSETS ───────────────────────────────────────────────────────
+ * Client-supplied JPEGs in public/images/gym-safety-accessories/, wired below
+ * with intrinsic width/height to prevent layout shift:
+ *   - zain-curb-stone-hero.jpg                        (hero)
+ *   - zain-curb-stone-dramatic-shatter-impact.jpg     (problem/solution)
+ *   - zain-curb-stone-mirror-protection-closeup.jpg   (applications)
+ * TODO: convert these to optimised WebP to match the parent hub's asset
+ * pipeline (its set is WebP; the JPEG sources there were deleted post-convert).
+ * og:image falls back to the hero file (no purpose-built 1200×630 card yet).
+ *
+ * ─── DATA INTEGRITY FLAGS (CLAUDE.md §0 + §6) ───────────────────────────
+ *   - The §5 technical table is DESCRIPTIVE only (composition, protection
+ *     scope, thermal / chemical behaviour, install method) — verbatim from the
+ *     request, no numbers asserted. curb-stone.yaml still lists Dimensions
+ *     (L×W×H), Weight and Colour options as unfilled TODOs; collect and publish
+ *     those before go-live.
+ *   - Hero primary CTA scrolls to the in-page lead-capture form (#lead-form),
+ *     a Netlify Forms POST — matching contact.astro and the sibling spokes.
+ *   - FAQ answers are reused verbatim from the parent hub
+ *     (src/pages/gym-safety-accessories.astro) so terminology stays consistent
+ *     across the hub and spoke (CLAUDE.md §3).
+ */
+import BaseLayout from '@layouts/BaseLayout.astro';
+
+const SITE = (Astro.site ?? new URL('https://ruknalzain.ae')).origin;
+const IMG = '/images/gym-safety-accessories';
+const PATH = '/gym-safety-accessories/curb-stone';
+
+/* Request-specified curb-stone photography — see IMAGE ASSETS note above. */
+const HERO_IMG = `${IMG}/zain-curb-stone-hero.jpg`;
+const HERO_ALT =
+  'Zain Curb Stone rubber gym safety barrier with official Rukn Al Zain product label displayed in a Dubai fitness facility';
+const PS_IMG = `${IMG}/zain-curb-stone-dramatic-shatter-impact.jpg`;
+const PS_ALT =
+  'High-speed cinematic action shot capturing a heavy barbell impact shattering glass and baseboards versus total shock absorption by a Zain Curb Stone barrier in a Dubai gym';
+const APPS_IMG = `${IMG}/zain-curb-stone-mirror-protection-closeup.jpg`;
+const APPS_ALT =
+  'Close-up of Zain Curb Stone rubber barrier resting tightly against a floor-to-ceiling mirror wall, blocking a heavy dumbbell in a Dubai gym';
+const OG_IMG = HERO_IMG; // fallback share image — no purpose-built 1200×630 card yet
+
+const WHATSAPP_HERO =
+  'https://wa.me/971505698195?text=Hello%20Rukn%20Al%20Zain,%20I%20am%20interested%20in%20Zain%20Curb%20Stone%20safety%20barriers';
+const WHATSAPP_PLAIN = 'https://wa.me/971505698195';
+
+/* ─── Inline Lucide icon path data (24×24, currentColor stroke) ─────────── */
+const icon: Record<string, string> = {
+  'shield-check':
+    '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/>',
+  shield:
+    '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>',
+  truck:
+    '<path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/>',
+  'building-2':
+    '<path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/>',
+  building:
+    '<rect width="16" height="20" x="4" y="2" rx="2" ry="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01"/><path d="M16 6h.01"/><path d="M12 6h.01"/><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/>',
+  hotel:
+    '<path d="M10 22v-6.57"/><path d="M12 11h.01"/><path d="M12 7h.01"/><path d="M14 15.43V22"/><path d="M15 16a5 5 0 0 0-6 0"/><path d="M16 11h.01"/><path d="M16 7h.01"/><path d="M8 11h.01"/><path d="M8 7h.01"/><rect x="4" y="2" width="16" height="20" rx="2"/>',
+  dumbbell:
+    '<path d="M14.4 14.4 9.6 9.6"/><path d="M18.657 21.485a2 2 0 1 1-2.829-2.828l-1.767 1.768a2 2 0 1 1-2.829-2.829l6.364-6.364a2 2 0 1 1 2.829 2.829l-1.768 1.767a2 2 0 1 1 2.828 2.829z"/><path d="m21.5 21.5-1.4-1.4"/><path d="M3.9 3.9 2.5 2.5"/><path d="M6.404 12.768a2 2 0 1 1-2.829-2.829l1.768-1.767a2 2 0 1 1-2.828-2.829l2.828-2.828a2 2 0 1 1 2.829 2.828l1.767-1.768a2 2 0 1 1 2.829 2.829z"/>',
+  activity:
+    '<path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2"/>',
+  'volume-x':
+    '<path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"/><path d="m22 9-6 6"/><path d="m16 9 6 6"/>',
+  layers:
+    '<path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"/><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"/><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"/>',
+  sun:
+    '<circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>',
+  'flask-conical':
+    '<path d="M14 2v6a2 2 0 0 0 .245.96l5.51 10.08A2 2 0 0 1 18 22H6a2 2 0 0 1-1.755-2.96l5.51-10.08A2 2 0 0 0 10 8V2"/><path d="M6.453 15h11.094"/><path d="M8.5 2h7"/>',
+  headset:
+    '<path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-5a9 9 0 0 1 18 0v5a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3"/>',
+  warehouse:
+    '<path d="M22 8.35V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8.35A2 2 0 0 1 3.26 6.5l8-3.2a2 2 0 0 1 1.48 0l8 3.2A2 2 0 0 1 22 8.35Z"/><path d="M6 18h12"/><path d="M6 14h12"/><path d="M6 10h12"/>',
+  search: '<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',
+  package:
+    '<path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"/><path d="M12 22V12"/><polyline points="3.29 7 12 12 20.71 7"/><path d="m7.5 4.27 9 5.15"/>',
+  wrench:
+    '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>',
+  'map-pin':
+    '<path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/>',
+};
+
+/* ─── 2. Trust bar — verbatim from the request ─────────────────────────── */
+const trustCards = [
+  {
+    icon: 'shield-check',
+    term: 'GCC Climate Certified',
+    desc: 'Resists extreme temperature swings and continuous AC cycling without off-gassing, drying out, or cracking.',
+  },
+  {
+    icon: 'truck',
+    term: '24–48 Hour Local Delivery',
+    desc: 'Direct dispatch from central Dubai inventory across all seven Emirates.',
+  },
+  {
+    icon: 'building-2',
+    term: 'Architectural Fit-Out Protection',
+    desc: 'Built specifically to save multi-million Dirham subfloors, mirror walls, and perimeter glass facades.',
+  },
+];
+
+/* ─── 3. Problem / Solution — paired lists, verbatim from the request ──── */
+const problemPoints = [
+  {
+    term: 'Stray Rolling Equipment',
+    desc: 'Loose dumbbells roll out of drop zones, creating immediate trip hazards.',
+  },
+  {
+    term: 'Costly Wall & Mirror Damage',
+    desc: 'Stray weights collide with mirror walls, glass facades, and drywall, causing shattered fixtures and high repair bills.',
+  },
+  {
+    term: 'Inadequate Light Barriers',
+    desc: 'Standard plastic or light foam stoppers shatter instantly under real barbell impacts.',
+  },
+  {
+    term: 'Vibration & Structural Shock',
+    desc: 'Unprotected impacts transmit kinetic energy and vibration through concrete slabs in high-rise towers.',
+  },
+];
+const solutionPoints = [
+  {
+    term: 'Heavy Equipment Containment',
+    desc: 'Immovable physical border that stops rolling barbells right at the perimeter.',
+  },
+  {
+    term: 'Kinetic Impact Absorption',
+    desc: 'High-density recycled SBR rubber matrix absorbs dynamic force, shielding surrounding glass and walls.',
+  },
+  {
+    term: 'Shatter-Proof Durability',
+    desc: 'Polyurethane-bound SBR withstands continuous heavy impacts without cracking or flaking.',
+  },
+  {
+    term: 'Vibration Isolation',
+    desc: 'Dampens shock before reaching structural walls, reducing noise transfer through building frames.',
+  },
+];
+
+/* ─── 4. Key product benefits — 5, verbatim from the request ───────────── */
+const benefits = [
+  {
+    icon: 'activity',
+    term: 'Heavy-Duty Impact Absorption',
+    desc: 'High-density SBR dissipates dynamic energy from weight drops.',
+  },
+  {
+    icon: 'shield-check',
+    term: 'Perimeter Containment & Security',
+    desc: 'Physical boundary around free-weight platforms and dumbbell racks.',
+  },
+  {
+    icon: 'shield',
+    term: 'Glass & Structural Protection',
+    desc: 'Prevents costly cracking of mirror walls, glass facades, and drywall.',
+  },
+  {
+    icon: 'layers',
+    term: 'Flexible Modular Installation',
+    desc: 'Lay-flat design; loose-lay or floor-anchored.',
+  },
+  {
+    icon: 'sun',
+    term: 'GCC Climate Resilient',
+    desc: 'Heat-resistant polyurethane binders prevent warping and off-gassing.',
+  },
+];
+
+/* ─── 5. Technical specifications — DESCRIPTIVE ONLY, verbatim (no numbers) */
+const specRows: [string, string][] = [
+  [
+    'Material Composition',
+    'Recycled SBR granules bound with high-performance polyurethane binders',
+  ],
+  [
+    'Primary Protection Scope',
+    'Kinetic shock absorption, weight containment, and glass/mirror collision defense',
+  ],
+  [
+    'Thermal Stability',
+    'Resists continuous temperature swings between UAE heat and cold indoor AC',
+  ],
+  [
+    'Chemical & Moisture Resistance',
+    'Non-porous surface finish resists sweat absorption, humidity, and cleaning agents',
+  ],
+  [
+    'Installation Method',
+    'Modular lay-flat design; loose-lay or polyurethane adhesive anchored',
+  ],
+];
+
+/* ─── 6. Ideal applications — 4, verbatim from the request ─────────────── */
+const applications = [
+  {
+    icon: 'dumbbell',
+    term: 'Commercial Fitness Clubs',
+    desc: 'Positioned beneath dumbbell racks and perimeter walls to stop heavy rolling weights.',
+  },
+  {
+    icon: 'building',
+    term: 'High-Rise Residential Gyms',
+    desc: 'Stops perimeter impacts against structural concrete, reducing sound transfer across tower frames.',
+  },
+  {
+    icon: 'hotel',
+    term: 'Boutique & Hotel Studios',
+    desc: 'Maintains neat boundaries while protecting custom interior finishes.',
+  },
+  {
+    icon: 'activity',
+    term: 'CrossFit & Powerlifting Zones',
+    desc: 'Works alongside heavy weightlifting tiles to form a complete perimeter safety barrier.',
+  },
+];
+
+/* ─── 8. Why Rukn Al Zain — USP cards + 4-step process + delivery ──────── */
+const uspCards = [
+  {
+    icon: 'warehouse',
+    term: 'Central Dubai Stock',
+    desc: 'Large reserves held locally for rapid site dispatch to any Emirate.',
+  },
+  {
+    icon: 'flask-conical',
+    term: 'Quality-Tested SBR',
+    desc: 'Recycled SBR and polyurethane binder formulations tested for continuous heavy impact.',
+  },
+  {
+    icon: 'headset',
+    term: 'Technical Guidance',
+    desc: 'Support on perimeter layout, anchoring method and free-weight zone boundaries.',
+  },
+];
+const processSteps = [
+  {
+    n: '01',
+    icon: 'search',
+    term: 'Facility Assessment',
+    desc: 'We evaluate your floor plan to identify perimeter risks, mirror edges, and free-weight zones.',
+  },
+  {
+    n: '02',
+    icon: 'package',
+    term: 'Material Samples',
+    desc: 'Physical product samples and the technical data sheet delivered to your office or site.',
+  },
+  {
+    n: '03',
+    icon: 'truck',
+    term: 'Direct Site Dispatch',
+    desc: 'Orders load directly from our central Dubai inventory and ship to your location.',
+  },
+  {
+    n: '04',
+    icon: 'wrench',
+    term: 'Layout Guidance',
+    desc: 'Clear layout and anchoring instructions for temporary loose-lay or permanent bonded setups.',
+  },
+];
+const primaryHub = {
+  term: 'Primary Hub — Dubai',
+  desc: 'Downtown, Business Bay, Al Quoz, Dubai Marina, JLT, Palm Jumeirah and DIFC — same-week dispatch.',
+};
+const extendedCoverage = [
+  { term: 'Abu Dhabi & Al Ain', desc: 'Commercial fitness centers, sports complexes and private facilities.' },
+  { term: 'Sharjah', desc: 'Educational sports halls, community gyms and commercial fit-outs.' },
+  { term: 'Ajman', desc: 'Hotel wellness centers, home gyms and commercial studios.' },
+  { term: 'Ras Al Khaimah', desc: 'Resort fitness suites and commercial gym projects.' },
+  { term: 'Fujairah', desc: 'East-coast hospitality, sports and commercial facilities.' },
+  { term: 'Umm Al Quwain', desc: 'Public venues, private gyms and residential fit-out projects.' },
+];
+
+/* Project-location dropdown for the lead form. */
+const emirates = [
+  'Dubai',
+  'Abu Dhabi',
+  'Sharjah',
+  'Ajman',
+  'Ras Al Khaimah',
+  'Umm Al Quwain',
+  'Fujairah',
+  'Outside the UAE',
+];
+
+/* ─── 9. FAQ (AEO) — 8 self-contained answers, reused verbatim from the
+       parent hub src/pages/gym-safety-accessories.astro for consistent
+       terminology (CLAUDE.md §3). */
+const faqs = [
+  {
+    question: 'How do Rukn Al Zain gym safety accessories prevent facility damage?',
+    answer:
+      'Our high-density rubber curb stones form a heavy physical barrier around free-weight and dumbbell zones. When weights drop or roll, the rubber absorbs the impact energy, stopping the equipment before it can hit and shatter wall mirrors, glass windows, or drywall.',
+  },
+  {
+    question: 'Can these safety barriers be installed in rented commercial spaces in Dubai?',
+    answer:
+      'Yes, our safety accessories can be loose-laid directly over existing rubber flooring or raw concrete without permanent adhesives. This non-destructive setup allows tenants to protect rented properties and remove the accessories easily at the end of their lease.',
+  },
+  {
+    question: 'What specific material is used to manufacture Zain Curb Stones?',
+    answer:
+      'Zain Curb Stones are built using high-density recycled SBR rubber granules combined with high-performance polyurethane binders. This composition creates an extremely tough, flexible barrier that absorbs dynamic impact forces continuously without cracking.',
+  },
+  {
+    question: 'How do rubber safety curb stones compare to plastic or wood barriers?',
+    answer:
+      'Plastic and wood barriers often crack, splinter, or chip when struck by heavy steel dumbbells or barbells. High-density rubber absorbs kinetic shock, retains its shape, and does not damage dropped equipment or floor surfaces.',
+  },
+  {
+    question: 'How are safety curb stones used in free-weight and dumbbell training areas?',
+    answer:
+      'Curb stones are arranged along the perimeter of free-weight areas, particularly beneath dumbbell racks and along glass walls. They create a secure border that contains weights within designated lifting zones.',
+  },
+  {
+    question: 'Do these safety accessories require specialized tools for maintenance and cleaning?',
+    answer:
+      'No, the non-porous rubber surface can be swept, vacuumed, or wiped down using standard floor cleaning detergents and damp mops.',
+  },
+  {
+    question: 'How do environmental conditions in the UAE affect rubber safety accessories?',
+    answer:
+      'Our safety accessories are engineered with heat-resistant binders that prevent warping, drying out, or off-gassing under high coastal humidity and continuous indoor air conditioning.',
+  },
+  {
+    question:
+      'Why are rubber safety barriers critical for high-rise gyms located in Downtown Dubai or Business Bay?',
+    answer:
+      'High-rise buildings in Dubai feature concrete slabs that transfer vibration. Safety barriers absorb weight drops right at the perimeter, preventing structural impacts against surrounding walls and keeping noise from transferring through the building frame.',
+  },
+];
+
+/* ─── Structured data — single combined @graph (build request §1) ─────── */
+const breadcrumbSchema = {
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE}/` },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: 'Gym Safety Accessories',
+      item: `${SITE}/gym-safety-accessories`,
+    },
+    { '@type': 'ListItem', position: 3, name: 'Zain Curb Stone', item: `${SITE}${PATH}` },
+  ],
+};
+
+const productSchema = {
+  '@type': 'Product',
+  name: 'Zain Curb Stone Gym Safety & Protection Barrier',
+  description:
+    'Heavy-duty, high-density recycled SBR rubber curb stone engineered to contain free weights, stop rolling equipment, and shield mirror walls, glass facades and drywall from dynamic impacts in commercial and home gyms across Dubai and the UAE.',
+  image: `${SITE}${OG_IMG}`,
+  sku: 'RZ-CURB-STONE',
+  category: 'Gym Safety Accessories & Protection Barriers',
+  url: `${SITE}${PATH}`,
+  brand: { '@type': 'Brand', name: 'Rukn Al Zain' },
+  manufacturer: { '@type': 'Organization', name: 'Rukn Al Zain General Trading LLC' },
+  material:
+    'Recycled SBR rubber granules bound with high-performance polyurethane binders',
+  areaServed: 'United Arab Emirates',
+};
+
+const faqSchema = {
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((f) => ({
+    '@type': 'Question',
+    name: f.question,
+    acceptedAnswer: { '@type': 'Answer', text: f.answer },
+  })),
+};
+
+const graphSchema = {
+  '@context': 'https://schema.org',
+  '@graph': [breadcrumbSchema, productSchema, faqSchema],
+};
+
+/* Shared class helpers — mirror src/pages/gym-flooring-rolls/zainduo.astro. */
+const sectionShell = 'border-t border-industrial-300 py-14 sm:py-16';
+const container = 'mx-auto max-w-content px-4 sm:px-6 lg:px-8';
+const h2 = 'text-2xl font-bold text-charcoal';
+const lede = 'mt-4 max-w-3xl text-charcoal-600';
+const primaryCta =
+  'inline-flex items-center justify-center rounded bg-amber-400 px-5 py-3 font-semibold text-charcoal-900 transition-colors hover:bg-amber-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2';
+const ghostCta =
+  'inline-flex items-center justify-center rounded border border-white/25 px-5 py-3 font-semibold text-white transition-colors hover:border-white/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400';
+const iconChip =
+  'mb-3 grid h-11 w-11 place-items-center rounded bg-white text-amber-700 ring-1 ring-industrial-300';
+const crumbLink =
+  'rounded hover:text-amber-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700';
+const fieldClass =
+  'mt-1.5 block w-full rounded border border-charcoal-300 bg-white px-3 py-2.5 text-charcoal shadow-sm focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-700';
+const labelClass = 'block text-sm font-medium text-charcoal';
+---
+
+<BaseLayout
+  title="Rubber Curb Stones UAE | Gym Equipment Protection | Rukn Al Zain"
+  description="Zain Curb Stones absorb impact and protect glass, mirrors, and equipment from accidental weight drops in commercial and home gyms."
+  canonical={PATH}
+  ogImage={OG_IMG}
+  ogImageAlt="Zain Curb Stone heavy-duty SBR rubber gym safety and protection barrier by Rukn Al Zain, Dubai UAE."
+>
+  <article class="zcs-page">
+    {/*
+      Mark the document as JS-capable ASAP so scroll-reveal elements start hidden
+      only when the animation engine is available. A failsafe timer guarantees
+      content becomes visible even if the observer below never runs, and
+      reduced-motion visitors skip the effect entirely.
+    */}
+    <script is:inline>
+      (function () {
+        document.documentElement.classList.add('zcs-js');
+        var sel = '.zcs-page [data-reveal], .zcs-page [data-reveal-group]';
+        var showAll = function () {
+          document.querySelectorAll(sel).forEach(function (el) {
+            el.classList.add('in');
+          });
+        };
+        var reduce =
+          window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (reduce) {
+          if (document.readyState === 'loading')
+            document.addEventListener('DOMContentLoaded', showAll);
+          else showAll();
+        } else {
+          setTimeout(showAll, 1600);
+        }
+      })();
+    </script>
+
+    {/* Breadcrumb strip — Home > Gym Safety Accessories > Zain Curb Stone.
+        Hand-rolled (not <Breadcrumbs />) so the BreadcrumbList JSON-LD is
+        declared once, in the combined @graph at the foot of this file. */}
+    <div class="border-b border-industrial-300 bg-industrial-100">
+      <div class={`${container} py-4`}>
+        <nav aria-label="Breadcrumb" class="text-sm">
+          <ol class="flex flex-wrap items-center gap-x-2 gap-y-1 text-charcoal-500">
+            <li class="flex items-center gap-x-2">
+              <a href="/" class={crumbLink}>Home</a>
+            </li>
+            <li class="flex items-center gap-x-2">
+              <span aria-hidden="true" class="text-charcoal-300">/</span>
+              <a href="/gym-safety-accessories" class={crumbLink}>Gym Safety Accessories</a>
+            </li>
+            <li class="flex items-center gap-x-2">
+              <span aria-hidden="true" class="text-charcoal-300">/</span>
+              <span aria-current="page" class="font-medium text-charcoal">Zain Curb Stone</span>
+            </li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+
+    {/* ─── 1. HERO ─────────────────────────────────────────────────────────── */}
+    <header class="bg-charcoal-700 text-white">
+      <div class={`${container} py-14 sm:py-16`}>
+        <div class="grid items-center gap-10 lg:grid-cols-2">
+          <div data-hero>
+            <p class="font-heading text-sm font-semibold uppercase tracking-wide text-amber-400">
+              Gym Safety &amp; Protection Barriers
+            </p>
+            <h1 class="mt-3 text-4xl font-extrabold leading-tight text-white sm:text-5xl">
+              Zain Curb Stone — Gym Safety &amp; Protection Barriers
+            </h1>
+
+            {/* AEO direct-answer block — sits immediately under the H1 */}
+            <p class="mt-5 max-w-xl border-l-[3px] border-amber-400 pl-4 text-lg text-industrial-100">
+              Heavy-duty, high-density SBR rubber curb stones engineered to contain free weights,
+              prevent equipment rolling, and shield glass facades or mirrors from dynamic impacts in
+              Dubai fitness facilities.
+            </p>
+
+            <div class="mt-7 flex flex-wrap gap-3">
+              <a href="#lead-form" class={`${primaryCta} focus-visible:ring-offset-charcoal-700`}>
+                Request Free Sample &amp; Project Quote
+              </a>
+              <a
+                href={WHATSAPP_HERO}
+                target="_blank"
+                rel="noopener"
+                class={`${ghostCta} focus-visible:ring-offset-charcoal-700`}
+              >
+                Chat on WhatsApp (+971 50 569 8195)
+              </a>
+            </div>
+          </div>
+
+          <figure class="m-0" data-hero>
+            <img
+              src={HERO_IMG}
+              alt={HERO_ALT}
+              title="Zain Curb Stone SBR rubber gym safety barrier — Rukn Al Zain, Dubai"
+              width="1024"
+              height="1024"
+              loading="eager"
+              fetchpriority="high"
+              decoding="async"
+              class="h-auto w-full rounded border border-white/10"
+            />
+          </figure>
+        </div>
+      </div>
+    </header>
+
+    {/* ─── 2. TRUST BAR ───────────────────────────────────────────────────── */}
+    <section aria-labelledby="trust-h" class={`${sectionShell} bg-white`}>
+      <div class={container}>
+        <h2 id="trust-h" class={h2} data-reveal>
+          Supplied &amp; Delivered Across Dubai &amp; the UAE
+        </h2>
+        <dl class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3" data-reveal-group>
+          {
+            trustCards.map((it) => (
+              <div class="card-lift rounded border border-industrial-300 border-l-[3px] border-l-amber-400 bg-industrial-100 p-5">
+                <span class={iconChip} aria-hidden="true">
+                  <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" set:html={icon[it.icon]} />
+                </span>
+                <dt class="font-heading font-semibold text-charcoal">{it.term}</dt>
+                <dd class="mt-1.5 text-sm text-charcoal-600">{it.desc}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+    </section>
+
+    {/* ─── 3. PROBLEM & SOLUTION ──────────────────────────────────────────── */}
+    <section aria-labelledby="ps-h" class={`${sectionShell} bg-industrial-100`}>
+      <div class={container}>
+        <h2 id="ps-h" class={h2} data-reveal>
+          The Unprotected Risk vs. the Zain Curb Stone Defense
+        </h2>
+
+        <div class="mt-8 grid gap-6 lg:grid-cols-2" data-reveal-group>
+          {/* The Problem */}
+          <div class="rounded border border-industrial-300 border-l-[3px] border-l-danger bg-white p-6">
+            <h3 class="font-heading text-lg font-bold text-charcoal">
+              The Unprotected Risk
+            </h3>
+            <dl class="mt-4 space-y-4">
+              {
+                problemPoints.map((p) => (
+                  <div>
+                    <dt class="flex gap-2 font-heading text-sm font-semibold text-charcoal">
+                      <span class="mt-0.5 text-danger" aria-hidden="true">&#10007;</span>
+                      <span>{p.term}</span>
+                    </dt>
+                    <dd class="mt-1 pl-6 text-sm text-charcoal-600">{p.desc}</dd>
+                  </div>
+                ))
+              }
+            </dl>
+          </div>
+
+          {/* The Solution */}
+          <div class="rounded border border-industrial-300 border-l-[3px] border-l-success bg-white p-6">
+            <h3 class="font-heading text-lg font-bold text-charcoal">
+              The Zain Curb Stone Defense
+            </h3>
+            <dl class="mt-4 space-y-4">
+              {
+                solutionPoints.map((s) => (
+                  <div>
+                    <dt class="flex gap-2 font-heading text-sm font-semibold text-charcoal">
+                      <span class="mt-0.5 text-success" aria-hidden="true">&#10003;</span>
+                      <span>{s.term}</span>
+                    </dt>
+                    <dd class="mt-1 pl-6 text-sm text-charcoal-600">{s.desc}</dd>
+                  </div>
+                ))
+              }
+            </dl>
+          </div>
+        </div>
+
+        <figure class="m-0 mt-10" data-reveal>
+          <img
+            src={PS_IMG}
+            alt={PS_ALT}
+            title="Barbell impact shattering glass and baseboards versus shock absorption by a Zain Curb Stone barrier"
+            width="1376"
+            height="768"
+            loading="lazy"
+            decoding="async"
+            class="h-auto w-full rounded border border-industrial-300"
+          />
+        </figure>
+      </div>
+    </section>
+
+    {/* ─── 4. KEY PRODUCT BENEFITS ────────────────────────────────────────── */}
+    <section aria-labelledby="benefits-h" class={`${sectionShell} bg-white`}>
+      <div class={container}>
+        <h2 id="benefits-h" class={h2} data-reveal>Key Product Benefits</h2>
+        <dl
+          class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5"
+          data-reveal-group
+        >
+          {
+            benefits.map((it) => (
+              <div class="card-lift rounded border border-industrial-300 bg-industrial-100 p-5">
+                <span class={iconChip} aria-hidden="true">
+                  <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" set:html={icon[it.icon]} />
+                </span>
+                <dt class="font-heading font-semibold text-charcoal">{it.term}</dt>
+                <dd class="mt-1.5 text-sm text-charcoal-600">{it.desc}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+    </section>
+
+    {/* ─── 5. TECHNICAL SPECIFICATIONS ────────────────────────────────────── */}
+    <section aria-labelledby="specs-h" class={`${sectionShell} bg-industrial-100`}>
+      <div class={container}>
+        <h2 id="specs-h" class={h2} data-reveal>Technical Specifications</h2>
+        <p class={lede} data-reveal>
+          Material engineering, protection scope, climate behaviour and installation method for the
+          Zain Curb Stone barrier system.
+        </p>
+
+        <div class="mt-8 overflow-x-auto" data-reveal>
+          <table class="w-full border-collapse text-left text-sm tabular-nums">
+            <caption class="sr-only">
+              Zain Curb Stone gym safety and protection barrier technical specifications
+            </caption>
+            <thead>
+              <tr class="border-b-2 border-charcoal-300">
+                <th scope="col" class="w-2/5 px-4 py-3 font-heading font-semibold text-charcoal">
+                  Specification Parameter
+                </th>
+                <th scope="col" class="px-4 py-3 font-heading font-semibold text-charcoal">
+                  Technical Detail
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                specRows.map(([label, value], i) => (
+                  <tr class:list={['border-b border-industrial-300', i % 2 === 1 && 'bg-white']}>
+                    <th scope="row" class="w-2/5 px-4 py-3 align-top font-semibold text-charcoal">
+                      {label}
+                    </th>
+                    <td class="px-4 py-3 align-top text-charcoal-600">{value}</td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
+
+        {/* TODO: Missing spec from brief — curb-stone.yaml lists Dimensions (L×W×H),
+            unit Weight and Colour options as null "to collect". Publish confirmed
+            dimensional data, unit weight and the colour range before go-live. */}
+        <p class="mt-3 text-xs text-charcoal-500" data-reveal>
+          Unit dimensions, weight per block and colour options are confirmed on the current Zain Curb
+          Stone specification sheet — <a
+            href="#lead-form"
+            class="rounded font-semibold text-amber-700 hover:text-amber-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700"
+          >request a copy</a>.
+        </p>
+      </div>
+    </section>
+
+    {/* ─── 6. BEST FOR / IDEAL APPLICATIONS ───────────────────────────────── */}
+    <section aria-labelledby="apps-h" class={`${sectionShell} bg-white`}>
+      <div class={container}>
+        <h2 id="apps-h" class={h2} data-reveal>Best For / Ideal Applications</h2>
+
+        <div class="mt-8 grid gap-10 lg:grid-cols-2 lg:items-center">
+          <figure class="m-0" data-reveal>
+            <img
+              src={APPS_IMG}
+              alt={APPS_ALT}
+              title="Zain Curb Stone barrier against a floor-to-ceiling mirror wall blocking a heavy dumbbell in a Dubai gym"
+              width="1376"
+              height="768"
+              loading="lazy"
+              decoding="async"
+              class="h-auto w-full rounded border border-industrial-300"
+            />
+          </figure>
+
+          <div data-reveal>
+            <h3 class="font-heading text-lg font-bold text-charcoal">
+              Wall &amp; Mirror Protection, Built In
+            </h3>
+            <p class="mt-3 text-charcoal-600">
+              Positioned tight against mirror walls and glass facades, Zain Curb Stones take the
+              collision so the fixture never does — a dense rubber buffer between your free-weight
+              zone and every expensive architectural finish around it.
+            </p>
+          </div>
+        </div>
+
+        <dl class="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4" data-reveal-group>
+          {
+            applications.map((it) => (
+              <div class="card-lift rounded border border-industrial-300 border-l-[3px] border-l-amber-400 bg-industrial-100 p-5">
+                <span class={iconChip} aria-hidden="true">
+                  <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" set:html={icon[it.icon]} />
+                </span>
+                <dt class="font-heading font-semibold text-charcoal">{it.term}</dt>
+                <dd class="mt-1.5 text-sm text-charcoal-600">{it.desc}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+    </section>
+
+    {/* ─── 7. GEOGRAPHIC SIGNALS ──────────────────────────────────────────── */}
+    <section aria-labelledby="geo-h" class={`${sectionShell} bg-industrial-100`}>
+      <div class={container}>
+        <div
+          class="rounded border border-industrial-300 border-l-[3px] border-l-amber-400 bg-white p-6 sm:p-8"
+          data-reveal
+        >
+          <h3 id="geo-h" class="font-heading text-xl font-bold text-charcoal">
+            Why Rubber Safety Barriers Are Essential for Dubai Facilities
+          </h3>
+          <p class="mt-4 text-charcoal-600">
+            Gym facilities in Al Quoz, Sheikh Zayed Road, Business Bay, Downtown Dubai, and Palm
+            Jumeirah feature modern architectural layouts with extensive mirror walls and glass
+            facades. Dropping or rolling heavy weights in these commercial and residential towers
+            presents major structural and financial risks. Zain Curb Stones act as shock-absorbing
+            buffers, protecting glass fixtures and resisting degradation from intense GCC humidity and
+            continuous air conditioning.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    {/* ─── 8. ABOUT RUKN AL ZAIN & DELIVERY ───────────────────────────────── */}
+    <section aria-labelledby="rzn-h" class={`${sectionShell} bg-white`}>
+      <div class={container}>
+        <h2 id="rzn-h" class={h2} data-reveal>About Rukn Al Zain &amp; Delivery</h2>
+        <p class={lede} data-reveal>
+          Rukn Al Zain General Trading LLC is a trusted Dubai-based supplier specializing in
+          high-performance rubber flooring and safety accessories engineered specifically for the GCC
+          region (P.O. Box 36528, Dubai, UAE).
+        </p>
+
+        <dl class="mt-8 grid gap-5 lg:grid-cols-3" data-reveal-group>
+          {
+            uspCards.map((it) => (
+              <div class="card-lift rounded border border-industrial-300 bg-industrial-100 p-5">
+                <span class={iconChip} aria-hidden="true">
+                  <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" set:html={icon[it.icon]} />
+                </span>
+                <dt class="font-heading font-semibold text-charcoal">{it.term}</dt>
+                <dd class="mt-1.5 text-sm text-charcoal-600">{it.desc}</dd>
+              </div>
+            ))
+          }
+        </dl>
+
+        <h3 class="mt-12 font-heading text-lg font-bold text-charcoal" data-reveal>
+          Our 4-Step Process
+        </h3>
+        <ol class="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-4" data-reveal-group>
+          {
+            processSteps.map((s) => (
+              <li class="card-lift flex h-full flex-col rounded border border-industrial-300 bg-industrial-100 p-5">
+                <div class="flex items-center justify-between">
+                  <span class="grid h-11 w-11 place-items-center rounded bg-white text-amber-700 ring-1 ring-industrial-300" aria-hidden="true">
+                    <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" set:html={icon[s.icon]} />
+                  </span>
+                  <span class="font-heading text-2xl font-extrabold text-industrial-400" aria-hidden="true">
+                    {s.n}
+                  </span>
+                </div>
+                <h4 class="mt-3 font-heading text-base font-bold text-charcoal">{s.term}</h4>
+                <p class="mt-1.5 text-sm text-charcoal-600">{s.desc}</p>
+              </li>
+            ))
+          }
+        </ol>
+
+        <h3 class="mt-12 font-heading text-lg font-bold text-charcoal" data-reveal>
+          Service Area
+        </h3>
+        <dl class="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3" data-reveal-group>
+          <div class="card-lift rounded border border-industrial-300 border-l-[3px] border-l-amber-400 bg-industrial-100 p-5 sm:col-span-2 lg:col-span-1">
+            <span class="grid h-11 w-11 place-items-center rounded bg-white text-amber-700 ring-1 ring-industrial-300" aria-hidden="true">
+              <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" set:html={icon['map-pin']} />
+            </span>
+            <dt class="mt-3 font-heading font-semibold text-charcoal">{primaryHub.term}</dt>
+            <dd class="mt-1.5 text-sm text-charcoal-600">{primaryHub.desc}</dd>
+          </div>
+          {
+            extendedCoverage.map((a) => (
+              <div class="card-lift rounded border border-industrial-300 bg-industrial-100 p-5">
+                <span class="grid h-11 w-11 place-items-center rounded bg-white text-amber-700 ring-1 ring-industrial-300" aria-hidden="true">
+                  <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" set:html={icon['map-pin']} />
+                </span>
+                <dt class="mt-3 font-heading font-semibold text-charcoal">{a.term}</dt>
+                <dd class="mt-1.5 text-sm text-charcoal-600">{a.desc}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+    </section>
+
+    {/* ─── 9. FAQ — accordion (native <details>, zero-JS) ─────────────────── */}
+    <section aria-labelledby="faq-h" class={`${sectionShell} bg-industrial-100`}>
+      <div class={container}>
+        <h2 id="faq-h" class={h2} data-reveal>Frequently Asked Questions (FAQ)</h2>
+        <div
+          class="mt-6 max-w-3xl divide-y divide-industrial-300 border-y border-industrial-300"
+          data-reveal-group
+        >
+          {
+            faqs.map((f, i) => (
+              <details class="group" open={i === 0}>
+                <summary class="flex cursor-pointer items-center justify-between gap-4 py-4 font-heading text-base font-semibold text-charcoal marker:content-none [&::-webkit-details-marker]:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700">
+                  <span>{f.question}</span>
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    class="h-5 w-5 shrink-0 text-amber-700 transition-transform duration-200 group-open:-rotate-180"
+                    aria-hidden="true"
+                  >
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m6 9 6 6 6-6" />
+                  </svg>
+                </summary>
+                <p class="pb-4 text-charcoal-600">{f.answer}</p>
+              </details>
+            ))
+          }
+        </div>
+
+        {/* Internal link: spoke → hub, keyword anchor text */}
+        <p class="mt-8 max-w-3xl text-sm text-charcoal-600" data-reveal>
+          Zain Curb Stone is part of Rukn Al Zain's{' '}
+          <a
+            href="/gym-safety-accessories"
+            class="rounded font-semibold text-amber-700 hover:text-amber-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700"
+          >
+            gym safety accessories range
+          </a>. Pair it with heavy weightlifting tiles to complete a free-weight perimeter.
+        </p>
+      </div>
+    </section>
+
+    {/* Combined BreadcrumbList + Product + FAQPage structured data (@graph).
+        Kept in-body to match the sibling spoke pages (BaseLayout exposes no
+        <head> slot); crawlers parse it identically. Organization JSON-LD is
+        emitted sitewide by BaseLayout. */}
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(graphSchema)} />
+
+    {/* ─── 10. LEAD CAPTURE & BOTTOM CTA ──────────────────────────────────── */}
+    <section
+      id="lead-form"
+      aria-labelledby="cta-h"
+      class="border-t border-industrial-300 bg-charcoal-700 text-white"
+    >
+      <div class={`${container} py-16`}>
+        <div class="grid gap-10 lg:grid-cols-[1fr_1.05fr] lg:items-start">
+          <div data-reveal>
+            <h2 id="cta-h" class="text-2xl font-bold text-white">
+              Request Technical Specs or a Fast Project Quote
+            </h2>
+            <p class="mt-4 max-w-xl text-industrial-200">
+              Tell us about your free-weight zone and we will send the Zain Curb Stone specification
+              sheet, a sample, and a bulk quote for your UAE facility.
+            </p>
+            <dl class="mt-6 space-y-3 text-sm">
+              <div class="flex flex-wrap gap-x-2">
+                <dt class="font-semibold text-white">Phone / WhatsApp:</dt>
+                <dd>
+                  <a
+                    href="tel:+971505698195"
+                    class="rounded font-medium text-amber-400 hover:text-amber-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+                  >
+                    +971 50 569 8195
+                  </a>
+                </dd>
+              </div>
+              <div class="flex flex-wrap gap-x-2">
+                <dt class="font-semibold text-white">Location:</dt>
+                <dd class="text-industrial-200">Dubai, United Arab Emirates</dd>
+              </div>
+              <div class="flex flex-wrap gap-x-2">
+                <dt class="font-semibold text-white">Address:</dt>
+                <dd class="text-industrial-200">
+                  Rukn Al Zain General Trading LLC, P.O. Box 36528, Dubai, UAE
+                </dd>
+              </div>
+            </dl>
+
+            <div class="mt-6">
+              <a
+                href={WHATSAPP_PLAIN}
+                target="_blank"
+                rel="noopener"
+                class={`${ghostCta} focus-visible:ring-offset-charcoal-700`}
+              >
+                Chat on WhatsApp
+              </a>
+            </div>
+          </div>
+
+          {/*
+            Standard HTML POST form wired for Netlify Forms (zero JS): captured
+            automatically on a Netlify deploy. Locally (`astro preview`) the POST
+            has no handler — that is expected. Mirrors src/pages/contact.astro.
+          */}
+          <div class="rounded border border-industrial-300 bg-white p-6 text-charcoal" data-reveal>
+            <form
+              name="curb-stone-quote"
+              method="POST"
+              action={PATH}
+              data-netlify="true"
+              netlify-honeypot="bot-field"
+              class="space-y-5"
+            >
+              <input type="hidden" name="form-name" value="curb-stone-quote" />
+              <p class="hidden">
+                <label>Leave this field empty if you are human: <input name="bot-field" /></label>
+              </p>
+
+              <div class="grid gap-5 sm:grid-cols-2">
+                <div>
+                  <label class={labelClass} for="name">
+                    Full name <span class="text-amber-700">*</span>
+                  </label>
+                  <input
+                    class={fieldClass}
+                    type="text"
+                    id="name"
+                    name="name"
+                    autocomplete="name"
+                    required
+                  />
+                </div>
+                <div>
+                  <label class={labelClass} for="phone">
+                    Phone / WhatsApp number <span class="text-amber-700">*</span>
+                  </label>
+                  <input
+                    class={fieldClass}
+                    type="tel"
+                    id="phone"
+                    name="phone"
+                    autocomplete="tel"
+                    inputmode="tel"
+                    required
+                  />
+                </div>
+                <div>
+                  <label class={labelClass} for="location">Project location</label>
+                  <select class={fieldClass} id="location" name="location">
+                    <option value="" selected disabled>Select an emirate</option>
+                    {emirates.map((e) => <option value={e}>{e}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label class={labelClass} for="quantity">Required quantity / metres</label>
+                  <input
+                    class={fieldClass}
+                    type="text"
+                    id="quantity"
+                    name="quantity"
+                    inputmode="numeric"
+                    placeholder="e.g. 60 linear metres / 40 units"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label class={labelClass} for="product">Product interest</label>
+                <select class={fieldClass} id="product" name="product">
+                  <option value="Zain Curb Stone" selected>Zain Curb Stone</option>
+                  <option value="Zain Curb Stone + weightlifting tiles">
+                    Zain Curb Stone + weightlifting tiles
+                  </option>
+                  <option value="Other gym safety accessories">Other gym safety accessories</option>
+                </select>
+              </div>
+
+              <div class="flex flex-wrap gap-3">
+                <button
+                  type="submit"
+                  class="inline-flex items-center justify-center rounded bg-amber-400 px-5 py-3 font-semibold text-charcoal-900 transition-colors hover:bg-amber-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700 focus-visible:ring-offset-2"
+                >
+                  Request Free Sample &amp; Project Quote
+                </button>
+                <a
+                  href={WHATSAPP_PLAIN}
+                  target="_blank"
+                  rel="noopener"
+                  class="inline-flex items-center justify-center rounded border border-charcoal-300 px-5 py-3 font-semibold text-charcoal transition-colors hover:border-charcoal-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700"
+                >
+                  WhatsApp Now
+                </a>
+              </div>
+              <p class="text-xs text-charcoal-400">
+                {/* TODO: add a branded /thank-you success page and point the form action at it. */}
+                Submissions are handled by Netlify Forms on the live site.
+              </p>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {/* ─── SUBTLE MOTION ──────────────────────────────────────────────────────
+        One-shot CSS load-in for the hero and a staggered scroll-reveal for
+        headings, card groups, figures and the spec table. Progressive
+        enhancement only — content is fully visible without JS, and every effect
+        is disabled under prefers-reduced-motion. Mirrors zainduo.astro. */}
+    <style is:global>
+      .zcs-js .zcs-page [data-hero] {
+        animation: zcs-rise 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      @keyframes zcs-rise {
+        from {
+          opacity: 0;
+          transform: translateY(16px);
+        }
+      }
+
+      .zcs-js .zcs-page [data-reveal],
+      .zcs-js .zcs-page [data-reveal-group] > * {
+        opacity: 0;
+        transform: translateY(14px);
+        transition:
+          opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+          transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .zcs-js .zcs-page [data-reveal].in,
+      .zcs-js .zcs-page [data-reveal-group].in > * {
+        opacity: 1;
+        transform: none;
+      }
+      .zcs-js .zcs-page [data-reveal-group].in > *:nth-child(2) { transition-delay: 0.06s; }
+      .zcs-js .zcs-page [data-reveal-group].in > *:nth-child(3) { transition-delay: 0.12s; }
+      .zcs-js .zcs-page [data-reveal-group].in > *:nth-child(4) { transition-delay: 0.18s; }
+      .zcs-js .zcs-page [data-reveal-group].in > *:nth-child(5) { transition-delay: 0.24s; }
+      .zcs-js .zcs-page [data-reveal-group].in > *:nth-child(n + 6) { transition-delay: 0.3s; }
+
+      .zcs-page .card-lift {
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
+      }
+      .zcs-page .card-lift:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 24px -6px rgb(42 45 52 / 0.18);
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .zcs-js .zcs-page [data-hero] {
+          animation: none;
+        }
+        .zcs-js .zcs-page [data-reveal],
+        .zcs-js .zcs-page [data-reveal-group] > * {
+          opacity: 1;
+          transform: none;
+          transition: none;
+        }
+        .zcs-page .card-lift,
+        .zcs-page .card-lift:hover {
+          transition: none;
+          transform: none;
+        }
+      }
+    </style>
+
+    <script>
+      const targets = document.querySelectorAll(
+        '.zcs-page [data-reveal], .zcs-page [data-reveal-group]',
+      );
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const revealAll = () => targets.forEach((el) => el.classList.add('in'));
+
+      if (reduce || !('IntersectionObserver' in window)) {
+        revealAll();
+      } else {
+        const io = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (!entry.isIntersecting) continue;
+              entry.target.classList.add('in');
+              io.unobserve(entry.target);
+            }
+          },
+          { rootMargin: '0px 0px -8% 0px' },
+        );
+        targets.forEach((el) => io.observe(el));
+        window.addEventListener('load', () => setTimeout(revealAll, 1200));
+      }
+    </script>
+  </article>
+</BaseLayout>

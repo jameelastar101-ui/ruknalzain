@@ -1,0 +1,85 @@
+path: /acoustic-soundproofing-flooring
+navLabel: Acoustic Flooring
+image: acoustic
+
+# NOTE: This route renders via the bespoke src/pages/acoustic-soundproofing-flooring.astro
+# (excluded from [...slug].astro), so these SEO fields are a record only — not
+# rendered. Kept in sync with that page's Dubai-focused redesign, including the
+# full 8-FAQ set (hub schema `faqs` cap raised to 8 in config.ts).
+
+h1: Acoustic & Soundproofing Flooring Solutions in Dubai
+seoTitle: Acoustic Underlay & Soundproof Flooring Dubai | Rukn Al Zain
+metaDescription: >-
+  High-density rubber acoustic underlayments and screed isolation systems
+  engineered for high-rises and commercial developments across Dubai and the UAE.
+primaryKeyword: acoustic flooring solutions Dubai
+secondaryKeywords:
+  - soundproofing underlay UAE
+  - acoustic rubber matting
+  - impact sound insulation Dubai
+
+definition: >-
+  Acoustic and soundproofing flooring is a resilient recycled-rubber layer —
+  acoustic underlay, screed isolation mat or perimeter strip — installed beneath
+  a floor finish to cut impact and airborne noise between building levels. Rukn
+  Al Zain supplies these high-density systems to Dubai high-rises and commercial
+  developments across the UAE.
+
+intro: >-
+  Noise transfer between floors is one of the most common complaints in Dubai
+  high-rise buildings — footsteps, dropped objects, traffic and nearby
+  construction all carry through hard structural slabs. Acoustic flooring adds a
+  resilient rubber layer that absorbs that energy before it reaches the units
+  below, and it is far easier to build in during construction or fit-out than to
+  retrofit later.
+
+audience:
+  - Architects
+  - Acoustic consultants
+  - Developers
+  - Fit-out contractors
+
+children:
+  - acoustic-underlay
+  - sports-track-underlay
+  - screed-isolation
+  - acoustic-strips
+
+faqs:
+  - question: How fast can Rukn Al Zain deliver acoustic materials to project sites in Dubai?
+    answer: >-
+      We dispatch orders directly from our central Dubai warehouse, delivering to
+      site locations across Dubai within 24 to 48 hours.
+  - question: Does Rukn Al Zain provide technical sample kits and data sheets for specifiers?
+    answer: >-
+      Yes, we provide physical product samples and technical datasheets directly
+      to acoustic consultants, architects, and contractors across the UAE.
+  - question: What is the difference between ZainAcoustic Underlay and ZainSilence?
+    answer: >-
+      ZainAcoustic Underlay is designed for thin application directly beneath
+      floor finishes like tile, marble, or wood. ZainSilence is a heavy-duty mat
+      engineered to sit beneath wet concrete screeds to support high structural
+      loads.
+  - question: Can ZainAcoustic underlay be installed under natural marble and porcelain tile?
+    answer: >-
+      Yes, ZainAcoustic underlayment is engineered for installation beneath hard
+      surface flooring, providing impact noise reduction without creating joint
+      movement.
+  - question: How do rubber acoustic underlays reduce sound transfer between building floors?
+    answer: >-
+      Rubber underlays act as a resilient layer between the subfloor and finished
+      flooring, absorbing kinetic impact energy before it can travel through the
+      concrete slab as sound.
+  - question: Why is perimeter edge isolation necessary when installing acoustic underlayment?
+    answer: >-
+      Using self-adhesive acoustic strips along wall perimeters prevents the floor
+      finish from touching vertical walls, blocking flanking noise paths.
+  - question: How do Dubai indoor air-conditioning cycles affect floor underlayment stability?
+    answer: >-
+      Frequent air-conditioning continuous cycles cause temperature fluctuations
+      that warp low-grade materials. Our underlays use non-degrading polyurethane
+      binders to stay dimensionally flat.
+  - question: Why are recycled rubber acoustic underlays preferred for construction projects in the UAE?
+    answer: >-
+      Recycled rubber provides long-term compression resistance under heavy loads
+      while supporting green building sustainability goals across GCC developments.

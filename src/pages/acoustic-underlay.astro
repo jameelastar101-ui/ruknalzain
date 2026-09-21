@@ -1,0 +1,1062 @@
+---
+/**
+ * /acoustic-underlay — "ZainAcoustic Underlay — Acoustic Sound Insulation in Dubai"
+ * conversion + SEO / AEO / GEO product page.
+ *
+ * Bespoke page (not the YAML-driven generic ProductPage), built to mirror the
+ * structure, class helpers and progressive-enhancement motion of the sibling
+ * spoke src/pages/gym-flooring-rolls/zainduo.astro and the parent hub
+ * src/pages/acoustic-soundproofing-flooring.astro.
+ *
+ * ─── ROUTING ─────────────────────────────────────────────────────────────
+ * The content entry src/content/products/acoustic-underlay.yaml carries
+ * `path: /acoustic-underlay`. To avoid a duplicate-route build error the
+ * matching branch is filtered out of getStaticPaths in src/pages/[...slug].astro
+ * — the same pattern already used for zainfit, zainsquare, zainduo,
+ * zainactive-rolls and curb-stone. The YAML entry stays as data (child of the
+ * `acoustic` hub, still referenced by the hub nav); this file serves the URL.
+ *
+ * ─── DECISIONS TAKEN / FLAGS (CLAUDE.md §0 "Data Integrity" + §6) ─────────
+ *  - PARENT HUB: the build request's JSON-LD names the breadcrumb parent
+ *    "Acoustics & Construction Systems" at /acoustics-construction-systems.
+ *    That route does not exist in this project — the real acoustic hub is
+ *    /acoustic-soundproofing-flooring (which already links here). Both the
+ *    visible breadcrumb and the BreadcrumbList JSON-LD below use the real path
+ *    with the label "Acoustic & Soundproofing Flooring".
+ *    TODO: confirm the intended hub label / slug with the client.
+ *  - CANONICAL HOST: the request shows "rukanalzain.com"; the configured site
+ *    is "ruknalzain.ae" (astro.config.mjs). Canonical is built from the
+ *    configured site via BaseLayout `canonical={PATH}` (same choice as the
+ *    zainduo / zainsquare siblings). TODO: confirm the production domain.
+ *  - DESIGN SYSTEM: the request describes a neutral-950 / emerald-600 palette.
+ *    The live site design system (CLAUDE.md "Brand & Visual Identity",
+ *    DESIGN-NOTES.md, every sibling page) is charcoal / industrial-grey with a
+ *    single amber action accent and bordered "ghost" WhatsApp buttons. This
+ *    page follows the live system for cross-site consistency.
+ *  - TECHNICAL SPECS: acoustic-underlay.yaml lists thickness, density, format
+ *    and impact-sound reduction (ΔLw / IIC) as null "to collect". Every spec
+ *    row rendered below was supplied in the page-build request, NOT in
+ *    Rukn_Al_Zain_SEO_Content_Brief.docx. Treat as PROVISIONAL and confirm
+ *    against real product test data / manufacturer certificates before go-live.
+ *  - STRUCTURED DATA: a single combined @graph (BreadcrumbList + Product +
+ *    FAQPage) is emitted inline. The request supplied BreadcrumbList + FAQPage;
+ *    the Product node is added per CLAUDE.md §5 (Product schema on every product
+ *    page). Organization JSON-LD is emitted sitewide by BaseLayout.
+ *
+ * ─── IMAGE ASSETS ───────────────────────────────────────────────────────
+ * public/images/acoustic-soundproofing-flooring/ — intrinsic dimensions wired
+ * below to prevent layout shift:
+ *   - zainacoustic-underlayment-roll.jpg          (hero, 1024×1024)
+ *   - zainacoustic-problem-solution-diagram.jpg   (landscape, 1408×768)
+ *       ↳ the request asked for "zainacoustic-problem-solution-dramatic.jpg",
+ *         which does not exist. The "-diagram" sibling is used instead.
+ *         TODO: supply the dramatic action capture if it is meant to differ.
+ *   - zainacoustic-technical-specifications.jpg   (square, 1024×1024)
+ *   - high-rise-apartment-acoustic-flooring.jpg   (landscape, 1408×768)
+ * public/ images use <img> (astro:assets <Image /> only optimises src/assets).
+ * TODO: convert to optimised WebP; add a purpose-built 1200×630 OG card
+ * (og:image currently falls back to the hero file).
+ */
+import BaseLayout from '@layouts/BaseLayout.astro';
+
+const SITE = (Astro.site ?? new URL('https://ruknalzain.ae')).origin;
+const IMG = '/images/acoustic-soundproofing-flooring';
+const PATH = '/acoustic-underlay';
+
+const HERO_IMG = `${IMG}/zainacoustic-underlayment-roll.jpg`; // 1024×1024
+const HERO_ALT =
+  'ZainAcoustic soundproofing rubber underlayment roll sample with official Rukn Al Zain product label sleeve in a Dubai showroom';
+const PS_IMG = `${IMG}/zainacoustic-problem-solution-diagram.jpg`; // 1408×768 (see IMAGE ASSETS note)
+const PS_ALT =
+  'Side-by-side diagram showing unmitigated structural vibration through a bare concrete slab versus kinetic shock absorbed by ZainAcoustic underlayment in a Dubai high-rise';
+const SPEC_IMG = `${IMG}/zainacoustic-technical-specifications.jpg`; // 1024×1024
+const SPEC_ALT =
+  'Technical exploded view detailing the SBR rubber granule structure, polyurethane binding, multi-thickness profile and non-slip surface of ZainAcoustic underlayment';
+const GEO_IMG = `${IMG}/high-rise-apartment-acoustic-flooring.jpg`; // 1408×768
+const GEO_ALT =
+  'High-rise luxury apartment in Dubai undergoing floor installation with ZainAcoustic soundproofing underlayment';
+const OG_IMG = HERO_IMG; // fallback share image — no purpose-built 1200×630 card yet
+
+const WHATSAPP_HERO =
+  'https://wa.me/971505698195?text=Hello%20Rukn%20Al%20Zain,%20I%20would%20like%20a%20free%20sample%20of%20ZainAcoustic%20Underlay';
+const WHATSAPP_PLAIN = 'https://wa.me/971505698195';
+
+/* ─── Inline Lucide icon path data (24×24, currentColor stroke) ─────────── */
+const icon: Record<string, string> = {
+  leaf:
+    '<path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>',
+  layers:
+    '<path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"/><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"/><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"/>',
+  truck:
+    '<path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/>',
+  'volume-x':
+    '<path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"/><path d="m22 9-6 6"/><path d="m16 9 6 6"/>',
+  'minimize-2':
+    '<polyline points="4 14 10 14 10 20"/><polyline points="20 10 14 10 14 4"/><line x1="14" x2="21" y1="10" y2="3"/><line x1="3" x2="10" y1="21" y2="14"/>',
+  thermometer:
+    '<path d="M14 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0Z"/>',
+  grip:
+    '<circle cx="12" cy="5" r="1"/><circle cx="19" cy="5" r="1"/><circle cx="5" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/><circle cx="12" cy="19" r="1"/><circle cx="19" cy="19" r="1"/><circle cx="5" cy="19" r="1"/>',
+  'shield-check':
+    '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/>',
+  'building-2':
+    '<path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/>',
+  hotel:
+    '<path d="M10 22v-6.57"/><path d="M12 11h.01"/><path d="M12 7h.01"/><path d="M14 15.43V22"/><path d="M15 16a5 5 0 0 0-6 0"/><path d="M16 11h.01"/><path d="M16 7h.01"/><path d="M8 11h.01"/><path d="M8 7h.01"/><rect x="4" y="2" width="16" height="20" rx="2"/>',
+  briefcase:
+    '<path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><rect width="20" height="14" x="2" y="6" rx="2"/>',
+  home:
+    '<path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>',
+  search: '<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',
+  package:
+    '<path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"/><path d="M12 22V12"/><polyline points="3.29 7 12 12 20.71 7"/><path d="m7.5 4.27 9 5.15"/>',
+  'map-pin':
+    '<path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/>',
+};
+
+/* ─── 2. Trust bar ────────────────────────────────────────────────────── */
+const trustCards = [
+  {
+    icon: 'leaf',
+    term: '100% Recycled SBR Rubber',
+    desc: 'Eco-friendly composition engineered with polyurethane binders to withstand humid GCC climates without degrading.',
+  },
+  {
+    icon: 'layers',
+    term: 'Thin-Profile Versatility',
+    desc: 'Provides high impact sound reduction beneath direct floor finishes without creating excessive build-up height.',
+  },
+  {
+    icon: 'truck',
+    term: 'Rapid Local Delivery',
+    desc: 'Dispatched directly from our central Dubai warehouse with 24 to 48-hour delivery across all Emirates.',
+  },
+];
+
+/* ─── 3. Problem / Solution — paired lists (verbatim from the request) ── */
+const problemPoints = [
+  {
+    term: 'Unchecked Structural Transmission',
+    desc: 'Hard surface flooring like marble, porcelain tile, and vinyl installed directly onto concrete subfloors allows footstep impacts, dropped items, and moving furniture to travel freely through the building frame.',
+  },
+  {
+    term: 'Acoustic Flanking in Multi-Story High-Rises',
+    desc: 'In high-density towers across Dubai, unmitigated kinetic shock converts into low-frequency impact noise, causing constant disturbance and noise complaints for occupants on lower levels.',
+  },
+  {
+    term: 'Thermal & Structural Joint Stress',
+    desc: 'Continuous indoor air-conditioning cycles create temperature contrast between occupied spaces and concrete slabs, causing lower-grade subfloor materials to warp, crack grout lines, or lose bonding.',
+  },
+];
+const solutionPoints = [
+  {
+    term: 'Continuous Decoupling Layer',
+    desc: 'Placed directly beneath top floor finishes to create a resilient structural break, isolating the floor finish from the underlying concrete slab.',
+  },
+  {
+    term: 'Kinetic Impact Shock Absorption',
+    desc: 'Manufactured from high-density recycled SBR rubber that deforms slightly under dynamic impact, trapping and absorbing energy before it turns into structural vibration.',
+  },
+  {
+    term: 'GCC Climate-Resilient Formulation',
+    desc: 'Bound with high-grade polyurethane binders engineered to remain dimensionally flat, rot-proof, and resilient through extreme indoor air-conditioning temperature shifts.',
+  },
+  {
+    term: 'Thin-Profile Versatility',
+    desc: 'Delivers high impact sound reduction without adding excessive finished floor height or creating floor joint movement under hard finishes.',
+  },
+];
+
+/* ─── 4. Key product benefits (verbatim from the request) ─────────────── */
+const benefits = [
+  {
+    icon: 'volume-x',
+    term: 'Superior Impact Sound Reduction',
+    desc: 'Deadens footstep noise, impact vibration, and dropped item shocks across multi-story buildings.',
+  },
+  {
+    icon: 'minimize-2',
+    term: 'Thin Profile Integration',
+    desc: 'Delivers high acoustic performance in multi-thickness options, minimizing finished floor height buildup.',
+  },
+  {
+    icon: 'thermometer',
+    term: 'Thermal & Dimensional Stability',
+    desc: 'Formulated with non-degrading binders that remain completely flat through Dubai indoor air-conditioning cycles.',
+  },
+  {
+    icon: 'leaf',
+    term: 'Eco-Friendly & Sustainable',
+    desc: 'Manufactured from high-density recycled tire rubber, aiding green building compliance across UAE developments.',
+  },
+  {
+    icon: 'grip',
+    term: 'Non-Slip & Easy Handling',
+    desc: 'Features a textured surface that ensures easy cutting, rapid roll placement, and reliable tile/wood adhesive bonding.',
+  },
+];
+
+/* ─── 5. Technical specifications — PROVISIONAL (see data-integrity flags) */
+const specRows: [string, string][] = [
+  ['Product Name', 'ZainAcoustic Underlay'],
+  ['Primary Material', 'Sustainable Recycled SBR Rubber Granules'],
+  ['Binder Type', 'MDI Polyurethane Binder (GCC Grade)'],
+  ['Format', 'Multi-thickness continuous rolls'],
+  ['Thickness Options', 'Custom roll thicknesses available'],
+  ['Primary Function', 'Impact sound insulation beneath direct floor finishes'],
+  ['Compatible Subfloors', 'Concrete slabs, pre-cast concrete panels, cementitious screeds'],
+  ['Compatible Finishes', 'Thin-set porcelain tile, natural marble, vinyl, engineered wood'],
+  ['Surface Feature', 'Non-slip textured matte handling'],
+];
+
+/* ─── 6. Ideal applications — text-only cards, NO images (request §6) ──── */
+const applications = [
+  {
+    icon: 'building-2',
+    term: 'High-Rise Apartments & Towers',
+    desc: 'Eliminates vertical footstep noise transfer between multi-story residential units.',
+  },
+  {
+    icon: 'hotel',
+    term: 'Luxury Hotels & Guestrooms',
+    desc: 'Preserves guest privacy and peaceful indoor environments in hospitality projects.',
+  },
+  {
+    icon: 'briefcase',
+    term: 'Commercial Offices & Suites',
+    desc: 'Isolates foot-traffic sound in high-density corporate environments.',
+  },
+  {
+    icon: 'home',
+    term: 'Residential Villas',
+    desc: 'Dampens impact sounds across multi-level private residences.',
+  },
+];
+
+/* ─── 8. About Rukn Al Zain — 3-step order flow (verbatim from request) ── */
+const processSteps = [
+  {
+    n: '01',
+    icon: 'search',
+    term: 'Sample & Spec Request',
+    desc: 'Request physical sample kits and technical datasheets directly from our sales team.',
+  },
+  {
+    n: '02',
+    icon: 'package',
+    term: 'Order Dispatch',
+    desc: 'Material is picked and packed directly at our central Dubai facility.',
+  },
+  {
+    n: '03',
+    icon: 'truck',
+    term: 'On-Site Delivery',
+    desc: 'Rapid site delivery within 24 to 48 hours across the UAE.',
+  },
+];
+
+const coverageAreas = [
+  'Dubai',
+  'Abu Dhabi',
+  'Sharjah',
+  'Ajman',
+  'Ras Al Khaimah',
+  'Umm Al Quwain',
+  'Fujairah',
+];
+
+/* Project-location dropdown for the lead form. */
+const emirates = [...coverageAreas, 'Outside the UAE'];
+
+/* ─── 9. FAQ (AEO) — self-contained answers, 1:1 with the JSON-LD below ── */
+const faqs = [
+  {
+    question: 'Can ZainAcoustic Underlay be installed directly under tile and marble?',
+    answer:
+      'Yes, ZainAcoustic Underlay is engineered for direct installation beneath hard finishes like natural marble, porcelain tile, and vinyl without causing joint movement or cracked tile grout.',
+  },
+  {
+    question: 'What is the difference between ZainAcoustic Underlay and ZainSilence?',
+    answer:
+      'ZainAcoustic Underlay is a thin-profile membrane designed for direct application right under floor finishes. ZainSilence is a heavy-duty matting designed to sit beneath cast-in-place wet concrete screeds for high structural load-bearing isolation.',
+  },
+  {
+    question: 'Why is perimeter edge isolation recommended during installation?',
+    answer:
+      'Using self-adhesive acoustic perimeter strips prevents the top floor finish from physically contacting adjacent walls, blocking flanking noise transmission paths through the building frame.',
+  },
+  {
+    question: 'How fast can Rukn Al Zain deliver material to site locations in Dubai?',
+    answer:
+      'Orders are dispatched directly from our central Dubai warehouse, with typical job-site deliveries completed within 24 to 48 hours.',
+  },
+  {
+    question: 'Does Rukn Al Zain provide technical datasheets and sample kits?',
+    answer:
+      'Yes, physical technical sample kits and datasheets are available for acoustic consultants, contractors, and architects upon request.',
+  },
+];
+
+/* ─── Structured data — single combined @graph ───────────────────────────
+   BreadcrumbList + FAQPage per the build request, plus a Product node per
+   CLAUDE.md §5. The visible breadcrumb trail is hand-rolled below (not the
+   <Breadcrumbs /> component) so the BreadcrumbList is declared exactly once.
+   Organization JSON-LD is emitted sitewide by BaseLayout. */
+const breadcrumbSchema = {
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE}/` },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: 'Acoustic & Soundproofing Flooring',
+      item: `${SITE}/acoustic-soundproofing-flooring`,
+    },
+    { '@type': 'ListItem', position: 3, name: 'ZainAcoustic Underlay', item: `${SITE}${PATH}` },
+  ],
+};
+
+const productSchema = {
+  '@type': 'Product',
+  name: 'ZainAcoustic Underlay',
+  description:
+    'High-performance thin-profile acoustic sound insulation underlayment formulated from recycled SBR rubber. Creates a continuous structural break beneath marble, porcelain tile, vinyl and engineered wood flooring to control impact sound transmission across high-rise developments in Dubai and the UAE.',
+  image: `${SITE}${OG_IMG}`,
+  sku: 'RZ-ACU-UNDERLAY',
+  category: 'Acoustic Rubber Underlay',
+  url: `${SITE}${PATH}`,
+  brand: { '@type': 'Brand', name: 'Rukn Al Zain' },
+  manufacturer: { '@type': 'Organization', name: 'Rukn Al Zain General Trading LLC' },
+  material: 'Recycled SBR rubber granules with MDI polyurethane binder',
+  areaServed: 'United Arab Emirates',
+};
+
+const faqSchema = {
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((f) => ({
+    '@type': 'Question',
+    name: f.question,
+    acceptedAnswer: { '@type': 'Answer', text: f.answer },
+  })),
+};
+
+const graphSchema = {
+  '@context': 'https://schema.org',
+  '@graph': [breadcrumbSchema, productSchema, faqSchema],
+};
+
+/* Shared class helpers — mirrors src/pages/gym-flooring-rolls/zainduo.astro. */
+const sectionShell = 'border-t border-industrial-300 py-14 sm:py-16';
+const container = 'mx-auto max-w-content px-4 sm:px-6 lg:px-8';
+const h2 = 'text-2xl font-bold text-charcoal';
+const lede = 'mt-4 max-w-3xl text-charcoal-600';
+const primaryCta =
+  'inline-flex items-center justify-center rounded bg-amber-400 px-5 py-3 font-semibold text-charcoal-900 transition-colors hover:bg-amber-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2';
+const ghostCta =
+  'inline-flex items-center justify-center rounded border border-white/25 px-5 py-3 font-semibold text-white transition-colors hover:border-white/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400';
+const iconChip =
+  'mb-3 grid h-11 w-11 place-items-center rounded bg-white text-amber-700 ring-1 ring-industrial-300';
+const crumbLink =
+  'rounded hover:text-amber-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700';
+const fieldClass =
+  'mt-1.5 block w-full rounded border border-charcoal-300 bg-white px-3 py-2.5 text-charcoal shadow-sm focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-700';
+const labelClass = 'block text-sm font-medium text-charcoal';
+---
+
+<BaseLayout
+  title="Acoustic Underlay Dubai | Impact Sound Insulation UAE | Rukn Al Zain"
+  description="High-performance acoustic sound insulation underlayment in Dubai. Reduces impact sound transmission under marble, tile, engineered wood, and vinyl flooring."
+  canonical={PATH}
+  ogImage={OG_IMG}
+  ogImageAlt="ZainAcoustic Underlay recycled SBR rubber acoustic sound insulation underlayment by Rukn Al Zain, Dubai UAE."
+>
+  <article class="au-page">
+    {/*
+      Mark the document as JS-capable ASAP so scroll-reveal elements start hidden
+      only when the animation engine is available. A failsafe timer guarantees
+      content becomes visible even if the observer below never runs, and
+      reduced-motion visitors skip the effect entirely.
+    */}
+    <script is:inline>
+      (function () {
+        document.documentElement.classList.add('au-js');
+        var sel = '.au-page [data-reveal], .au-page [data-reveal-group]';
+        var showAll = function () {
+          document.querySelectorAll(sel).forEach(function (el) {
+            el.classList.add('in');
+          });
+        };
+        var reduce =
+          window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (reduce) {
+          if (document.readyState === 'loading')
+            document.addEventListener('DOMContentLoaded', showAll);
+          else showAll();
+        } else {
+          setTimeout(showAll, 1600);
+        }
+      })();
+    </script>
+
+    {/* Breadcrumb strip — Home > Acoustic & Soundproofing Flooring > ZainAcoustic Underlay.
+        Hand-rolled (not <Breadcrumbs />) so the BreadcrumbList JSON-LD is
+        declared once, in the combined @graph at the foot of this file. */}
+    <div class="border-b border-industrial-300 bg-industrial-100">
+      <div class={`${container} py-4`}>
+        <nav aria-label="Breadcrumb" class="text-sm">
+          <ol class="flex flex-wrap items-center gap-x-2 gap-y-1 text-charcoal-500">
+            <li class="flex items-center gap-x-2">
+              <a href="/" class={crumbLink}>Home</a>
+            </li>
+            <li class="flex items-center gap-x-2">
+              <span aria-hidden="true" class="text-charcoal-300">/</span>
+              <a href="/acoustic-soundproofing-flooring" class={crumbLink}>
+                Acoustic &amp; Soundproofing Flooring
+              </a>
+            </li>
+            <li class="flex items-center gap-x-2">
+              <span aria-hidden="true" class="text-charcoal-300">/</span>
+              <span aria-current="page" class="font-medium text-charcoal">
+                ZainAcoustic Underlay
+              </span>
+            </li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+
+    {/* ─── 1. HERO ─────────────────────────────────────────────────────────── */}
+    <header class="bg-charcoal-700 text-white">
+      <div class={`${container} py-14 sm:py-16`}>
+        <div class="grid items-center gap-10 lg:grid-cols-2">
+          <div data-hero>
+            <p class="font-heading text-sm font-semibold uppercase tracking-wide text-amber-400">
+              Acoustic Sound Insulation Underlayment
+            </p>
+            <h1 class="mt-3 text-4xl font-extrabold leading-tight text-white sm:text-5xl">
+              ZainAcoustic Underlay — Acoustic Sound Insulation in Dubai
+            </h1>
+
+            {/* AEO direct-answer block — sits immediately under the H1 */}
+            <p class="mt-5 max-w-xl border-l-[3px] border-amber-400 pl-4 text-lg text-industrial-100">
+              Rukn Al Zain General Trading LLC supplies high-performance ZainAcoustic Underlay
+              engineered to control impact sound transmission and structural noise across
+              high-rise developments in Dubai and the UAE. Formulated from durable recycled SBR
+              rubber, this thin-profile acoustic membrane creates a continuous structural break
+              beneath marble, porcelain tile, vinyl, and engineered wood flooring to absorb
+              kinetic energy before it reaches the concrete slab.
+            </p>
+
+            <div class="mt-7 flex flex-wrap gap-3">
+              <a href="#lead-capture" class={`${primaryCta} focus-visible:ring-offset-charcoal-700`}>
+                Request Free Sample
+              </a>
+              <a
+                href={WHATSAPP_HERO}
+                target="_blank"
+                rel="noopener"
+                class={`${ghostCta} focus-visible:ring-offset-charcoal-700`}
+              >
+                WhatsApp Now
+              </a>
+            </div>
+          </div>
+
+          <figure class="m-0" data-hero>
+            <img
+              src={HERO_IMG}
+              alt={HERO_ALT}
+              title="ZainAcoustic recycled rubber acoustic underlayment roll — Rukn Al Zain, Dubai"
+              width="1024"
+              height="1024"
+              loading="eager"
+              fetchpriority="high"
+              decoding="async"
+              class="h-auto w-full rounded border border-white/10"
+            />
+          </figure>
+        </div>
+      </div>
+    </header>
+
+    {/* ─── 2. TRUST BAR ───────────────────────────────────────────────────── */}
+    <section aria-labelledby="trust-h" class={`${sectionShell} bg-white`}>
+      <div class={container}>
+        <h2 id="trust-h" class={h2} data-reveal>
+          Engineered Acoustic Sound Insulation Across Dubai &amp; the UAE
+        </h2>
+        <dl class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3" data-reveal-group>
+          {
+            trustCards.map((it) => (
+              <div class="card-lift rounded border border-industrial-300 border-l-[3px] border-l-amber-400 bg-industrial-100 p-5">
+                <span class={iconChip} aria-hidden="true">
+                  <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" set:html={icon[it.icon]} />
+                </span>
+                <dt class="font-heading font-semibold text-charcoal">{it.term}</dt>
+                <dd class="mt-1.5 text-sm text-charcoal-600">{it.desc}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+    </section>
+
+    {/* ─── 3. PROBLEM & SOLUTION ──────────────────────────────────────────── */}
+    <section aria-labelledby="ps-h" class={`${sectionShell} bg-industrial-100`}>
+      <div class={container}>
+        <h2 id="ps-h" class={h2} data-reveal>
+          Solving Acoustic Flanking and Footstep Noise in Dubai High-Rises
+        </h2>
+
+        <div class="mt-8 grid gap-6 lg:grid-cols-2" data-reveal-group>
+          {/* The Problem */}
+          <div class="rounded border border-industrial-300 border-l-[3px] border-l-danger bg-white p-6">
+            <h3 class="font-heading text-lg font-bold text-charcoal">
+              The Problem: Structural Noise Transfer in Concrete Towers
+            </h3>
+            <dl class="mt-4 space-y-4">
+              {
+                problemPoints.map((p) => (
+                  <div>
+                    <dt class="flex gap-2 font-heading text-sm font-semibold text-charcoal">
+                      <span class="mt-0.5 text-danger" aria-hidden="true">&#10007;</span>
+                      <span>{p.term}</span>
+                    </dt>
+                    <dd class="mt-1 pl-6 text-sm text-charcoal-600">{p.desc}</dd>
+                  </div>
+                ))
+              }
+            </dl>
+          </div>
+
+          {/* The Solution */}
+          <div class="rounded border border-industrial-300 border-l-[3px] border-l-success bg-white p-6">
+            <h3 class="font-heading text-lg font-bold text-charcoal">
+              The Solution: ZainAcoustic Underlay Decoupling Layer
+            </h3>
+            <dl class="mt-4 space-y-4">
+              {
+                solutionPoints.map((s) => (
+                  <div>
+                    <dt class="flex gap-2 font-heading text-sm font-semibold text-charcoal">
+                      <span class="mt-0.5 text-success" aria-hidden="true">&#10003;</span>
+                      <span>{s.term}</span>
+                    </dt>
+                    <dd class="mt-1 pl-6 text-sm text-charcoal-600">{s.desc}</dd>
+                  </div>
+                ))
+              }
+            </dl>
+          </div>
+        </div>
+
+        {/* TODO: Missing image from brief — request asked for
+            "zainacoustic-problem-solution-dramatic.jpg"; using the existing
+            "-diagram" sibling. Supply the dramatic action capture if intended. */}
+        <figure class="m-0 mt-10" data-reveal>
+          <img
+            src={PS_IMG}
+            alt={PS_ALT}
+            title="Structural vibration through a bare concrete slab versus kinetic shock absorbed by ZainAcoustic underlayment"
+            width="1408"
+            height="768"
+            loading="lazy"
+            decoding="async"
+            class="h-auto w-full rounded border border-industrial-300"
+          />
+        </figure>
+      </div>
+    </section>
+
+    {/* ─── 4. KEY PRODUCT BENEFITS ────────────────────────────────────────── */}
+    <section aria-labelledby="benefits-h" class={`${sectionShell} bg-white`}>
+      <div class={container}>
+        <h2 id="benefits-h" class={h2} data-reveal>Key Product Benefits</h2>
+        <dl class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3" data-reveal-group>
+          {
+            benefits.map((it) => (
+              <div class="card-lift rounded border border-industrial-300 bg-industrial-100 p-5">
+                <span class={iconChip} aria-hidden="true">
+                  <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" set:html={icon[it.icon]} />
+                </span>
+                <dt class="font-heading font-semibold text-charcoal">{it.term}</dt>
+                <dd class="mt-1.5 text-sm text-charcoal-600">{it.desc}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+    </section>
+
+    {/* ─── 5. TECHNICAL SPECIFICATIONS ────────────────────────────────────── */}
+    <section aria-labelledby="specs-h" class={`${sectionShell} bg-industrial-100`}>
+      <div class={container}>
+        <h2 id="specs-h" class={h2} data-reveal>Technical Specifications</h2>
+        <p class={lede} data-reveal>
+          Material composition, binder grade, format, compatible subfloors and finishes for the
+          ZainAcoustic Underlay membrane. Figures are
+          <span class="font-semibold text-amber-700"> provisional</span> pending confirmation
+          against manufacturer product data and acoustic test certificates.
+        </p>
+
+        <div class="mt-8 grid gap-10 lg:grid-cols-2 lg:items-start" data-reveal-group>
+          <div class="overflow-x-auto">
+            <table class="w-full border-collapse text-left text-sm tabular-nums">
+              <caption class="sr-only">
+                ZainAcoustic Underlay acoustic sound insulation technical specifications
+              </caption>
+              <tbody>
+                {
+                  specRows.map(([label, value], i) => (
+                    <tr class:list={['border-b border-industrial-300', i % 2 === 1 && 'bg-white']}>
+                      <th scope="row" class="w-2/5 px-4 py-3 align-top font-semibold text-charcoal">
+                        {label}
+                      </th>
+                      <td class="px-4 py-3 align-top text-charcoal-600">{value}</td>
+                    </tr>
+                  ))
+                }
+              </tbody>
+            </table>
+          </div>
+
+          <figure class="m-0">
+            <img
+              src={SPEC_IMG}
+              alt={SPEC_ALT}
+              title="ZainAcoustic underlayment build-up — SBR granule structure, polyurethane binder and non-slip surface"
+              width="1024"
+              height="1024"
+              loading="lazy"
+              decoding="async"
+              class="h-auto w-full rounded border border-industrial-300"
+            />
+          </figure>
+        </div>
+
+        {/* TODO: Missing spec from brief — acoustic-underlay.yaml lists thickness,
+            density (kg/m³), format and impact-sound reduction (ΔLw / IIC) as null
+            "to collect". Confirm the SBR / MDI-polyurethane composition, roll
+            format, thickness range and tested acoustic figures against real
+            product test data / manufacturer certificates before go-live. */}
+        <p class="mt-3 text-xs text-charcoal-500" data-reveal>
+          Specifications are provisional pending final manufacturer product data and acoustic
+          test certificates.
+        </p>
+      </div>
+    </section>
+
+    {/* ─── 6. BEST FOR / IDEAL APPLICATIONS (text-only cards, no images) ──── */}
+    <section aria-labelledby="apps-h" class={`${sectionShell} bg-white`}>
+      <div class={container}>
+        <h2 id="apps-h" class={h2} data-reveal>Ideal Applications for ZainAcoustic Underlay</h2>
+        <dl class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4" data-reveal-group>
+          {
+            applications.map((it) => (
+              <div class="card-lift rounded border border-industrial-300 border-l-[3px] border-l-amber-400 bg-industrial-100 p-5">
+                <span class={iconChip} aria-hidden="true">
+                  <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" set:html={icon[it.icon]} />
+                </span>
+                <dt class="font-heading font-semibold text-charcoal">{it.term}</dt>
+                <dd class="mt-1.5 text-sm text-charcoal-600">{it.desc}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+    </section>
+
+    {/* ─── 7. GEOGRAPHIC SIGNALS ──────────────────────────────────────────── */}
+    <section aria-labelledby="geo-h" class={`${sectionShell} bg-industrial-100`}>
+      <div class={container}>
+        <h2 id="geo-h" class={h2} data-reveal>
+          Engineered for Dubai &amp; GCC Architectural Standards
+        </h2>
+
+        <div class="mt-8 grid gap-10 lg:grid-cols-2 lg:items-center">
+          <figure class="m-0" data-reveal>
+            <img
+              src={GEO_IMG}
+              alt={GEO_ALT}
+              title="High-rise Dubai apartment floor installation with ZainAcoustic soundproofing underlayment"
+              width="1408"
+              height="768"
+              loading="lazy"
+              decoding="async"
+              class="h-auto w-full rounded border border-industrial-300"
+            />
+          </figure>
+
+          <div data-reveal>
+            <p class="text-charcoal-600">
+              Dubai's continuous indoor air-conditioning cycles create steep temperature contrast
+              between occupied rooms and concrete structural slabs. Low-grade acoustic mats warp,
+              expand, or degrade under these conditions, leading to hollow tiles and cracked grout
+              lines. ZainAcoustic Underlay is specifically formulated for the Middle East
+              construction market. Its high-density SBR rubber matrix remains dimensionally flat,
+              rot-proof, and resilient against humidity and temperature shifts, offering long-term
+              acoustic protection across Dubai, Abu Dhabi, and the Northern Emirates.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {/* ─── 8. ABOUT RUKN AL ZAIN & DELIVERY ───────────────────────────────── */}
+    <section aria-labelledby="rzn-h" class={`${sectionShell} bg-white`}>
+      <div class={container}>
+        <h2 id="rzn-h" class={h2} data-reveal>Why Choose Rukn Al Zain?</h2>
+        <p class={lede} data-reveal>
+          Rukn Al Zain General Trading LLC is a trusted supplier of engineered acoustic systems
+          and sports flooring products in Dubai. We support contractors, architects, and acoustic
+          specifiers with fully tested materials that meet local municipal standards.
+        </p>
+
+        <h3 class="mt-10 font-heading text-lg font-bold text-charcoal" data-reveal>
+          How to Order
+        </h3>
+        <ol class="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3" data-reveal-group>
+          {
+            processSteps.map((s) => (
+              <li class="card-lift flex h-full flex-col rounded border border-industrial-300 bg-industrial-100 p-5">
+                <div class="flex items-center justify-between">
+                  <span class="grid h-11 w-11 place-items-center rounded bg-white text-amber-700 ring-1 ring-industrial-300" aria-hidden="true">
+                    <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" set:html={icon[s.icon]} />
+                  </span>
+                  <span class="font-heading text-2xl font-extrabold text-industrial-400" aria-hidden="true">
+                    {s.n}
+                  </span>
+                </div>
+                <h4 class="mt-3 font-heading text-base font-bold text-charcoal">{s.term}</h4>
+                <p class="mt-1.5 text-sm text-charcoal-600">{s.desc}</p>
+              </li>
+            ))
+          }
+        </ol>
+
+        <h3 class="mt-12 font-heading text-lg font-bold text-charcoal" data-reveal>
+          Delivery Coverage Across the UAE
+        </h3>
+        <p class="mt-4 max-w-3xl text-charcoal-600" data-reveal>
+          Serving {coverageAreas.slice(0, -1).join(', ')}, and {coverageAreas.at(-1)}.
+        </p>
+        <ul class="mt-5 flex flex-wrap gap-2.5" data-reveal-group>
+          {
+            coverageAreas.map((area) => (
+              <li class="inline-flex items-center gap-1.5 rounded border border-industrial-300 bg-industrial-100 px-3 py-1.5 text-sm font-medium text-charcoal">
+                <svg class="h-4 w-4 text-amber-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" set:html={icon['map-pin']} aria-hidden="true" />
+                {area}
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </section>
+
+    {/* ─── 9. FAQ — accordion (native <details>, zero-JS) ─────────────────── */}
+    <section aria-labelledby="faq-h" class={`${sectionShell} bg-industrial-100`}>
+      <div class={container}>
+        <h2 id="faq-h" class={h2} data-reveal>Frequently Asked Questions</h2>
+        <div
+          class="mt-6 max-w-3xl divide-y divide-industrial-300 border-y border-industrial-300"
+          data-reveal-group
+        >
+          {
+            faqs.map((f, i) => (
+              <details class="group" open={i === 0}>
+                <summary class="flex cursor-pointer items-center justify-between gap-4 py-4 font-heading text-base font-semibold text-charcoal marker:content-none [&::-webkit-details-marker]:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700">
+                  <span>{f.question}</span>
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    class="h-5 w-5 shrink-0 text-amber-700 transition-transform duration-200 group-open:-rotate-180"
+                    aria-hidden="true"
+                  >
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m6 9 6 6 6-6" />
+                  </svg>
+                </summary>
+                <p class="pb-4 text-charcoal-600">{f.answer}</p>
+              </details>
+            ))
+          }
+        </div>
+
+        {/* Internal link: spoke → hub, keyword anchor text */}
+        <p class="mt-8 max-w-3xl text-sm text-charcoal-600" data-reveal>
+          ZainAcoustic Underlay is part of Rukn Al Zain's{' '}
+          <a
+            href="/acoustic-soundproofing-flooring"
+            class="rounded font-semibold text-amber-700 hover:text-amber-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700"
+          >
+            acoustic &amp; soundproofing flooring range
+          </a>. For perimeter flanking control, pair it with the{' '}
+          <a
+            href="/acoustic-strips"
+            class="rounded font-semibold text-amber-700 hover:text-amber-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700"
+          >
+            Zain Acoustic Strip
+          </a>; for under-screed isolation, see{' '}
+          <a
+            href="/screed-isolation"
+            class="rounded font-semibold text-amber-700 hover:text-amber-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700"
+          >
+            Zain Silence
+          </a>.
+        </p>
+      </div>
+    </section>
+
+    {/* Combined BreadcrumbList + Product + FAQPage structured data (@graph).
+        Kept in-body to match the sibling spoke pages (BaseLayout exposes no
+        <head> slot); crawlers parse it identically. Organization JSON-LD is
+        emitted sitewide by BaseLayout. */}
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(graphSchema)} />
+
+    {/* ─── 10. LEAD CAPTURE & BOTTOM CTA ──────────────────────────────────── */}
+    <section
+      id="lead-capture"
+      aria-labelledby="cta-h"
+      class="border-t border-industrial-300 bg-charcoal-700 text-white"
+    >
+      <div class={`${container} py-16`}>
+        <div class="grid gap-10 lg:grid-cols-[1fr_1.05fr] lg:items-start">
+          <div data-reveal>
+            <h2 id="cta-h" class="text-2xl font-bold text-white">
+              Get Your Free Sample Kit &amp; Project Quote
+            </h2>
+            <p class="mt-4 max-w-xl text-industrial-200">
+              Protect your project from structural impact noise. Contact our Dubai acoustic
+              specialists today to request physical samples, detailed technical datasheets, or a
+              competitive project quotation.
+            </p>
+            <dl class="mt-6 space-y-3 text-sm">
+              <div class="flex flex-wrap gap-x-2">
+                <dt class="font-semibold text-white">Phone / WhatsApp:</dt>
+                <dd>
+                  <a
+                    href="tel:+971505698195"
+                    class="rounded font-medium text-amber-400 hover:text-amber-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+                  >
+                    +971 50 569 8195
+                  </a>
+                </dd>
+              </div>
+              <div class="flex flex-wrap gap-x-2">
+                <dt class="font-semibold text-white">Address:</dt>
+                <dd class="text-industrial-200">
+                  Rukn Al Zain General Trading LLC, P.O. Box 36528, Dubai, UAE
+                </dd>
+              </div>
+            </dl>
+
+            <div class="mt-6">
+              <a
+                href={WHATSAPP_PLAIN}
+                target="_blank"
+                rel="noopener"
+                class={`${ghostCta} focus-visible:ring-offset-charcoal-700`}
+              >
+                WhatsApp Now
+              </a>
+            </div>
+          </div>
+
+          {/*
+            Standard HTML POST form wired for Netlify Forms (zero JS): captured
+            automatically on a Netlify deploy. Locally (`astro preview`) the POST
+            has no handler — that is expected. Mirrors src/pages/contact.astro
+            and the zainduo sibling.
+            TODO: add a branded /thank-you success page and point `action` at it.
+          */}
+          <div class="rounded border border-industrial-300 bg-white p-6 text-charcoal" data-reveal>
+            <form
+              name="acoustic-underlay-quote"
+              method="POST"
+              action={PATH}
+              data-netlify="true"
+              netlify-honeypot="bot-field"
+              class="space-y-5"
+            >
+              <input type="hidden" name="form-name" value="acoustic-underlay-quote" />
+              <input type="hidden" name="product" value="ZainAcoustic Underlay" />
+              <p class="hidden">
+                <label>Leave this field empty if you are human: <input name="bot-field" /></label>
+              </p>
+
+              <div class="grid gap-5 sm:grid-cols-2">
+                <div>
+                  <label class={labelClass} for="name">
+                    Name <span class="text-amber-700">*</span>
+                  </label>
+                  <input
+                    class={fieldClass}
+                    type="text"
+                    id="name"
+                    name="name"
+                    autocomplete="name"
+                    required
+                  />
+                </div>
+                <div>
+                  <label class={labelClass} for="email">
+                    Email <span class="text-amber-700">*</span>
+                  </label>
+                  <input
+                    class={fieldClass}
+                    type="email"
+                    id="email"
+                    name="email"
+                    autocomplete="email"
+                    required
+                  />
+                </div>
+                <div>
+                  <label class={labelClass} for="phone">
+                    Phone Number <span class="text-amber-700">*</span>
+                  </label>
+                  <input
+                    class={fieldClass}
+                    type="tel"
+                    id="phone"
+                    name="phone"
+                    autocomplete="tel"
+                    inputmode="tel"
+                    required
+                  />
+                </div>
+                <div>
+                  <label class={labelClass} for="location">Project Location</label>
+                  <select class={fieldClass} id="location" name="location">
+                    <option value="" selected disabled>Select an emirate</option>
+                    {emirates.map((e) => <option value={e}>{e}</option>)}
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label class={labelClass} for="message">Message</label>
+                <textarea
+                  class={fieldClass}
+                  id="message"
+                  name="message"
+                  rows="4"
+                  placeholder="Tell us about your project — area (sq. m), floor finish, target sound rating"
+                ></textarea>
+              </div>
+
+              <div class="flex flex-wrap gap-3">
+                <button
+                  type="submit"
+                  class="inline-flex items-center justify-center rounded bg-amber-400 px-5 py-3 font-semibold text-charcoal-900 transition-colors hover:bg-amber-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700 focus-visible:ring-offset-2"
+                >
+                  Request Free Sample
+                </button>
+                <a
+                  href={WHATSAPP_PLAIN}
+                  target="_blank"
+                  rel="noopener"
+                  class="inline-flex items-center justify-center rounded border border-charcoal-300 px-5 py-3 font-semibold text-charcoal transition-colors hover:border-charcoal-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700"
+                >
+                  WhatsApp Now
+                </a>
+              </div>
+              <p class="text-xs text-charcoal-400">
+                Submissions are handled by Netlify Forms on the live site.
+              </p>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {/* ─── SUBTLE MOTION ──────────────────────────────────────────────────────
+        One-shot CSS load-in for the hero and a staggered scroll-reveal for
+        headings, card groups, figures and the spec table. Progressive
+        enhancement only — content is fully visible without JS, and every effect
+        is disabled under prefers-reduced-motion. Mirrors zainduo.astro. */}
+    <style is:global>
+      .au-js .au-page [data-hero] {
+        animation: au-rise 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      @keyframes au-rise {
+        from {
+          opacity: 0;
+          transform: translateY(16px);
+        }
+      }
+
+      .au-js .au-page [data-reveal],
+      .au-js .au-page [data-reveal-group] > * {
+        opacity: 0;
+        transform: translateY(14px);
+        transition:
+          opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+          transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .au-js .au-page [data-reveal].in,
+      .au-js .au-page [data-reveal-group].in > * {
+        opacity: 1;
+        transform: none;
+      }
+      .au-js .au-page [data-reveal-group].in > *:nth-child(2) { transition-delay: 0.06s; }
+      .au-js .au-page [data-reveal-group].in > *:nth-child(3) { transition-delay: 0.12s; }
+      .au-js .au-page [data-reveal-group].in > *:nth-child(4) { transition-delay: 0.18s; }
+      .au-js .au-page [data-reveal-group].in > *:nth-child(5) { transition-delay: 0.24s; }
+      .au-js .au-page [data-reveal-group].in > *:nth-child(n + 6) { transition-delay: 0.3s; }
+
+      .au-page .card-lift {
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
+      }
+      .au-page .card-lift:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 24px -6px rgb(42 45 52 / 0.18);
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .au-js .au-page [data-hero] {
+          animation: none;
+        }
+        .au-js .au-page [data-reveal],
+        .au-js .au-page [data-reveal-group] > * {
+          opacity: 1;
+          transform: none;
+          transition: none;
+        }
+        .au-page .card-lift,
+        .au-page .card-lift:hover {
+          transition: none;
+          transform: none;
+        }
+      }
+    </style>
+
+    <script>
+      const targets = document.querySelectorAll(
+        '.au-page [data-reveal], .au-page [data-reveal-group]',
+      );
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const revealAll = () => targets.forEach((el) => el.classList.add('in'));
+
+      if (reduce || !('IntersectionObserver' in window)) {
+        revealAll();
+      } else {
+        const io = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (!entry.isIntersecting) continue;
+              entry.target.classList.add('in');
+              io.unobserve(entry.target);
+            }
+          },
+          { rootMargin: '0px 0px -8% 0px' },
+        );
+        targets.forEach((el) => io.observe(el));
+        window.addEventListener('load', () => setTimeout(revealAll, 1200));
+      }
+    </script>
+  </article>
+</BaseLayout>

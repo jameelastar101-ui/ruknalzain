@@ -1,0 +1,89 @@
+---
+/**
+ * Catch-all route for every hub and product page. Each content entry carries its
+ * own canonical `path`; getStaticPaths turns that into the route so nested
+ * product URLs (e.g. /rubber-gym-tiles/zainfit) work from a single file.
+ */
+import type { CollectionEntry } from 'astro:content';
+import { getCollection } from 'astro:content';
+
+import BaseLayout from '@layouts/BaseLayout.astro';
+import HubPage from '@components/HubPage.astro';
+import ProductPage from '@components/ProductPage.astro';
+
+export async function getStaticPaths() {
+  const [hubs, products] = await Promise.all([
+    getCollection('hubs'),
+    getCollection('products'),
+  ]);
+
+  return [
+    ...hubs
+      // /acoustic-soundproofing-flooring, /gym-fitness-flooring and
+      // /animal-agricultural-flooring are owned by bespoke pages in src/pages/ —
+      // exclude them here to avoid a route collision. Their YAML entries stay as
+      // data for their child products.
+      .filter(
+        (entry) =>
+          entry.data.path !== '/acoustic-soundproofing-flooring' &&
+          entry.data.path !== '/gym-fitness-flooring' &&
+          entry.data.path !== '/animal-agricultural-flooring',
+      )
+      .map((entry) => ({
+        params: { slug: entry.data.path.replace(/^\//, '') },
+        props: { kind: 'hub' as const, entry },
+      })),
+    ...products
+      // /acoustic-underlay, /sports-track-underlay, /screed-isolation,
+      // /acoustic-strips, /hammer-top, /horse-mats, /outdoor-pavers/dogbone,
+      // /outdoor-pavers/hexagon, /rubber-gym-tiles/zainfit,
+      // /rubber-gym-tiles/zainsquare, /gym-flooring-rolls/zainduo,
+      // /gym-flooring-rolls/zainactive-rolls and
+      // /gym-safety-accessories/curb-stone are owned by bespoke pages in
+      // src/pages/ — exclude them here to avoid a route collision. Their YAML
+      // entries stay as data (children of their hub) and the bespoke pages serve
+      // the same URLs.
+      .filter(
+        (entry) =>
+          entry.data.path !== '/acoustic-underlay' &&
+          entry.data.path !== '/sports-track-underlay' &&
+          entry.data.path !== '/screed-isolation' &&
+          entry.data.path !== '/acoustic-strips' &&
+          entry.data.path !== '/hammer-top' &&
+          entry.data.path !== '/horse-mats' &&
+          entry.data.path !== '/outdoor-pavers/dogbone' &&
+          entry.data.path !== '/outdoor-pavers/hexagon' &&
+          entry.data.path !== '/rubber-gym-tiles/zainfit' &&
+          entry.data.path !== '/rubber-gym-tiles/zainsquare' &&
+          entry.data.path !== '/gym-flooring-rolls/zainduo' &&
+          entry.data.path !== '/gym-flooring-rolls/zainactive-rolls' &&
+          entry.data.path !== '/gym-safety-accessories/curb-stone',
+      )
+      .map((entry) => ({
+        params: { slug: entry.data.path.replace(/^\//, '') },
+        props: { kind: 'product' as const, entry },
+      })),
+  ];
+}
+
+type Props =
+  | { kind: 'hub'; entry: CollectionEntry<'hubs'> }
+  | { kind: 'product'; entry: CollectionEntry<'products'> };
+
+const { kind, entry } = Astro.props as Props;
+const d = entry.data;
+---
+<BaseLayout
+  title={d.seoTitle}
+  description={d.metaDescription}
+  canonical={d.path}
+  noindex={d.noindex}
+>
+  {
+    kind === 'hub' ? (
+      <HubPage entry={entry as CollectionEntry<'hubs'>} />
+    ) : (
+      <ProductPage entry={entry as CollectionEntry<'products'>} />
+    )
+  }
+</BaseLayout>

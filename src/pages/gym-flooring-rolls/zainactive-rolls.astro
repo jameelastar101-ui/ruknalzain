@@ -1,0 +1,1096 @@
+---
+/**
+ * /gym-flooring-rolls/zainactive-rolls — "ZainActive Rolls — Continuous SBR &
+ * EPDM Rubber Flooring Rolls Dubai" conversion + SEO / AEO / GEO product page.
+ *
+ * Bespoke page (not the YAML-driven generic ProductPage), built to mirror the
+ * structure, class helpers and progressive-enhancement motion of the sibling
+ * spoke src/pages/gym-flooring-rolls/zainduo.astro and the parent hub
+ * src/pages/gym-flooring-rolls.astro.
+ *
+ * ─── ROUTING ─────────────────────────────────────────────────────────────
+ * The content entry src/content/products/zainactive-rolls.yaml carries
+ * `path: /gym-flooring-rolls/zainactive-rolls`. To avoid a duplicate-route
+ * build error the matching branch is filtered out of getStaticPaths in
+ * src/pages/[...slug].astro — the same pattern already used for zainfit,
+ * zainsquare and zainduo. The YAML entry stays as data; this file serves the
+ * URL.
+ *
+ * ─── DATA INTEGRITY FLAGS (CLAUDE.md §0 "Data Integrity" + §6) ────────────
+ * zainactive-rolls.yaml lists roll width, roll length and thickness options as
+ * `null` "to collect". Every technical figure rendered in Section 5 (1.22 m roll
+ * width, 10–15 m roll length, 6/8/10/12 mm thickness, 1000–1050 kg/m³ density,
+ * 60–65 Shore A hardness, MDI-polyurethane-bonded recycled-SBR + EPDM-fleck
+ * composition, full-spread PU adhesive glue-down, 18–22 dB impact-sound
+ * reduction) was supplied in the page-build request, NOT in
+ * Rukn_Al_Zain_SEO_Content_Brief.docx. Treat every value as PROVISIONAL and
+ * confirm against real product test data / manufacturer certificates before
+ * go-live.
+ *
+ * ─── IMAGE ASSETS ───────────────────────────────────────────────────────
+ * Client-supplied JPEGs in public/images/gym-flooring-rolls/, intrinsic
+ * dimensions wired below to prevent layout shift:
+ *   - zainactive-rolls-hero.jpg                       (hero, 1024×1024)
+ *   - zainactive-rolls-problem-solution-dramatic.jpg  (landscape, 1376×768)
+ *   - zainactive-rolls-technical-specifications.jpg   (square, 1024×1024)
+ * Section 7 (Geographic Signals) asked for a purpose-built
+ * `zainactive-rolls-ideal-applications.jpg` — NOT present in the repo. The
+ * proven hub asset `dubai-high-rise-gym-rubber-rolls.webp` (1408×768, already
+ * used on src/pages/gym-flooring-rolls.astro) is used in its place so the page
+ * renders without a broken image. TODO: swap in the dedicated asset when
+ * supplied, and convert the three new JPEGs to optimised WebP to match the
+ * zainsquare / hub asset pipeline. og:image falls back to the hero file (no
+ * purpose-built 1200×630 card yet).
+ *
+ * ─── DECISIONS TAKEN ────────────────────────────────────────────────────
+ *   - Hero "Request Free Material" CTA scrolls to the in-page lead-capture form
+ *     (id="lead-form", Section 10) — a Netlify Forms POST, matching the zero-JS
+ *     pattern in src/pages/contact.astro and the zainduo sibling. The secondary
+ *     button opens WhatsApp.
+ *   - Palette: the build request described a "dark / neutral-950 / emerald-600
+ *     WhatsApp" system. That does NOT match this project — the live site and
+ *     every sibling spoke (zainduo, zainsquare, zainfit) use the light
+ *     industrial system from CLAUDE.md (charcoal text, industrial-100 sections,
+ *     white cards, amber-400 primary CTA, charcoal/white ghost secondary).
+ *     This page follows the established system for design-system consistency;
+ *     the emerald WhatsApp accent is intentionally not used.
+ *   - Structured data: a single combined @graph (BreadcrumbList + Product +
+ *     FAQPage) emitted inline, matching zainduo. The visible breadcrumb trail is
+ *     hand-rolled (not <Breadcrumbs />) so the BreadcrumbList is declared
+ *     exactly once. Organization JSON-LD is still emitted sitewide by BaseLayout.
+ *   - Canonical host: the request shows "rukanalzain.com"; the configured site
+ *     is "ruknalzain.ae" (astro.config.mjs) — canonical is built from that
+ *     via the BaseLayout `canonical` prop (same choice as the zainduo sibling).
+ *   - Single <h1>: the on-page H1 is the hero heading "Continuous Rubber Gym
+ *     Flooring Rolls in Dubai". The request's separate "ZainActive Rolls —
+ *     Rubber Flooring Rolls Dubai" line is used only as internal page-name copy,
+ *     not a second H1.
+ */
+import BaseLayout from '@layouts/BaseLayout.astro';
+
+const SITE = (Astro.site ?? new URL('https://ruknalzain.ae')).origin;
+const IMG = '/images/gym-flooring-rolls';
+const PATH = '/gym-flooring-rolls/zainactive-rolls';
+
+/* Client-supplied ZainActive photography — see IMAGE ASSETS note above. */
+const HERO_IMG = `${IMG}/zainactive-rolls-hero.jpg`; // 1024×1024
+const HERO_ALT =
+  'ZainActive rubber gym flooring roll displayed on a pedestal featuring the Rukn Al Zain product label logo in a modern Dubai showroom';
+const PS_IMG = `${IMG}/zainactive-rolls-problem-solution-dramatic.jpg`; // 1376×768
+const PS_ALT =
+  'Visual comparison showing dynamic seam lifting on tiled gym flooring versus a continuous ZainActive rubber roll surface';
+const SPEC_IMG = `${IMG}/zainactive-rolls-technical-specifications.jpg`; // 1024×1024
+const SPEC_ALT =
+  'Technical cross-section diagram detailing ZainActive rolls specification, showing the recycled SBR body with EPDM colour flecks and non-slip matte finish';
+/* Section 7: purpose-built asset not supplied — proven hub image reused. */
+const GEO_IMG = `${IMG}/dubai-high-rise-gym-rubber-rolls.webp`; // 1408×768
+const GEO_ALT =
+  'Contractor unrolling a seamless ZainActive rubber flooring roll in a modern Dubai commercial gym inside a high-rise tower';
+const OG_IMG = HERO_IMG; // fallback share image — no purpose-built 1200×630 card yet
+
+const WHATSAPP_HERO =
+  'https://wa.me/971505698195?text=Hello%20Rukn%20Al%20Zain,%20I%20am%20interested%20in%20ZainActive%20Rolls';
+const WHATSAPP_PLAIN = 'https://wa.me/971505698195';
+
+/* ─── Inline Lucide icon path data (24×24, currentColor stroke) ─────────── */
+const icon: Record<string, string> = {
+  layers:
+    '<path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"/><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"/><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"/>',
+  palette:
+    '<circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/>',
+  droplets:
+    '<path d="M7 16.3c2.2 0 4-1.83 4-4.05 0-1.16-.57-2.26-1.71-3.19S7.29 4.24 7 2c-.29 2.24-1.14 4.83-2.29 6.06S3 11.1 3 12.25c0 2.22 1.8 4.05 4 4.05z"/><path d="M12.56 6.6A10.97 10.97 0 0 0 14 3.02c.5 2.5 2 4.9 4 6.5s3 3.5 3 5.5a6.98 6.98 0 0 1-11.91 4.97"/>',
+  'volume-x':
+    '<path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"/><path d="m22 9-6 6"/><path d="m16 9 6 6"/>',
+  'shield-check':
+    '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/>',
+  sun:
+    '<circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>',
+  activity:
+    '<path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2"/>',
+  'building-2':
+    '<path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/>',
+  dumbbell:
+    '<path d="m6.5 6.5 11 11"/><path d="m21 21-1-1"/><path d="m3 3 1 1"/><path d="m18 22 4-4"/><path d="m2 6 4-4"/><path d="m3 10 7-7"/><path d="m14 21 7-7"/>',
+  route:
+    '<circle cx="6" cy="19" r="3"/><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"/><circle cx="18" cy="5" r="3"/>',
+  warehouse:
+    '<path d="M22 8.35V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8.35A2 2 0 0 1 3.26 6.5l8-3.2a2 2 0 0 1 1.48 0l8 3.2A2 2 0 0 1 22 8.35Z"/><path d="M6 18h12"/><path d="M6 14h12"/><path d="M6 10h12"/>',
+  truck:
+    '<path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/>',
+  package:
+    '<path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"/><path d="M12 22V12"/><polyline points="3.29 7 12 12 20.71 7"/><path d="m7.5 4.27 9 5.15"/>',
+  'map-pin':
+    '<path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/>',
+  waves:
+    '<path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/>',
+  globe:
+    '<circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/>',
+};
+
+/* ─── 2. Trust bar ────────────────────────────────────────────────────── */
+const trustCards = [
+  {
+    icon: 'warehouse',
+    term: 'Direct Local Stock in Dubai',
+    desc: 'Large inventory reserves kept locally to support 24-to-48-hour delivery across Dubai and all seven Emirates.',
+  },
+  {
+    icon: 'layers',
+    term: 'Low-Seam Continuous Coverage',
+    desc: 'Engineered for wide-area coverage, drastically reducing dirt traps and seam lines in high-traffic fitness spaces.',
+  },
+  {
+    icon: 'sun',
+    term: 'GCC Heat & AC Resilient',
+    desc: "Formulated with heat-stable polyurethane binders that won't warp, off-gas, or degrade during extreme UAE temperature changes.",
+  },
+];
+
+/* ─── 3. Problem / Solution — paired lists ───────────────────────────── */
+const problemPoints = [
+  {
+    term: 'Hundreds of Exposed Tile Seams',
+    desc: 'Traditional tile flooring across expansive commercial gyms, multi-purpose halls and functional training areas creates hundreds of exposed seams over the floor plan.',
+  },
+  {
+    term: 'Seams Catch, Lift and Trap Debris',
+    desc: 'Intense foot traffic, rolling equipment and aggressive floor cleaning cause tile seams to catch, lift, and trap dirt and moisture over time.',
+  },
+  {
+    term: 'Constant Maintenance & Floor Gaps',
+    desc: 'The result is ongoing maintenance work, unsightly floor gaps and an inconsistent surface finish in premium Dubai facilities.',
+  },
+  {
+    term: 'Trip Hazards Along Joints',
+    desc: 'Lifted and curling tile edges become potential tripping hazards in busy training zones and along sprint lanes.',
+  },
+];
+const solutionPoints = [
+  {
+    term: 'Up to 80% Fewer Seam Lines',
+    desc: 'ZainActive Rolls provide a continuous, wide-format rubber surface that reduces seam lines by up to 80% compared with standard tiles.',
+  },
+  {
+    term: 'High-Density SBR & EPDM Body',
+    desc: 'Made from high-density recycled SBR and resilient EPDM granules bound with heavy-duty polyurethane for a durable, uniform layer.',
+  },
+  {
+    term: 'Flat, Easy-to-Clean Surface',
+    desc: 'Rolls unroll smoothly to form a flat, uniform floor that is fast to sweep and damp mop, with far fewer crevices to trap sweat and dirt.',
+  },
+  {
+    term: 'Locked in Place Under Heavy Traffic',
+    desc: 'Glued down across its full spread, the surface absorbs impact, reduces acoustic noise and stays firmly in place under heavy commercial use.',
+  },
+];
+
+/* ─── 4. Key product benefits ────────────────────────────────────────── */
+const benefits = [
+  {
+    icon: 'droplets',
+    term: 'Seamless Aesthetic & Easy Cleaning',
+    desc: 'Fewer seam lines create a sleek, modern finish while eliminating crevice traps where dirt and sweat accumulate.',
+  },
+  {
+    icon: 'activity',
+    term: 'High-Density Impact Absorption',
+    desc: 'Cushions heavy fitness equipment, absorbs kinetic shock, and protects concrete subfloors from cracking.',
+  },
+  {
+    icon: 'volume-x',
+    term: 'Acoustic & Vibration Isolation',
+    desc: 'Dampens footsteps and equipment noise, reducing sound transfer across multi-story commercial buildings.',
+  },
+  {
+    icon: 'palette',
+    term: 'Custom Color Fleck Options',
+    desc: 'Available in solid black SBR or custom EPDM colour-fleck variations to match facility branding.',
+  },
+];
+
+/* ─── 5. Technical specifications — PROVISIONAL (see data-integrity flags) */
+const specRows: [string, string][] = [
+  [
+    'Material Composition',
+    'High-density recycled SBR rubber granules with EPDM colour flecks bonded with MDI polyurethane binders',
+  ],
+  ['Roll Width', '1.22 metres (standard)'],
+  ['Roll Length', '10 metres to 15 metres (custom lengths available on request)'],
+  ['Thickness Options', '6 mm, 8 mm, 10 mm, 12 mm'],
+  ['Density Rating', '1000 kg/m³ to 1050 kg/m³'],
+  ['Hardness Rating', '60° to 65° Shore A'],
+  ['Installation Method', 'Continuous seam glue-down with full-spread polyurethane adhesive'],
+  [
+    'Surface Finish',
+    'Non-slip textured matte finish (solid black or with customizable EPDM colour flecks)',
+  ],
+  ['Acoustic Rating', 'Reduces impact sound transmission by 18 dB to 22 dB'],
+];
+
+/* ─── 6. Ideal applications — text/UI only, no imagery (build request §6) */
+const applications = [
+  {
+    icon: 'dumbbell',
+    term: 'Commercial Fitness Centers & Gym Floors',
+    desc: 'Ideal for wide-format, open-layout cardio zones, resistance-machine areas and main training floors needing low-seam coverage.',
+  },
+  {
+    icon: 'route',
+    term: 'Functional Training Tracks & Sprint Lanes',
+    desc: 'Provides continuous traction and dynamic stability under foot traffic and sled pushing without lifting along joints.',
+  },
+  {
+    icon: 'building-2',
+    term: 'Multi-Purpose Halls & Sports Complexes',
+    desc: 'Suitable for high-occupancy athletic zones, school gymnasiums and corporate recreation areas requiring quick, expansive floor covering.',
+  },
+  {
+    icon: 'shield-check',
+    term: 'CrossFit & Free-Weight Surrounding Areas',
+    desc: 'Serves as a smooth perimeter surface around high-impact drop zones, ensuring an easy-to-clean environment.',
+  },
+];
+
+/* ─── 7. Geographic signals ──────────────────────────────────────────── */
+const geoPoints = [
+  {
+    icon: 'building-2',
+    term: 'Dubai Business & Fitness Hubs',
+    desc: 'Servicing commercial fit-outs and high-rise fitness spaces in Business Bay, Downtown Dubai, Al Quoz, Sheikh Zayed Road and Dubai Design District (d3).',
+  },
+  {
+    icon: 'waves',
+    term: 'Waterfront & Residential Developments',
+    desc: 'Supplying premium fitness facilities and villa workout rooms across Dubai Marina, JBR, Palm Jumeirah, Dubai Hills Estate and MBR City.',
+  },
+  {
+    icon: 'globe',
+    term: 'UAE & GCC Coverage',
+    desc: 'Rapid 24-to-48-hour delivery network supporting projects in Abu Dhabi, Sharjah, Ajman, Ras Al Khaimah and broad GCC commercial markets.',
+  },
+];
+
+/* ─── 8. About Rukn Al Zain & delivery ──────────────────────────────── */
+const deliveryCards = [
+  {
+    icon: 'warehouse',
+    term: 'Local Inventory',
+    desc: 'Large stock volumes held locally in Dubai for immediate dispatch.',
+  },
+  {
+    icon: 'truck',
+    term: 'Dispatch Times',
+    desc: 'Same-day fulfillment with 24-hour delivery in Dubai and 48 hours across the rest of the UAE.',
+  },
+  {
+    icon: 'package',
+    term: 'Sample Support',
+    desc: 'Physical material samples and technical density datasheets delivered directly to project contractors, architects and facility owners on request.',
+  },
+];
+
+/* Project-location dropdown for the lead form (build request §10 order). */
+const emirates = [
+  'Dubai',
+  'Abu Dhabi',
+  'Sharjah',
+  'Ajman',
+  'Ras Al Khaimah',
+  'Fujairah',
+  'Umm Al Quwain',
+];
+
+/* ─── 9. FAQ (AEO) — self-contained answers, verbatim from the request ── */
+const faqs = [
+  {
+    question: 'What services does Rukn Al Zain General Trading LLC provide for fitness facilities?',
+    answer:
+      'Rukn Al Zain supplies commercial-grade SBR and EPDM rubber gym flooring rolls across Dubai and the UAE. We assist clients with technical specification selection, physical sample deliveries, and layout guidance.',
+  },
+  {
+    question: 'Where is Rukn Al Zain located, and what are the order fulfillment times?',
+    answer:
+      'Our central distribution hub is located in Dubai, United Arab Emirates. We maintain local stock to fulfill orders within 24 hours across Dubai and within 48 hours to all other Emirates.',
+  },
+  {
+    question: 'What materials are used to manufacture ZainActive rubber gym rolls?',
+    answer:
+      'ZainActive rolls are manufactured using high-density recycled SBR rubber granules and vibrant EPDM color flecks bonded with polyurethane binders. This combination forms a durable, high-density workout surface.',
+  },
+  {
+    question: 'What standard thickness options are available for gym flooring rolls?',
+    answer:
+      'Our rubber gym rolls are available in standard thicknesses of 6mm, 8mm, 10mm, and 12mm. Custom thicknesses and roll lengths can also be supplied based on specific facility demands.',
+  },
+  {
+    question: 'Where are rubber gym flooring rolls most effectively installed in a fitness facility?',
+    answer:
+      'Rubber rolls are best installed over expansive floor areas such as cardio zones, weight machine sections, sprint lanes, and functional sled push tracks. They deliver a continuous, low-seam surface that withstands heavy equipment and dynamic foot traffic.',
+  },
+  {
+    question: 'How are continuous rubber gym rolls cleaned and maintained?',
+    answer:
+      'Daily maintenance requires vacuuming or sweeping away surface dust and debris. Regular deep cleaning is completed by damp mopping the surface using warm water mixed with a neutral pH cleaning detergent.',
+  },
+  {
+    question: "How do rubber gym rolls withstand Dubai's climate and heavy indoor air conditioning?",
+    answer:
+      'The heat-resistant polyurethane binders used in our rubber rolls keep the material dimensionally stable. They resist warping, edge lifting, and off-gassing during intense thermal changes caused by indoor AC cycling and GCC ambient heat.',
+  },
+  {
+    question: 'Why are rubber gym rolls required for fitness facilities located in Dubai high-rises?',
+    answer:
+      'Multi-story towers in areas like Business Bay and Downtown Dubai transfer dynamic weight drops directly into concrete sub-slabs. Dense rubber rolls isolate vibration and absorb kinetic shock at the surface, reducing sound transfer to lower levels.',
+  },
+];
+
+/* ─── Structured data — single combined @graph (build request §0) ─────── */
+const breadcrumbSchema = {
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE}/` },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: 'Gym Flooring Rolls',
+      item: `${SITE}/gym-flooring-rolls`,
+    },
+    { '@type': 'ListItem', position: 3, name: 'ZainActive Rolls', item: `${SITE}${PATH}` },
+  ],
+};
+
+const productSchema = {
+  '@type': 'Product',
+  name: 'ZainActive Rolls — Continuous SBR & EPDM Rubber Flooring Rolls',
+  description:
+    'Heavy-duty rubber flooring rolls made from high-density recycled SBR and resilient EPDM granules bound with MDI polyurethane. Supplied in low-seam continuous lengths for large commercial fitness centers, multi-purpose halls and functional sprint tracks across Dubai and the UAE, delivering shock absorption, dynamic equipment support and acoustic isolation.',
+  image: `${SITE}${OG_IMG}`,
+  sku: 'RZ-ACTIVE-ROLL',
+  category: 'Gym Fitness Flooring',
+  url: `${SITE}${PATH}`,
+  brand: { '@type': 'Brand', name: 'Rukn Al Zain' },
+  manufacturer: { '@type': 'Organization', name: 'Rukn Al Zain General Trading LLC' },
+  material:
+    'High-density recycled SBR rubber granules with EPDM colour flecks bonded with MDI polyurethane binders',
+  areaServed: 'United Arab Emirates',
+};
+
+const faqSchema = {
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((f) => ({
+    '@type': 'Question',
+    name: f.question,
+    acceptedAnswer: { '@type': 'Answer', text: f.answer },
+  })),
+};
+
+const graphSchema = {
+  '@context': 'https://schema.org',
+  '@graph': [breadcrumbSchema, productSchema, faqSchema],
+};
+
+/* Shared class helpers — mirrors src/pages/gym-flooring-rolls/zainduo.astro. */
+const sectionShell = 'border-t border-industrial-300 py-14 sm:py-16';
+const container = 'mx-auto max-w-content px-4 sm:px-6 lg:px-8';
+const h2 = 'text-2xl font-bold text-charcoal';
+const lede = 'mt-4 max-w-3xl text-charcoal-600';
+const primaryCta =
+  'inline-flex items-center justify-center rounded bg-amber-400 px-5 py-3 font-semibold text-charcoal-900 transition-colors hover:bg-amber-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2';
+const ghostCta =
+  'inline-flex items-center justify-center rounded border border-white/25 px-5 py-3 font-semibold text-white transition-colors hover:border-white/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400';
+const iconChip =
+  'mb-3 grid h-11 w-11 place-items-center rounded bg-white text-amber-700 ring-1 ring-industrial-300';
+const crumbLink =
+  'rounded hover:text-amber-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700';
+const fieldClass =
+  'mt-1.5 block w-full rounded border border-charcoal-300 bg-white px-3 py-2.5 text-charcoal shadow-sm focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-700';
+const labelClass = 'block text-sm font-medium text-charcoal';
+---
+
+<BaseLayout
+  title="Rubber Flooring Rolls Dubai | SBR & EPDM Gym Rolls | Rukn Al Zain"
+  description="Heavy-duty rubber flooring rolls in Dubai. Seamless SBR and EPDM rolls designed for large commercial fitness facilities, multi-purpose halls, and functional tracks."
+  canonical={PATH}
+  ogImage={OG_IMG}
+  ogImageAlt="ZainActive continuous SBR and EPDM rubber gym flooring rolls by Rukn Al Zain, Dubai UAE."
+>
+  <article class="zar-page">
+    {/*
+      Mark the document as JS-capable ASAP so scroll-reveal elements start hidden
+      only when the animation engine is available. A failsafe timer guarantees
+      content becomes visible even if the observer below never runs, and
+      reduced-motion visitors skip the effect entirely.
+    */}
+    <script is:inline>
+      (function () {
+        document.documentElement.classList.add('zar-js');
+        var sel = '.zar-page [data-reveal], .zar-page [data-reveal-group]';
+        var showAll = function () {
+          document.querySelectorAll(sel).forEach(function (el) {
+            el.classList.add('in');
+          });
+        };
+        var reduce =
+          window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (reduce) {
+          if (document.readyState === 'loading')
+            document.addEventListener('DOMContentLoaded', showAll);
+          else showAll();
+        } else {
+          setTimeout(showAll, 1600);
+        }
+      })();
+    </script>
+
+    {/* Breadcrumb strip — Home > Gym Flooring Rolls > ZainActive Rolls.
+        Hand-rolled (not <Breadcrumbs />) so the BreadcrumbList JSON-LD is
+        declared once, in the combined @graph at the foot of this file. */}
+    <div class="border-b border-industrial-300 bg-industrial-100">
+      <div class={`${container} py-4`}>
+        <nav aria-label="Breadcrumb" class="text-sm">
+          <ol class="flex flex-wrap items-center gap-x-2 gap-y-1 text-charcoal-500">
+            <li class="flex items-center gap-x-2">
+              <a href="/" class={crumbLink}>Home</a>
+            </li>
+            <li class="flex items-center gap-x-2">
+              <span aria-hidden="true" class="text-charcoal-300">/</span>
+              <a href="/gym-flooring-rolls" class={crumbLink}>Gym Flooring Rolls</a>
+            </li>
+            <li class="flex items-center gap-x-2">
+              <span aria-hidden="true" class="text-charcoal-300">/</span>
+              <span aria-current="page" class="font-medium text-charcoal">ZainActive Rolls</span>
+            </li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+
+    {/* ─── 1. HERO ─────────────────────────────────────────────────────────── */}
+    <header class="bg-charcoal-700 text-white">
+      <div class={`${container} py-14 sm:py-16`}>
+        <div class="grid items-center gap-10 lg:grid-cols-2">
+          <div data-hero>
+            <p class="font-heading text-sm font-semibold uppercase tracking-wide text-amber-400">
+              ZainActive Rolls — Rubber Flooring Rolls Dubai
+            </p>
+            <h1 class="mt-3 text-4xl font-extrabold leading-tight text-white sm:text-5xl">
+              Continuous Rubber Gym Flooring Rolls in Dubai
+            </h1>
+
+            {/* AEO direct-answer block — sits immediately under the H1 */}
+            <p class="mt-5 max-w-xl border-l-[3px] border-amber-400 pl-4 text-lg text-industrial-100">
+              Rukn Al Zain General Trading LLC supplies heavy-duty SBR and EPDM rubber flooring rolls
+              designed for large commercial fitness centers, multi-purpose halls and functional
+              sprint tracks across Dubai and the UAE. Engineered to deliver continuous, low-seam
+              coverage, ZainActive Rolls provide maximum shock absorption, dynamic equipment support
+              and acoustic isolation.
+            </p>
+
+            <div class="mt-7 flex flex-wrap gap-3">
+              <a href="#lead-form" class={`${primaryCta} focus-visible:ring-offset-charcoal-700`}>
+                Request Free Material
+              </a>
+              <a
+                href={WHATSAPP_HERO}
+                target="_blank"
+                rel="noopener"
+                class={`${ghostCta} focus-visible:ring-offset-charcoal-700`}
+              >
+                WhatsApp Us
+              </a>
+            </div>
+          </div>
+
+          <figure class="m-0" data-hero>
+            <img
+              src={HERO_IMG}
+              alt={HERO_ALT}
+              title="ZainActive continuous SBR & EPDM rubber gym flooring roll — Rukn Al Zain, Dubai"
+              width="1024"
+              height="1024"
+              loading="eager"
+              fetchpriority="high"
+              decoding="async"
+              class="h-auto w-full rounded border border-white/10"
+            />
+          </figure>
+        </div>
+      </div>
+    </header>
+
+    {/* ─── 2. TRUST BAR ───────────────────────────────────────────────────── */}
+    <section aria-labelledby="trust-h" class={`${sectionShell} bg-white`}>
+      <div class={container}>
+        <h2 id="trust-h" class={h2} data-reveal>
+          Continuous Rubber Flooring Rolls Stocked &amp; Delivered Across the UAE
+        </h2>
+        <dl class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3" data-reveal-group>
+          {
+            trustCards.map((it) => (
+              <div class="card-lift rounded border border-industrial-300 border-l-[3px] border-l-amber-400 bg-industrial-100 p-5">
+                <span class={iconChip} aria-hidden="true">
+                  <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" set:html={icon[it.icon]} />
+                </span>
+                <dt class="font-heading font-semibold text-charcoal">{it.term}</dt>
+                <dd class="mt-1.5 text-sm text-charcoal-600">{it.desc}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+    </section>
+
+    {/* ─── 3. PROBLEM & SOLUTION ──────────────────────────────────────────── */}
+    <section aria-labelledby="ps-h" class={`${sectionShell} bg-industrial-100`}>
+      <div class={container}>
+        <h2 id="ps-h" class={h2} data-reveal>
+          The Challenge: Dynamic Seam Lifting &amp; Maintenance in Large Dubai Facilities
+        </h2>
+
+        <div class="mt-8 grid gap-6 lg:grid-cols-2" data-reveal-group>
+          {/* The Problem */}
+          <div class="rounded border border-industrial-300 border-l-[3px] border-l-danger bg-white p-6">
+            <h3 class="font-heading text-lg font-bold text-charcoal">
+              The Problem: Exposed Tile Seams in High-Traffic Training Spaces
+            </h3>
+            <p class="mt-3 text-sm text-charcoal-600">
+              In expansive commercial gyms, multi-purpose halls and functional training areas across
+              Dubai, traditional tile flooring often creates hundreds of exposed seams. Over time,
+              intense foot traffic, rolling equipment and aggressive floor cleaning cause tile seams
+              to catch, lift and trap dirt and moisture — driving constant maintenance, unsightly
+              floor gaps and potential tripping hazards.
+            </p>
+            <dl class="mt-4 space-y-4">
+              {
+                problemPoints.map((p) => (
+                  <div>
+                    <dt class="flex gap-2 font-heading text-sm font-semibold text-charcoal">
+                      <span class="mt-0.5 text-danger" aria-hidden="true">&#10007;</span>
+                      <span>{p.term}</span>
+                    </dt>
+                    <dd class="mt-1 pl-6 text-sm text-charcoal-600">{p.desc}</dd>
+                  </div>
+                ))
+              }
+            </dl>
+          </div>
+
+          {/* The Solution */}
+          <div class="rounded border border-industrial-300 border-l-[3px] border-l-success bg-white p-6">
+            <h3 class="font-heading text-lg font-bold text-charcoal">
+              The Solution: ZainActive Continuous Rubber Rolls
+            </h3>
+            <p class="mt-3 text-sm text-charcoal-600">
+              ZainActive Rolls provide a continuous, wide-format rubber surface that reduces seam
+              lines by up to 80% compared with standard tiles. Made from high-density recycled SBR
+              and resilient EPDM granules bound with heavy-duty polyurethane, these rolls unroll
+              smoothly to form a flat, uniform layer — an easy-to-clean, highly durable floor that
+              absorbs impact, reduces acoustic noise and stays firmly locked in place under heavy
+              commercial traffic.
+            </p>
+            <dl class="mt-4 space-y-4">
+              {
+                solutionPoints.map((s) => (
+                  <div>
+                    <dt class="flex gap-2 font-heading text-sm font-semibold text-charcoal">
+                      <span class="mt-0.5 text-success" aria-hidden="true">&#10003;</span>
+                      <span>{s.term}</span>
+                    </dt>
+                    <dd class="mt-1 pl-6 text-sm text-charcoal-600">{s.desc}</dd>
+                  </div>
+                ))
+              }
+            </dl>
+          </div>
+        </div>
+
+        <figure class="m-0 mt-10" data-reveal>
+          <img
+            src={PS_IMG}
+            alt={PS_ALT}
+            title="Dynamic seam lifting on tiled flooring versus a continuous ZainActive rubber roll"
+            width="1376"
+            height="768"
+            loading="lazy"
+            decoding="async"
+            class="h-auto w-full rounded border border-industrial-300"
+          />
+        </figure>
+      </div>
+    </section>
+
+    {/* ─── 4. KEY PRODUCT BENEFITS ────────────────────────────────────────── */}
+    <section aria-labelledby="benefits-h" class={`${sectionShell} bg-white`}>
+      <div class={container}>
+        <h2 id="benefits-h" class={h2} data-reveal>Key Product Benefits</h2>
+        <dl class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4" data-reveal-group>
+          {
+            benefits.map((it) => (
+              <div class="card-lift rounded border border-industrial-300 bg-industrial-100 p-5">
+                <span class={iconChip} aria-hidden="true">
+                  <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" set:html={icon[it.icon]} />
+                </span>
+                <dt class="font-heading font-semibold text-charcoal">{it.term}</dt>
+                <dd class="mt-1.5 text-sm text-charcoal-600">{it.desc}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+    </section>
+
+    {/* ─── 5. TECHNICAL SPECIFICATIONS ────────────────────────────────────── */}
+    <section aria-labelledby="specs-h" class={`${sectionShell} bg-industrial-100`}>
+      <div class={container}>
+        <h2 id="specs-h" class={h2} data-reveal>Technical Specifications</h2>
+        <p class={lede} data-reveal>
+          Material composition, roll dimensions, thickness options, density, hardness, installation
+          method, surface finish and acoustic performance for ZainActive Rolls. Figures are
+          <span class="font-semibold text-amber-700"> provisional</span> pending confirmation against
+          manufacturer product data.
+        </p>
+
+        <div class="mt-8 grid gap-10 lg:grid-cols-2 lg:items-start">
+          <div class="overflow-x-auto" data-reveal>
+            <table class="w-full border-collapse text-left text-sm tabular-nums">
+              <caption class="sr-only">
+                ZainActive Rolls continuous SBR &amp; EPDM rubber flooring technical specifications
+              </caption>
+              <tbody>
+                {
+                  specRows.map(([label, value], i) => (
+                    <tr class:list={['border-b border-industrial-300', i % 2 === 1 && 'bg-white']}>
+                      <th scope="row" class="w-2/5 px-4 py-3 align-top font-semibold text-charcoal">
+                        {label}
+                      </th>
+                      <td class="px-4 py-3 align-top text-charcoal-600">{value}</td>
+                    </tr>
+                  ))
+                }
+              </tbody>
+            </table>
+          </div>
+
+          <figure class="m-0" data-reveal>
+            <img
+              src={SPEC_IMG}
+              alt={SPEC_ALT}
+              title="ZainActive rolls technical cross-section — recycled SBR body with EPDM colour flecks"
+              width="1024"
+              height="1024"
+              loading="lazy"
+              decoding="async"
+              class="h-auto w-full rounded border border-industrial-300"
+            />
+          </figure>
+        </div>
+
+        {/* TODO: Missing spec from brief — zainactive-rolls.yaml lists roll width, roll
+            length and thickness options as null "to collect". Confirm the 1.22 m width,
+            10–15 m length, 6/8/10/12 mm thickness, 1000–1050 kg/m³ density, 60–65 Shore A
+            hardness, MDI-PU-bonded recycled-SBR + EPDM-fleck composition, full-spread PU
+            adhesive glue-down and 18–22 dB impact-sound reduction against real product
+            test data / manufacturer certificates before go-live. */}
+        <p class="mt-3 text-xs text-charcoal-500" data-reveal>
+          Specifications are provisional pending final manufacturer product data and test
+          certificates.
+        </p>
+      </div>
+    </section>
+
+    {/* ─── 6. BEST FOR / IDEAL APPLICATIONS (text + UI grid only) ──────────── */}
+    <section aria-labelledby="apps-h" class={`${sectionShell} bg-white`}>
+      <div class={container}>
+        <h2 id="apps-h" class={h2} data-reveal>Best For / Ideal Applications</h2>
+        <dl class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4" data-reveal-group>
+          {
+            applications.map((it) => (
+              <div class="card-lift rounded border border-industrial-300 border-l-[3px] border-l-amber-400 bg-industrial-100 p-5">
+                <span class={iconChip} aria-hidden="true">
+                  <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" set:html={icon[it.icon]} />
+                </span>
+                <dt class="font-heading font-semibold text-charcoal">{it.term}</dt>
+                <dd class="mt-1.5 text-sm text-charcoal-600">{it.desc}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+    </section>
+
+    {/* ─── 7. GEOGRAPHIC SIGNALS ──────────────────────────────────────────── */}
+    <section aria-labelledby="geo-h" class={`${sectionShell} bg-industrial-100`}>
+      <div class={container}>
+        <h2 id="geo-h" class={h2} data-reveal>Why Rubber Flooring is Best for Dubai Gyms</h2>
+
+        <div class="mt-8 grid gap-10 lg:grid-cols-2 lg:items-center">
+          {/* Image left, text right */}
+          <figure class="m-0" data-reveal>
+            {/* TODO: Missing asset — build request specified
+                /images/gym-flooring-rolls/zainactive-rolls-ideal-applications.jpg, which is
+                not in the repo. Using the proven hub image dubai-high-rise-gym-rubber-rolls.webp
+                (1408×768) until the dedicated asset is supplied. */}
+            <img
+              src={GEO_IMG}
+              alt={GEO_ALT}
+              title="Contractor unrolling a seamless ZainActive rubber flooring roll in a Dubai commercial gym"
+              width="1408"
+              height="768"
+              loading="lazy"
+              decoding="async"
+              class="h-auto w-full rounded border border-industrial-300"
+            />
+          </figure>
+
+          <div data-reveal>
+            <dl class="space-y-6">
+              {
+                geoPoints.map((g) => (
+                  <div class="flex gap-4">
+                    <span class="mt-0.5 grid h-11 w-11 shrink-0 place-items-center rounded bg-white text-amber-700 ring-1 ring-industrial-300" aria-hidden="true">
+                      <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" set:html={icon[g.icon]} />
+                    </span>
+                    <div>
+                      <dt class="font-heading font-semibold text-charcoal">{g.term}</dt>
+                      <dd class="mt-1.5 text-sm text-charcoal-600">{g.desc}</dd>
+                    </div>
+                  </div>
+                ))
+              }
+            </dl>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {/* ─── 8. ABOUT RUKN AL ZAIN & DELIVERY ───────────────────────────────── */}
+    <section aria-labelledby="rzn-h" class={`${sectionShell} bg-white`}>
+      <div class={container}>
+        <h2 id="rzn-h" class={h2} data-reveal>About Rukn Al Zain &amp; Delivery</h2>
+        <p class={lede} data-reveal>
+          Based in Dubai, Rukn Al Zain General Trading LLC is a trusted supplier of high-density SBR
+          and EPDM rubber flooring systems. Designed to meet the structural, safety and acoustic
+          requirements of modern GCC facilities, our product range includes interlocking tiles,
+          heavy-duty drop mats, continuous rolls and safety barriers (P.O. Box 36528, Dubai, UAE).
+        </p>
+
+        <dl class="mt-8 grid gap-5 lg:grid-cols-3" data-reveal-group>
+          {
+            deliveryCards.map((it) => (
+              <div class="card-lift rounded border border-industrial-300 bg-industrial-100 p-5">
+                <span class={iconChip} aria-hidden="true">
+                  <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" set:html={icon[it.icon]} />
+                </span>
+                <dt class="font-heading font-semibold text-charcoal">{it.term}</dt>
+                <dd class="mt-1.5 text-sm text-charcoal-600">{it.desc}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+    </section>
+
+    {/* ─── 9. FAQ — accordion (native <details>, zero-JS) ─────────────────── */}
+    <section aria-labelledby="faq-h" class={`${sectionShell} bg-industrial-100`}>
+      <div class={container}>
+        <h2 id="faq-h" class={h2} data-reveal>Frequently Asked Questions (FAQ)</h2>
+        <div
+          class="mt-6 max-w-3xl divide-y divide-industrial-300 border-y border-industrial-300"
+          data-reveal-group
+        >
+          {
+            faqs.map((f, i) => (
+              <details class="group" open={i === 0}>
+                <summary class="flex cursor-pointer items-center justify-between gap-4 py-4 font-heading text-base font-semibold text-charcoal marker:content-none [&::-webkit-details-marker]:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700">
+                  <span>{f.question}</span>
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    class="h-5 w-5 shrink-0 text-amber-700 transition-transform duration-200 group-open:-rotate-180"
+                    aria-hidden="true"
+                  >
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m6 9 6 6 6-6" />
+                  </svg>
+                </summary>
+                <p class="pb-4 text-charcoal-600">{f.answer}</p>
+              </details>
+            ))
+          }
+        </div>
+
+        {/* Internal link: spoke → hub, keyword anchor text */}
+        <p class="mt-8 max-w-3xl text-sm text-charcoal-600" data-reveal>
+          ZainActive Rolls are part of Rukn Al Zain's{' '}
+          <a
+            href="/gym-flooring-rolls"
+            class="rounded font-semibold text-amber-700 hover:text-amber-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700"
+          >
+            gym flooring rolls range
+          </a>. For a fused roll-and-tile build-up with an EPDM performance top layer, see{' '}
+          <a
+            href="/gym-flooring-rolls/zainduo"
+            class="rounded font-semibold text-amber-700 hover:text-amber-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700"
+          >
+            ZainDuo
+          </a>.
+        </p>
+      </div>
+    </section>
+
+    {/* Combined BreadcrumbList + Product + FAQPage structured data (@graph).
+        Kept in-body to match the sibling spoke pages (BaseLayout exposes no
+        <head> slot); crawlers parse it identically. Organization JSON-LD is
+        emitted sitewide by BaseLayout. */}
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(graphSchema)} />
+
+    {/* ─── 10. LEAD CAPTURE & BOTTOM CTA ──────────────────────────────────── */}
+    <section
+      id="lead-form"
+      aria-labelledby="cta-h"
+      class="border-t border-industrial-300 bg-charcoal-700 text-white"
+    >
+      <div class={`${container} py-16`}>
+        <div class="grid gap-10 lg:grid-cols-[1fr_1.05fr] lg:items-start">
+          <div data-reveal>
+            <h2 id="cta-h" class="text-2xl font-bold text-white">
+              Upgrade Your Facility with Continuous ZainActive Rolls
+            </h2>
+            <p class="mt-4 max-w-xl text-industrial-200">
+              Get direct factory pricing, request free sample rolls, or consult with our Dubai-based
+              technical team for quick delivery across the UAE.
+            </p>
+            <dl class="mt-6 space-y-3 text-sm">
+              <div class="flex flex-wrap gap-x-2">
+                <dt class="font-semibold text-white">Phone / WhatsApp:</dt>
+                <dd>
+                  <a
+                    href="tel:+971505698195"
+                    class="rounded font-medium text-amber-400 hover:text-amber-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+                  >
+                    +971 50 569 8195
+                  </a>
+                </dd>
+              </div>
+              <div class="flex flex-wrap gap-x-2">
+                <dt class="font-semibold text-white">Address:</dt>
+                <dd class="text-industrial-200">
+                  Rukn Al Zain General Trading LLC, P.O. Box 36528, Dubai, UAE
+                </dd>
+              </div>
+            </dl>
+
+            <div class="mt-6">
+              <a
+                href={WHATSAPP_PLAIN}
+                target="_blank"
+                rel="noopener"
+                class={`${ghostCta} focus-visible:ring-offset-charcoal-700`}
+              >
+                Chat on WhatsApp
+              </a>
+            </div>
+          </div>
+
+          {/*
+            Standard HTML POST form wired for Netlify Forms (zero JS): captured
+            automatically on a Netlify deploy. Locally (`astro preview`) the POST
+            has no handler — that is expected. Mirrors src/pages/contact.astro
+            and the zainduo sibling.
+          */}
+          <div class="rounded border border-industrial-300 bg-white p-6 text-charcoal" data-reveal>
+            <form
+              name="zainactive-rolls-quote"
+              method="POST"
+              action={PATH}
+              data-netlify="true"
+              netlify-honeypot="bot-field"
+              class="space-y-5"
+            >
+              <input type="hidden" name="form-name" value="zainactive-rolls-quote" />
+              <input
+                type="hidden"
+                name="product"
+                value="ZainActive Rolls — Continuous SBR & EPDM Rubber Flooring Rolls"
+              />
+              <p class="hidden">
+                <label>Leave this field empty if you are human: <input name="bot-field" /></label>
+              </p>
+
+              <div class="grid gap-5 sm:grid-cols-2">
+                <div>
+                  <label class={labelClass} for="name">
+                    Full name <span class="text-amber-700">*</span>
+                  </label>
+                  <input
+                    class={fieldClass}
+                    type="text"
+                    id="name"
+                    name="name"
+                    autocomplete="name"
+                    required
+                  />
+                </div>
+                <div>
+                  <label class={labelClass} for="phone">
+                    Phone / WhatsApp number <span class="text-amber-700">*</span>
+                  </label>
+                  <input
+                    class={fieldClass}
+                    type="tel"
+                    id="phone"
+                    name="phone"
+                    autocomplete="tel"
+                    inputmode="tel"
+                    required
+                  />
+                </div>
+                <div>
+                  <label class={labelClass} for="location">Project location</label>
+                  <select class={fieldClass} id="location" name="location">
+                    <option value="" selected disabled>Select an emirate</option>
+                    {emirates.map((e) => <option value={e}>{e}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label class={labelClass} for="area">Floor area (sq. metres)</label>
+                  <input
+                    class={fieldClass}
+                    type="number"
+                    id="area"
+                    name="area"
+                    min="1"
+                    inputmode="numeric"
+                    placeholder="e.g. 400"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label class={labelClass} for="details">Project details / sample request</label>
+                <textarea
+                  class={fieldClass}
+                  id="details"
+                  name="details"
+                  rows="4"
+                  placeholder="Tell us about your facility, timeline, thickness and colour preferences, or the samples you need."
+                ></textarea>
+              </div>
+
+              <div class="flex flex-wrap gap-3">
+                <button
+                  type="submit"
+                  class="inline-flex items-center justify-center rounded bg-amber-400 px-5 py-3 font-semibold text-charcoal-900 transition-colors hover:bg-amber-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700 focus-visible:ring-offset-2"
+                >
+                  Request Free Sample &amp; Quote
+                </button>
+                <a
+                  href={WHATSAPP_PLAIN}
+                  target="_blank"
+                  rel="noopener"
+                  class="inline-flex items-center justify-center rounded border border-charcoal-300 px-5 py-3 font-semibold text-charcoal transition-colors hover:border-charcoal-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700"
+                >
+                  WhatsApp Now (+971 50 569 8195)
+                </a>
+              </div>
+              <p class="text-xs text-charcoal-400">
+                {/* TODO: add a branded /thank-you success page and point the form action at it. */}
+                Submissions are handled by Netlify Forms on the live site.
+              </p>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {/* ─── SUBTLE MOTION ──────────────────────────────────────────────────────
+        One-shot CSS load-in for the hero and a staggered scroll-reveal for
+        headings, card groups, figures and the spec table. Progressive
+        enhancement only — content is fully visible without JS, and every effect
+        is disabled under prefers-reduced-motion. Mirrors zainduo.astro. */}
+    <style is:global>
+      .zar-js .zar-page [data-hero] {
+        animation: zar-rise 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      @keyframes zar-rise {
+        from {
+          opacity: 0;
+          transform: translateY(16px);
+        }
+      }
+
+      .zar-js .zar-page [data-reveal],
+      .zar-js .zar-page [data-reveal-group] > * {
+        opacity: 0;
+        transform: translateY(14px);
+        transition:
+          opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+          transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .zar-js .zar-page [data-reveal].in,
+      .zar-js .zar-page [data-reveal-group].in > * {
+        opacity: 1;
+        transform: none;
+      }
+      .zar-js .zar-page [data-reveal-group].in > *:nth-child(2) { transition-delay: 0.06s; }
+      .zar-js .zar-page [data-reveal-group].in > *:nth-child(3) { transition-delay: 0.12s; }
+      .zar-js .zar-page [data-reveal-group].in > *:nth-child(4) { transition-delay: 0.18s; }
+      .zar-js .zar-page [data-reveal-group].in > *:nth-child(5) { transition-delay: 0.24s; }
+      .zar-js .zar-page [data-reveal-group].in > *:nth-child(n + 6) { transition-delay: 0.3s; }
+
+      .zar-page .card-lift {
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
+      }
+      .zar-page .card-lift:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 24px -6px rgb(42 45 52 / 0.18);
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .zar-js .zar-page [data-hero] {
+          animation: none;
+        }
+        .zar-js .zar-page [data-reveal],
+        .zar-js .zar-page [data-reveal-group] > * {
+          opacity: 1;
+          transform: none;
+          transition: none;
+        }
+        .zar-page .card-lift,
+        .zar-page .card-lift:hover {
+          transition: none;
+          transform: none;
+        }
+      }
+    </style>
+
+    <script>
+      const targets = document.querySelectorAll(
+        '.zar-page [data-reveal], .zar-page [data-reveal-group]',
+      );
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const revealAll = () => targets.forEach((el) => el.classList.add('in'));
+
+      if (reduce || !('IntersectionObserver' in window)) {
+        revealAll();
+      } else {
+        const io = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (!entry.isIntersecting) continue;
+              entry.target.classList.add('in');
+              io.unobserve(entry.target);
+            }
+          },
+          { rootMargin: '0px 0px -8% 0px' },
+        );
+        targets.forEach((el) => io.observe(el));
+        window.addEventListener('load', () => setTimeout(revealAll, 1200));
+      }
+    </script>
+  </article>
+</BaseLayout>

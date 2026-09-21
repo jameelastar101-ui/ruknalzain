@@ -1,0 +1,183 @@
+---
+/**
+ * BaseLayout.astro — wraps every page: <head> metadata, sitewide JSON-LD,
+ * semantic <header> / <main> / <footer>, brand fonts and base styles.
+ */
+import '@fontsource-variable/montserrat';
+import '@fontsource-variable/inter';
+
+import Seo from '@components/Seo.astro';
+import Header from '@components/Header.astro';
+import Footer from '@components/Footer.astro';
+
+export interface Props {
+  title: string;
+  description: string;
+  canonical?: string;
+  ogImage?: string;
+  ogImageAlt?: string;
+  /** og:type — 'website' for most pages, 'article' for blog posts. */
+  ogType?: 'website' | 'article' | 'profile';
+  noindex?: boolean;
+  /**
+   * Emit LocalBusiness JSON-LD in addition to the sitewide Organization schema.
+   * Per CLAUDE.md §5 this belongs on the homepage and the contact page only.
+   */
+  businessSchema?: boolean;
+}
+
+const {
+  title,
+  description,
+  canonical,
+  ogImage,
+  ogImageAlt,
+  ogType = 'website',
+  noindex = false,
+  businessSchema = false,
+} = Astro.props;
+
+const SITE = (Astro.site ?? new URL('https://ruknalzain.ae')).origin;
+
+/** Standard NAP — keep identical here, in Footer.astro and on the contact page. */
+const NAP = {
+  name: 'Rukn Al Zain General Trading LLC',
+  telephone: '+971505698195',
+  poBox: '36528',
+  locality: 'Dubai',
+  country: 'AE',
+};
+
+/** areaServed — all seven emirates (CLAUDE.md §4). */
+const EMIRATES = [
+  'Dubai',
+  'Abu Dhabi',
+  'Sharjah',
+  'Ajman',
+  'Ras Al Khaimah',
+  'Umm Al Quwain',
+  'Fujairah',
+];
+
+const postalAddress = {
+  '@type': 'PostalAddress',
+  postOfficeBoxNumber: NAP.poBox,
+  addressLocality: NAP.locality,
+  addressCountry: NAP.country,
+};
+
+const areaServed = EMIRATES.map((name) => ({ '@type': 'AdministrativeArea', name }));
+
+const businessDescription =
+  'Dubai-based supplier of heavy-duty recycled-rubber flooring: acoustic rubber underlay for construction, gym and fitness flooring, and animal and agricultural rubber mats and pavers. Serving all seven emirates of the UAE.';
+
+const organizationSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  '@id': `${SITE}/#organization`,
+  name: NAP.name,
+  url: `${SITE}/`,
+  logo: `${SITE}/logo.jpg`,
+  image: `${SITE}/logo.jpg`,
+  description: businessDescription,
+  telephone: NAP.telephone,
+  address: postalAddress,
+  areaServed,
+  contactPoint: {
+    '@type': 'ContactPoint',
+    telephone: NAP.telephone,
+    contactType: 'sales',
+    areaServed: 'AE',
+    availableLanguage: ['en', 'ar'],
+  },
+};
+
+const localBusinessSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'LocalBusiness',
+  '@id': `${SITE}/#localbusiness`,
+  name: NAP.name,
+  url: `${SITE}/`,
+  logo: `${SITE}/logo.jpg`,
+  image: `${SITE}/logo.jpg`,
+  description: businessDescription,
+  telephone: NAP.telephone,
+  address: postalAddress,
+  areaServed,
+  // TODO: Missing spec from brief — geo coordinates, streetAddress, and
+  // openingHoursSpecification for complete LocalBusiness data (CLAUDE.md §6).
+};
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta name="theme-color" content="#2A2D34" />
+    <meta name="generator" content={Astro.generator} />
+
+    <Seo
+      title={title}
+      description={description}
+      canonical={canonical}
+      ogImage={ogImage}
+      ogImageAlt={ogImageAlt}
+      type={ogType}
+      noindex={noindex}
+    />
+
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(organizationSchema)} />
+    {businessSchema && (
+      <script type="application/ld+json" is:inline set:html={JSON.stringify(localBusinessSchema)} />
+    )}
+  </head>
+  <body class="flex min-h-dvh flex-col bg-white font-body text-charcoal antialiased">
+    <a
+      href="#main"
+      class="sr-only rounded focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:bg-charcoal-700 focus:px-4 focus:py-2 focus:text-white focus:outline-none focus:ring-2 focus:ring-amber-400"
+    >
+      Skip to main content
+    </a>
+
+    <Header />
+
+    <main id="main" class="flex-1">
+      <slot />
+    </main>
+
+    <Footer />
+
+    <style is:global>
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        @apply font-heading text-charcoal;
+      }
+
+      :target {
+        scroll-margin-top: 6rem;
+      }
+
+      @media (prefers-reduced-motion: no-preference) {
+        html {
+          scroll-behavior: smooth;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+          scroll-behavior: auto !important;
+        }
+      }
+    </style>
+  </body>
+</html>

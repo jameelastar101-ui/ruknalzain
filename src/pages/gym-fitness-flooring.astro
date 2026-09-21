@@ -1,0 +1,902 @@
+---
+/**
+ * /gym-fitness-flooring — Gym & Fitness Rubber Flooring category hub (UAE).
+ *
+ * Bespoke page (not the YAML-driven generic HubPage), built to mirror the
+ * structure and styling of src/pages/acoustic-soundproofing-flooring.astro. The
+ * `gym` hub is excluded from getStaticPaths in src/pages/[...slug].astro to avoid
+ * a route collision; src/content/hubs/gym.yaml stays as data for the six child
+ * products. SEO metadata mirrors that YAML so the brief stays the single source
+ * of truth.
+ *
+ * ─── IMPLEMENTATION NOTES ─────────────────────────────────────────────────
+ *  - Images use plain <img> from /public (not astro:assets <Image />) to match
+ *    the acoustic hub page and the explicit build-brief instruction: every <img>
+ *    carries verbatim alt text, explicit width/height and loading="lazy" (hero
+ *    is eager + fetchpriority). Files were pre-compressed with sharp to keep
+ *    payload sane. This knowingly supersedes the CLAUDE.md "<Image /> mandatory"
+ *    line for parity with the reference page — same rationale already documented
+ *    there.
+ *  - Brand tokens (charcoal / industrial / amber from tailwind.config.mjs) are
+ *    used throughout rather than raw neutral-* utilities, so the page stays
+ *    consistent with the acoustic hub and the design system. The result is the
+ *    same dark-accent + amber-highlight + subtle-border aesthetic the brief
+ *    describes.
+ *  - "Lucide" icons are rendered as inline SVG (Lucide path data) because the
+ *    project has no icon dependency and CLAUDE.md forbids zero-JS-breaking adds.
+ *
+ * ─── DATA INTEGRITY FLAGS (CLAUDE.md §0 + §6) — confirm before go-live ─────
+ *  - Marketing claims carried verbatim from the build brief and NOT backed by a
+ *    document on file: "certified shock absorption and thermal durability",
+ *    "absorbs up to 90% of kinetic impact energy". Substantiate or soften.
+ *  - Thickness ranges: only ZainExtreme (30–40 mm) is supplied. Every other
+ *    Thickness Range cell renders "To be confirmed †".
+ *  - Image `choose-gym-flooring-by-thickness.jpg` is a PLACEHOLDER (reused
+ *    weight-drop photo) — the brief specifies a cross-section thickness diagram.
+ *  - Netlify Forms handler / CRM endpoint, success page and privacy-policy link.
+ *  - Stray file public/images/gym-fitness-flooring/localhost_4333_acoustic-
+ *    soundproofing-flooring.png (~10 MB screenshot) is unused — recommend
+ *    deleting so it does not ship.
+ * ──────────────────────────────────────────────────────────────────────────
+ */
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Breadcrumbs from '@components/Breadcrumbs.astro';
+
+const SITE = (Astro.site ?? new URL('https://ruknalzain.ae')).origin;
+const IMG = '/images/gym-fitness-flooring';
+const HERO_IMG = `${IMG}/gym-rubber-flooring-dubai-installation.jpg`;
+const HERO_ALT =
+  'High-density rubber gym flooring installed in a commercial fitness facility in Dubai, UAE.';
+
+/* Inline Lucide icon path data (24×24, currentColor stroke). */
+const icon: Record<string, string> = {
+  'shield-check':
+    '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/>',
+  truck:
+    '<path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/>',
+  recycle:
+    '<path d="M7 19H4.815a1.83 1.83 0 0 1-1.57-.881 1.785 1.785 0 0 1-.004-1.784L7.196 9.5"/><path d="M11 19h8.203a1.83 1.83 0 0 0 1.556-.89 1.784 1.784 0 0 0 0-1.775l-1.226-2.12"/><path d="m14 16-3 3 3 3"/><path d="M8.293 13.596 7.196 9.5 3.1 10.598"/><path d="m9.344 5.811 1.093-1.892A1.83 1.83 0 0 1 11.985 3a1.784 1.784 0 0 1 1.546.888l3.943 6.843"/><path d="m13.378 9.633 4.096 1.098 1.097-4.096"/>',
+  'clipboard-list':
+    '<rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/>',
+  'package-check':
+    '<path d="m16 16 2 2 4-4"/><path d="M21 10V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l2-1.14"/><path d="M16.5 9.4 7.55 4.24"/><polyline points="3.29 7 12 12 20.71 7"/><line x1="12" x2="12" y1="22" y2="12"/>',
+  wrench:
+    '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>',
+  'building-2':
+    '<path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/>',
+  waves:
+    '<path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/>',
+  landmark:
+    '<line x1="3" x2="21" y1="22" y2="22"/><line x1="6" x2="6" y1="18" y2="11"/><line x1="10" x2="10" y1="18" y2="11"/><line x1="14" x2="14" y1="18" y2="11"/><line x1="18" x2="18" y1="18" y2="11"/><polygon points="12 2 20 7 4 7"/>',
+  'map-pin':
+    '<path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/>',
+};
+
+/* ─── 2. Trust & compliance bar ────────────────────────────────────────── */
+const trustBar = [
+  {
+    icon: 'shield-check',
+    term: 'High Impact & Shock Absorption',
+    desc: 'Protects concrete subfloors and heavy-weight equipment from extreme drop forces.',
+  },
+  {
+    icon: 'truck',
+    term: 'Fast UAE Site Delivery',
+    desc: 'Direct delivery across Dubai, Abu Dhabi, Sharjah, and all seven Emirates.',
+  },
+  {
+    icon: 'recycle',
+    term: '100% Recycled SBR & EPDM',
+    desc: 'Sustainable, low-odor, non-slip, and resilient under continuous heavy foot traffic and GCC temperatures.',
+  },
+];
+
+/* ─── 3. Problem & solution ────────────────────────────────────────────── */
+const problems = [
+  {
+    term: 'Concrete subfloor damage',
+    desc: 'Dropping heavy dumbbells and barbell bumpers directly onto concrete leads to expensive subfloor cracking.',
+  },
+  {
+    term: 'Vibration & noise complaints',
+    desc: 'Impact energy from weight drops travels rapidly through concrete slabs, creating acoustic noise complaints in multi-story commercial and residential towers.',
+  },
+  {
+    term: 'Equipment wear & wearer fatigue',
+    desc: "Hard surfaces cause premature wear on weight equipment and place continuous high-impact stress on athletes' joints.",
+  },
+];
+const solutions = [
+  {
+    term: 'Energy dissipation',
+    desc: 'Compressed SBR crumb rubber absorbs up to 90% of kinetic impact energy before it reaches the concrete slab.',
+  },
+  {
+    term: 'Acoustic dampening',
+    desc: 'Dense rubber matrices deaden structural vibrations, isolating floor noise in multi-story facilities.',
+  },
+  {
+    term: 'Non-slip stability & safety',
+    desc: 'Anti-slip textured surfaces provide optimum traction even under high humidity and heavy sweat conditions.',
+  },
+];
+
+/* ─── 4. Product range grid ────────────────────────────────────────────── */
+const products = [
+  {
+    name: 'ZainFit',
+    kind: 'Interlocking Tiles',
+    img: `${IMG}/zainfit-interlocking-rubber-tiles.jpg`,
+    alt: 'ZainFit easy-install interlocking rubber gym tiles on display.',
+    desc: 'Simple, easy-install puzzle tiles ideal for quick-fit, removable, or multi-use spaces.',
+    href: '/rubber-gym-tiles/zainfit',
+  },
+  {
+    name: 'ZainSquare',
+    kind: 'Square Tiles',
+    img: `${IMG}/zainsquare-recycled-rubber-tiles.jpg`,
+    alt: 'ZainSquare high-density recycled rubber gym tiles for commercial fitness centers.',
+    desc: 'Clean, straight-edge square tiles designed for precise pattern layouts and direct glue-down installation over concrete.',
+    href: '/rubber-gym-tiles/zainsquare',
+  },
+  {
+    name: 'ZainExtreme',
+    kind: 'Heavy-Duty Tiles',
+    img: `${IMG}/zainextreme-heavy-duty-gym-tiles.jpg`,
+    alt: 'ZainExtreme extra-thick rubber weightlifting tiles for heavy drop zones.',
+    desc: 'Extra-thick (30 mm–40 mm) heavy-duty tiles engineered for extreme drop zones and heavy weightlifting platforms.',
+    href: '/rubber-gym-tiles/zainextreme',
+  },
+  {
+    name: 'ZainDuo',
+    kind: 'Dual-Layer System',
+    img: `${IMG}/zainduo-performance-fitness-flooring.jpg`,
+    alt: 'ZainDuo performance dual-layer rubber fitness flooring with EPDM flecks.',
+    desc: 'High-performance system combining a vibrant EPDM fleck top surface fused over a dense SBR shock base.',
+    href: '/gym-flooring-rolls/zainduo',
+  },
+  {
+    name: 'ZainActive Rolls',
+    kind: 'Continuous Rolls',
+    img: `${IMG}/zainactive-rubber-flooring-rolls.jpg`,
+    alt: 'ZainActive continuous rubber flooring rolls for seamless commercial gym coverage.',
+    desc: 'Wide, seamless SBR and EPDM rubber rolls ideal for covering large commercial gym floor areas efficiently.',
+    href: '/gym-flooring-rolls/zainactive-rolls',
+  },
+  {
+    name: 'Zain Curb Stone',
+    kind: 'Safety Barriers',
+    img: `${IMG}/zain-curb-stone-gym-barrier.jpg`,
+    alt: 'Zain Curb Stone heavy-duty rubber safety border barrier block.',
+    desc: 'Heavy-duty rubber border blocks to protect glass walls, mirrors, and dumbbell racks from rolling weights.',
+    href: '/gym-safety-accessories/curb-stone',
+  },
+];
+
+/* ─── 5. Technical specifications comparison ────────────────────────────── */
+const TBC = 'To be confirmed †';
+const comparisonHead = ['Product', 'Format', 'Thickness Range', 'Surface Finish', 'Primary Application'];
+const comparisonRows = [
+  ['ZainFit', 'Interlocking puzzle tiles', TBC, 'Textured matte recycled rubber', 'Quick-fit home gyms and multi-use rooms'],
+  ['ZainSquare', 'Straight-edge square tiles, glue-down', TBC, 'Fine-texture recycled rubber', 'Permanent, seamless-look commercial gym floors'],
+  ['ZainExtreme', 'Heavy-duty tiles', '30 mm – 40 mm', 'Dense high-impact recycled rubber', 'Deadlift platforms and severe-impact drop zones'],
+  ['ZainDuo', 'Dual-layer EPDM-over-SBR system', TBC, 'Vibrant EPDM fleck over SBR shock base', 'Premium studios and full commercial fit-outs'],
+  ['ZainActive Rolls', 'Continuous rolls', TBC, 'Bonded SBR and EPDM granule', 'Large seamless commercial gym and studio floors'],
+  ['Zain Curb Stone', 'Solid moulded border block', TBC, 'Solid moulded recycled rubber', 'Safety barriers for racks, mirrors and glass'],
+];
+
+/* ─── 6. How to choose ─────────────────────────────────────────────────── */
+const byFacility = [
+  ['Home gyms & private studios', 'ZainFit interlocking tiles for a tool-free, relocatable floor — or ZainDuo where a finished studio look matters.'],
+  ['Commercial fitness clubs', 'ZainSquare glue-down tiles for high-traffic zones, or ZainActive Rolls to cover large open floors with the fewest joints.'],
+  ['Heavy powerlifting & Olympic zones', 'ZainExtreme 30 mm–40 mm heavy-duty tiles under lifting platforms and drop stations.'],
+  ['Perimeter & equipment safety', 'Zain Curb Stone border blocks along mirrors, glass partitions and dumbbell racks.'],
+];
+const thicknessTiers = [
+  ['6 mm – 10 mm', 'Cardio, group-exercise studios and light dumbbell areas. Firm underfoot, minimal step-height change at doorways.'],
+  ['15 mm – 20 mm', 'Standard commercial free-weight floors with racks, benches and moderate barbell use.'],
+  ['30 mm – 40 mm+', 'Heavy Olympic weightlifting, CrossFit rigs and dedicated drop zones — maximum impact and noise absorption.'],
+];
+
+/* ─── 7. How we work ──────────────────────────────────────────────────── */
+const process = [
+  { n: '01', icon: 'clipboard-list', term: 'Consultation & Specification', desc: 'We map each zone of your facility to the right format, thickness and finish, and confirm quantities from your drawings or site measurements.' },
+  { n: '02', icon: 'package-check', term: 'Sample & Technical Data Delivery', desc: 'Physical material samples plus the specification sheet for every product line so you can approve look, feel and compliance before ordering.' },
+  { n: '03', icon: 'truck', term: 'Direct UAE Site Logistics', desc: 'Stock items dispatched within 24–48 hours to sites across all seven Emirates, scheduled around your fit-out programme.' },
+  { n: '04', icon: 'wrench', term: 'Layout & Post-Installation Support', desc: 'Setting-out guidance, adhesive and trim recommendations, and follow-up support after the floor is down.' },
+];
+
+/* ─── 8. Service area ─────────────────────────────────────────────────── */
+const serviceArea = [
+  { icon: 'building-2', term: 'Downtown & Business Bay', desc: 'High-rise commercial gyms and acoustic isolation above occupied floors.' },
+  { icon: 'waves', term: 'Dubai Marina & Palm Jumeirah', desc: 'Luxury apartment, hotel and villa gyms with premium finishes.' },
+  { icon: 'landmark', term: 'DIFC & Sheikh Zayed Road', desc: 'Corporate wellness suites and heavy free-weight drop zones.' },
+  { icon: 'map-pin', term: 'Dubai Hills & All 7 Emirates', desc: 'Direct site logistics across Dubai, Abu Dhabi, Sharjah, Ajman, RAK, UAQ and Fujairah.' },
+];
+
+/* ─── 9. FAQ (AEO) — self-contained answers ───────────────────────────── */
+const faqs = [
+  {
+    question: 'How thick should gym flooring be for heavy weightlifting and Olympic drop zones?',
+    answer:
+      'For dedicated lifting platforms and drop zones, use 30 mm–40 mm heavy-duty rubber tiles such as ZainExtreme. Standard commercial free-weight areas are well served by 15 mm–20 mm tiles, while 6 mm–10 mm rubber suits cardio and light dumbbell zones. Thicker rubber absorbs more impact energy and better protects both the concrete slab and the barbell.',
+  },
+  {
+    question: 'Should I choose rubber tiles or continuous rolls for a gym?',
+    answer:
+      'Interlocking and square tiles (ZainFit, ZainSquare) are easy to transport, install and replace one at a time, which suits home gyms, phased fit-outs and multi-use rooms. Continuous rolls (ZainActive Rolls) give a near-seamless surface with fewer joints across large commercial floors and are quicker to lay over big areas. ZainDuo combines a roll-style performance surface over a tile base.',
+  },
+  {
+    question: 'Does rubber gym flooring need adhesive?',
+    answer:
+      'It depends on the format. ZainFit interlocking tiles lay loose and lock together with no glue, so they can be lifted and relaid. ZainSquare tiles and ZainActive Rolls are usually glued down to a clean, level, dry concrete slab with a recommended polyurethane or contact adhesive for a permanent installation. Perimeter and doorway edges may be bonded even on loose-lay floors.',
+  },
+  {
+    question: 'Is recycled SBR rubber flooring safe for an enclosed, air-conditioned gym?',
+    answer:
+      'Yes. Rukn Al Zain supplies low-odor recycled SBR and EPDM compounds selected for enclosed, air-conditioned rooms. A newly installed floor has a mild rubber smell that fades within a few days — ventilate the space and run fresh-air intake during that period. Request the product emissions documentation before installing in a sealed studio.',
+  },
+  {
+    question: 'How fast can you deliver gym flooring across the UAE?',
+    answer:
+      'Stock items are dispatched within 24–48 hours, reaching sites in the Dubai metro area first and Sharjah, Abu Dhabi, Ajman, Ras Al Khaimah, Umm Al Quwain and Fujairah shortly after. Large or made-to-order colour runs are scheduled at the time of order.',
+  },
+];
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((f) => ({
+    '@type': 'Question',
+    name: f.question,
+    acceptedAnswer: { '@type': 'Answer', text: f.answer },
+  })),
+};
+
+/* Product JSON-LD — one entry per card (CLAUDE.md §5 item 3). No price asserted. */
+const productSchema = products.map((p) => ({
+  '@context': 'https://schema.org',
+  '@type': 'Product',
+  name: `${p.name} — ${p.kind}`,
+  description: p.desc,
+  image: `${SITE}${p.img}`,
+  category: 'Gym & Fitness Rubber Flooring',
+  url: `${SITE}${p.href}`,
+  brand: { '@type': 'Brand', name: 'Rukn Al Zain' },
+  manufacturer: { '@type': 'Organization', name: 'Rukn Al Zain General Trading LLC' },
+  areaServed: 'United Arab Emirates',
+}));
+
+const productInterest = [
+  'ZainFit — Interlocking Tiles',
+  'ZainSquare — Square Tiles',
+  'ZainExtreme — Heavy-Duty Tiles',
+  'ZainDuo — Dual-Layer System',
+  'ZainActive Rolls — Continuous Rolls',
+  'Zain Curb Stone — Safety Barriers',
+  'Not sure yet — need advice',
+];
+const emirates = ['Dubai', 'Abu Dhabi', 'Sharjah', 'Ajman', 'Ras Al Khaimah', 'Umm Al Quwain', 'Fujairah'];
+
+/* Shared class helpers — mirrors the acoustic hub page. */
+const sectionShell = 'border-t border-industrial-300 py-14 sm:py-16';
+const container = 'mx-auto max-w-content px-4 sm:px-6 lg:px-8';
+const h2 = 'text-2xl font-bold text-charcoal';
+const lede = 'mt-4 max-w-3xl text-charcoal-600';
+const primaryCta =
+  'inline-flex items-center justify-center rounded bg-amber-400 px-5 py-3 font-semibold text-charcoal-900 transition-colors hover:bg-amber-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2';
+const ghostCta =
+  'inline-flex items-center justify-center rounded border border-white/25 px-5 py-3 font-semibold text-white transition-colors hover:border-white/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400';
+const iconChip =
+  'mb-3 grid h-11 w-11 place-items-center rounded bg-white text-amber-700 ring-1 ring-industrial-300';
+---
+
+<BaseLayout
+  title="Rubber Gym Flooring UAE | Tiles, Rolls & Fitness Flooring | Rukn Al Zain"
+  description="Durable rubber gym flooring for commercial gyms, home gyms, and fitness studios across the UAE — tiles, rolls, and Duo Performance systems."
+  canonical="/gym-fitness-flooring"
+  ogImage={HERO_IMG}
+  ogImageAlt={HERO_ALT}
+>
+  <article>
+    {/* Breadcrumb strip — emits BreadcrumbList JSON-LD */}
+    <div class="border-b border-industrial-300 bg-industrial-100">
+      <div class={`${container} py-4`}>
+        <Breadcrumbs trail={[{ name: 'Home', href: '/' }, { name: 'Gym & Fitness Flooring' }]} />
+      </div>
+    </div>
+
+    {/* ─── 1. HERO ─────────────────────────────────────────────────────────── */}
+    <header class="bg-charcoal-700 text-white">
+      <div class={`${container} py-14 sm:py-16`}>
+        <div class="grid items-center gap-10 lg:grid-cols-2">
+          <div>
+            <h1 class="text-4xl font-extrabold leading-tight text-white sm:text-5xl">
+              Commercial &amp; Home Gym Flooring Supplier in Dubai, UAE
+            </h1>
+
+            {/* AEO direct-answer block */}
+            <p class="mt-5 max-w-xl border-l-[3px] border-amber-400 pl-4 text-lg text-industrial-100">
+              Gym flooring is a shock-absorbing recycled-rubber surface — supplied as interlocking
+              tiles, continuous rolls or a combined roll-and-tile system — that protects the
+              subfloor, cushions dropped weights and reduces noise.
+            </p>
+
+            <p class="mt-4 max-w-xl text-industrial-200">
+              Rukn Al Zain supplies high-density recycled SBR and EPDM rubber gym flooring designed
+              for commercial fitness centers, CrossFit boxes, and home studios across all seven
+              Emirates. Available in 15 mm to 40 mm tiles and continuous rolls with certified shock
+              absorption and thermal durability built for the GCC climate.
+            </p>
+
+            <div class="mt-7 flex flex-wrap gap-3">
+              <a href="#request-quote" class={`${primaryCta} focus-visible:ring-offset-charcoal-700`}>
+                Request Free Material Samples
+              </a>
+              <a
+                href="https://wa.me/971505698195"
+                target="_blank"
+                rel="noopener"
+                class={`${ghostCta} focus-visible:ring-offset-charcoal-700`}
+              >
+                Chat on WhatsApp
+              </a>
+            </div>
+          </div>
+
+          <figure class="m-0">
+            <img
+              src={HERO_IMG}
+              alt={HERO_ALT}
+              title="High-density rubber gym flooring in a commercial fitness facility in Dubai, UAE"
+              width="1408"
+              height="768"
+              fetchpriority="high"
+              decoding="async"
+              class="h-auto w-full rounded border border-white/10"
+            />
+            <figcaption class="mt-2 text-sm text-industrial-300">
+              High-density recycled-rubber gym flooring installed across a commercial fitness
+              facility in Dubai.
+            </figcaption>
+          </figure>
+        </div>
+      </div>
+    </header>
+
+    {/* ─── 2. TRUST & COMPLIANCE BAR ──────────────────────────────────────── */}
+    <section aria-labelledby="trust-h" class={`${sectionShell} bg-white`}>
+      <div class={container}>
+        <h2 id="trust-h" class={h2}>Why Dubai Gyms Choose Us</h2>
+        <dl class="mt-8 grid gap-5 sm:grid-cols-3">
+          {
+            trustBar.map((it) => (
+              <div class="rounded border border-industrial-300 border-l-[3px] border-l-amber-400 bg-industrial-100 p-5">
+                <span class={iconChip} aria-hidden="true">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.75"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="h-6 w-6"
+                    set:html={icon[it.icon]}
+                  />
+                </span>
+                <dt class="font-heading font-semibold text-charcoal">{it.term}</dt>
+                <dd class="mt-1.5 text-sm text-charcoal-600">{it.desc}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+    </section>
+
+    {/* ─── 3. PROBLEM & SOLUTION ──────────────────────────────────────────── */}
+    <section aria-labelledby="problem-h" class={`${sectionShell} bg-industrial-100`}>
+      <div class={container}>
+        <h2 id="problem-h" class={h2}>
+          The Problem: Why Standard Gym Flooring Fails in the UAE (And Why Rubber is the Solution)
+        </h2>
+
+        <div class="mt-8 grid gap-6 lg:grid-cols-2">
+          <div class="rounded border border-industrial-300 bg-white p-6">
+            <h3 class="font-heading text-lg font-bold text-charcoal">The problem</h3>
+            <dl class="mt-4 space-y-4">
+              {
+                problems.map((p) => (
+                  <div class="border-l-[3px] border-l-danger pl-4">
+                    <dt class="font-heading font-semibold text-charcoal">{p.term}</dt>
+                    <dd class="mt-1 text-sm text-charcoal-600">{p.desc}</dd>
+                  </div>
+                ))
+              }
+            </dl>
+          </div>
+
+          <div class="rounded border border-industrial-300 border-l-[3px] border-l-amber-400 bg-white p-6">
+            <h3 class="font-heading text-lg font-bold text-charcoal">The rubber solution</h3>
+            <dl class="mt-4 space-y-4">
+              {
+                solutions.map((s) => (
+                  <div class="border-l-[3px] border-l-success pl-4">
+                    <dt class="font-heading font-semibold text-charcoal">{s.term}</dt>
+                    <dd class="mt-1 text-sm text-charcoal-600">{s.desc}</dd>
+                  </div>
+                ))
+              }
+            </dl>
+          </div>
+        </div>
+
+        <figure class="m-0 mt-10">
+          <img
+            src={`${IMG}/gym-subfloor-impact-protection-solution.jpg`}
+            alt="Split conceptual diagram demonstrating concrete subfloor damage from heavy weight drops versus impact absorption by high-density rubber gym flooring."
+            title="Concrete subfloor damage vs. rubber impact absorption - Rukn Al Zain"
+            width="1408"
+            height="768"
+            loading="lazy"
+            decoding="async"
+            class="h-auto w-full rounded border border-industrial-300"
+          />
+          <figcaption class="mt-2 text-sm text-charcoal-500">
+            Left: repeated weight drops crack an unprotected slab. Right: high-density rubber
+            dissipates the impact before it reaches the concrete.
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    {/* ─── 4. PRODUCT RANGE GRID ──────────────────────────────────────────── */}
+    <section aria-labelledby="range-h" class={`${sectionShell} bg-white`}>
+      <div class={container}>
+        <h2 id="range-h" class={h2}>Our Gym Flooring Products</h2>
+        <p class={lede}>
+          Explore our complete range of modular tiles, heavy-duty drop platforms, continuous rolls,
+          and perimeter protection blocks.
+        </p>
+
+        <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {
+            products.map((p) => (
+              <article class="flex flex-col overflow-hidden rounded border border-industrial-300 bg-white shadow-card">
+                <img
+                  src={p.img}
+                  alt={p.alt}
+                  title={`${p.name} — ${p.kind} — Rukn Al Zain`}
+                  width="900"
+                  height="900"
+                  loading="lazy"
+                  decoding="async"
+                  class="aspect-[4/3] w-full border-b border-industrial-300 object-cover"
+                />
+                <div class="flex flex-1 flex-col p-5">
+                  <h3 class="font-heading text-lg font-bold text-charcoal">{p.name}</h3>
+                  <p class="mt-0.5 text-sm font-semibold text-amber-700">{p.kind}</p>
+                  <p class="mt-2 flex-1 text-sm text-charcoal-600">{p.desc}</p>
+                  <a
+                    href={p.href}
+                    class="mt-4 inline-block rounded text-sm font-semibold text-amber-700 hover:text-amber-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700"
+                  >
+                    View {p.name} details &rarr;
+                  </a>
+                </div>
+              </article>
+            ))
+          }
+        </div>
+
+        <p class="mt-6 text-sm text-charcoal-600">
+          Building a gym above an occupied floor? Pair any surface with our{' '}
+          <a
+            href="/acoustic-soundproofing-flooring"
+            class="rounded font-semibold text-amber-700 hover:text-amber-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700"
+          >
+            acoustic rubber underlay
+          </a>{' '}
+          for structural impact-sound isolation.
+        </p>
+      </div>
+    </section>
+
+    {/* ─── 5. TECHNICAL SPECIFICATIONS COMPARISON TABLE ───────────────────── */}
+    <section aria-labelledby="comparison-h" class={`${sectionShell} bg-industrial-100`}>
+      <div class={container}>
+        <h2 id="comparison-h" class={h2}>Technical Specifications Comparison</h2>
+        <p class={lede}>
+          Compare format, thickness, surface finish and primary application across all six product
+          lines. Cells marked <span class="font-semibold text-amber-700">&dagger;</span> are confirmed
+          on each product's specification sheet.
+        </p>
+
+        <div class="mt-6 overflow-x-auto">
+          <table class="w-full min-w-[52rem] border-collapse text-left text-sm tabular-nums">
+            <caption class="sr-only">
+              Comparison of Rukn Al Zain gym and fitness rubber flooring products by format, thickness
+              range, surface finish and primary application
+            </caption>
+            <thead>
+              <tr class="border-b-2 border-charcoal-300 bg-white">
+                {comparisonHead.map((th) => (
+                  <th scope="col" class="px-4 py-3 font-semibold text-charcoal">{th}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {
+                comparisonRows.map((row, i) => (
+                  <tr class:list={['border-b border-industrial-300', i % 2 === 1 && 'bg-white']}>
+                    <th scope="row" class="px-4 py-3 align-top font-semibold text-charcoal">{row[0]}</th>
+                    <td class="px-4 py-3 align-top text-charcoal-600">{row[1]}</td>
+                    <td class="px-4 py-3 align-top text-charcoal-600">{row[2]}</td>
+                    <td class="px-4 py-3 align-top text-charcoal-600">{row[3]}</td>
+                    <td class="px-4 py-3 align-top text-charcoal-600">{row[4]}</td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
+        {/* TODO: Missing spec from brief — confirmed thickness ranges for ZainFit, ZainSquare,
+            ZainDuo, ZainActive Rolls and Zain Curb Stone (only ZainExtreme 30–40 mm supplied). */}
+        <p class="mt-3 text-xs text-charcoal-500">
+          &dagger; Thickness range pending final product data — confirmed on the specification sheet
+          per product line.
+        </p>
+
+        <figure class="m-0 mt-10">
+          <img
+            src={`${IMG}/gym-flooring-technical-specifications-comparison.jpg`}
+            alt="Technical specification matrix graphic comparing Rukn Al Zain gym rubber flooring products, thickness ranges, formats, and impact ratings."
+            title="Gym flooring technical specifications comparison matrix - Rukn Al Zain"
+            width="1408"
+            height="768"
+            loading="lazy"
+            decoding="async"
+            class="h-auto w-full rounded border border-industrial-300"
+          />
+          <figcaption class="mt-2 text-sm text-charcoal-500">
+            The full gym flooring range at a glance — format, thickness band and impact rating.
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    {/* ─── 6. HOW TO CHOOSE THE RIGHT GYM FLOORING ────────────────────────── */}
+    <section aria-labelledby="choose-h" class={`${sectionShell} bg-white`}>
+      <div class={container}>
+        <h2 id="choose-h" class={h2}>How to Choose the Right Gym Flooring</h2>
+
+        {/* 6.1 By facility type & application */}
+        <div class="mt-8 grid gap-10 lg:grid-cols-2 lg:items-start">
+          <div>
+            <h3 class="font-heading text-lg font-bold text-charcoal">1. By facility type &amp; application</h3>
+            <dl class="mt-4 space-y-4">
+              {
+                byFacility.map(([term, desc]) => (
+                  <div class="rounded border border-industrial-300 border-l-[3px] border-l-amber-400 bg-industrial-100 p-4">
+                    <dt class="font-heading font-semibold text-charcoal">{term}</dt>
+                    <dd class="mt-1 text-sm text-charcoal-600">{desc}</dd>
+                  </div>
+                ))
+              }
+            </dl>
+          </div>
+          <figure class="m-0">
+            <img
+              src={`${IMG}/choose-gym-flooring-by-facility-type.jpg`}
+              alt="Multi-panel visual guide showing rubber flooring applications across commercial gyms, home studios, weightlifting platforms, and perimeter curb barriers."
+              title="Choosing gym flooring by facility type - Rukn Al Zain"
+              width="1408"
+              height="768"
+              loading="lazy"
+              decoding="async"
+              class="h-auto w-full rounded border border-industrial-300"
+            />
+          </figure>
+        </div>
+
+        {/* 6.2 By format: tiles vs continuous rolls (no image) */}
+        <div class="mt-12">
+          <h3 class="font-heading text-lg font-bold text-charcoal">2. By format: tiles vs. continuous rolls</h3>
+          <div class="mt-4 grid gap-6 lg:grid-cols-2">
+            <div class="rounded border border-industrial-300 bg-industrial-100 p-5">
+              <h4 class="font-heading font-semibold text-charcoal">Modular tiles</h4>
+              <ul class="mt-2 list-disc space-y-1.5 pl-5 text-sm text-charcoal-600">
+                <li>Interlocking or square formats in 15 mm–40 mm for graded impact protection</li>
+                <li>Individual tiles lift out and replace without disturbing the rest of the floor</li>
+                <li>Straightforward to install without specialist labour</li>
+              </ul>
+            </div>
+            <div class="rounded border border-industrial-300 bg-industrial-100 p-5">
+              <h4 class="font-heading font-semibold text-charcoal">Continuous rolls</h4>
+              <ul class="mt-2 list-disc space-y-1.5 pl-5 text-sm text-charcoal-600">
+                <li>Seamless coverage across expansive commercial spaces with the fewest joints</li>
+                <li>Fast to lay over large open floor areas</li>
+                <li>Low-maintenance surface that is quick to clean down</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        {/* 6.3 By thickness & impact level */}
+        <div class="mt-12 grid gap-10 lg:grid-cols-2 lg:items-start">
+          <div>
+            <h3 class="font-heading text-lg font-bold text-charcoal">3. By thickness &amp; impact level</h3>
+            <dl class="mt-4 space-y-4">
+              {
+                thicknessTiers.map(([term, desc]) => (
+                  <div class="rounded border border-industrial-300 bg-industrial-100 p-4">
+                    <dt class="font-heading font-semibold text-charcoal tabular-nums">{term}</dt>
+                    <dd class="mt-1 text-sm text-charcoal-600">{desc}</dd>
+                  </div>
+                ))
+              }
+            </dl>
+          </div>
+          <figure class="m-0">
+            {/* TODO: Missing asset from brief — placeholder image; supply the cross-section
+                thickness diagram (6 mm–40 mm) with impact-absorption ratings. */}
+            <img
+              src={`${IMG}/choose-gym-flooring-by-thickness.jpg`}
+              alt="Cross-section visual diagram illustrating rubber gym flooring thickness options from 6mm to 40mm and their impact absorption ratings."
+              title="Choosing gym flooring by thickness and impact level - Rukn Al Zain"
+              width="1376"
+              height="768"
+              loading="lazy"
+              decoding="async"
+              class="h-auto w-full rounded border border-industrial-300"
+            />
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    {/* ─── 7. HOW WE WORK ─────────────────────────────────────────────────── */}
+    <section aria-labelledby="process-h" class={`${sectionShell} bg-industrial-100`}>
+      <div class={container}>
+        <h2 id="process-h" class={h2}>How We Work: Our 4-Step Supply &amp; Project Process</h2>
+        <ol class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {
+            process.map((s) => (
+              <li class="flex h-full flex-col rounded border border-industrial-300 bg-white p-5">
+                <div class="flex items-center justify-between">
+                  <span class="grid h-11 w-11 place-items-center rounded bg-industrial-100 text-amber-700 ring-1 ring-industrial-300" aria-hidden="true">
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.75"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      class="h-6 w-6"
+                      set:html={icon[s.icon]}
+                    />
+                  </span>
+                  <span class="font-heading text-2xl font-extrabold text-industrial-300" aria-hidden="true">{s.n}</span>
+                </div>
+                <h3 class="mt-3 font-heading text-base font-bold text-charcoal">{s.term}</h3>
+                <p class="mt-1.5 text-sm text-charcoal-600">{s.desc}</p>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </section>
+
+    {/* ─── 8. OUR SERVICE AREA ────────────────────────────────────────────── */}
+    <section aria-labelledby="area-h" class={`${sectionShell} bg-white`}>
+      <div class={container}>
+        <h2 id="area-h" class={h2}>Supplying Fit-Out Projects Across Major Dubai Hubs &amp; the UAE</h2>
+        <dl class="mt-8 grid gap-5 sm:grid-cols-2">
+          {
+            serviceArea.map((a) => (
+              <div class="rounded border border-industrial-300 bg-industrial-100 p-5">
+                <span class="grid h-11 w-11 place-items-center rounded bg-white text-amber-700 ring-1 ring-industrial-300" aria-hidden="true">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.75"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="h-6 w-6"
+                    set:html={icon[a.icon]}
+                  />
+                </span>
+                <dt class="mt-3 font-heading font-semibold text-charcoal">{a.term}</dt>
+                <dd class="mt-1.5 text-sm text-charcoal-600">{a.desc}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+    </section>
+
+    {/* ─── 9. FAQ — accordion (native <details>, zero-JS) ─────────────────── */}
+    <section aria-labelledby="faq-h" class={`${sectionShell} bg-industrial-100`}>
+      <div class={container}>
+        <h2 id="faq-h" class={h2}>Frequently Asked Questions About Gym &amp; Fitness Rubber Flooring</h2>
+        <div class="mt-6 max-w-3xl divide-y divide-industrial-300 border-y border-industrial-300">
+          {
+            faqs.map((f, i) => (
+              <details class="group" open={i === 0}>
+                <summary class="flex cursor-pointer items-center justify-between gap-4 py-4 font-heading text-base font-semibold text-charcoal marker:content-none [&::-webkit-details-marker]:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700">
+                  <span>{f.question}</span>
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    class="h-5 w-5 shrink-0 text-amber-700 transition-transform duration-200 group-open:-rotate-180"
+                    aria-hidden="true"
+                  >
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m6 9 6 6 6-6" />
+                  </svg>
+                </summary>
+                <p class="pb-4 text-charcoal-600">{f.answer}</p>
+              </details>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+    {/* FAQPage + Product structured data. Kept in-body (not <head>) to match the
+        acoustic hub convention; crawlers parse it identically. */}
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(faqSchema)} />
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(productSchema)} />
+
+    {/* ─── 10. LEAD CAPTURE & CONTACT ─────────────────────────────────────── */}
+    <section
+      id="request-quote"
+      aria-labelledby="request-quote-h"
+      class="border-t border-industrial-300 bg-charcoal-700 text-white"
+    >
+      <div class={`${container} py-16`}>
+        <div class="grid gap-10 lg:grid-cols-[1fr_1.1fr]">
+          <div>
+            <h2 id="request-quote-h" class="text-2xl font-bold text-white">
+              Request Technical Specs or a Fast Project Quote
+            </h2>
+            <p class="mt-4 max-w-md text-industrial-200">
+              Send your project location, floor area and product interest below, or reach the
+              technical sales team directly. We confirm formats, thicknesses and colours and send the
+              specification sheet for each product.
+            </p>
+
+            <dl class="mt-6 space-y-3 text-sm">
+              <div class="flex flex-wrap gap-x-2">
+                <dt class="font-semibold text-white">Phone / WhatsApp:</dt>
+                <dd>
+                  <a
+                    href="tel:+971505698195"
+                    class="rounded font-medium text-amber-400 hover:text-amber-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+                  >
+                    +971 50 569 8195
+                  </a>
+                </dd>
+              </div>
+              <div class="flex flex-wrap gap-x-2">
+                <dt class="font-semibold text-white">Location:</dt>
+                <dd class="text-industrial-200">Dubai, United Arab Emirates</dd>
+              </div>
+            </dl>
+
+            <a
+              href="https://wa.me/971505698195"
+              target="_blank"
+              rel="noopener"
+              class={`mt-6 ${ghostCta} focus-visible:ring-offset-charcoal-700`}
+            >
+              Chat on WhatsApp
+            </a>
+          </div>
+
+          {/*
+            Lead form: Name | Phone / WhatsApp | Location | Floor Area (Sq. Meters) | Product
+            Interest. Wired to Netlify Forms as a zero-JS default for this stack.
+            TODO: Missing spec from brief — confirm form handler / CRM endpoint, success page and
+            privacy-policy link.
+          */}
+          <form
+            name="gym-fitness-flooring-quote"
+            method="POST"
+            data-netlify="true"
+            netlify-honeypot="bot-field"
+            action="/contact"
+            class="rounded border border-white/15 bg-charcoal-800 p-6"
+          >
+            <input type="hidden" name="form-name" value="gym-fitness-flooring-quote" />
+            <p class="hidden">
+              <label>Do not fill this out if you are human: <input name="bot-field" /></label>
+            </p>
+
+            <fieldset class="m-0 space-y-4 border-0 p-0">
+              <legend class="mb-2 font-heading text-lg font-semibold text-white">
+                Request free material samples or a quote
+              </legend>
+
+              <div>
+                <label for="gf-name" class="block text-sm font-medium text-industrial-100">Name</label>
+                <input
+                  id="gf-name"
+                  name="name"
+                  type="text"
+                  autocomplete="name"
+                  required
+                  class="mt-1 w-full rounded border border-charcoal-300 bg-white px-3 py-2 text-charcoal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+                />
+              </div>
+
+              <div>
+                <label for="gf-phone" class="block text-sm font-medium text-industrial-100">
+                  Phone / WhatsApp
+                </label>
+                <input
+                  id="gf-phone"
+                  name="phone"
+                  type="tel"
+                  autocomplete="tel"
+                  required
+                  class="mt-1 w-full rounded border border-charcoal-300 bg-white px-3 py-2 text-charcoal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+                />
+              </div>
+
+              <div>
+                <label for="gf-location" class="block text-sm font-medium text-industrial-100">
+                  Location
+                </label>
+                <select
+                  id="gf-location"
+                  name="project-location"
+                  class="mt-1 w-full rounded border border-charcoal-300 bg-white px-3 py-2 text-charcoal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+                >
+                  <option value="" selected>Select an emirate</option>
+                  {emirates.map((e) => <option value={e}>{e}</option>)}
+                </select>
+              </div>
+
+              <div>
+                <label for="gf-area" class="block text-sm font-medium text-industrial-100">
+                  Floor Area (Sq. Meters)
+                </label>
+                <input
+                  id="gf-area"
+                  name="floor-area-sqm"
+                  type="number"
+                  min="1"
+                  inputmode="numeric"
+                  placeholder="e.g. 320"
+                  class="mt-1 w-full rounded border border-charcoal-300 bg-white px-3 py-2 text-charcoal tabular-nums placeholder:text-charcoal-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+                />
+              </div>
+
+              <div>
+                <label for="gf-product" class="block text-sm font-medium text-industrial-100">
+                  Product Interest
+                </label>
+                <select
+                  id="gf-product"
+                  name="product-interest"
+                  class="mt-1 w-full rounded border border-charcoal-300 bg-white px-3 py-2 text-charcoal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+                >
+                  <option value="" selected>Select a product line</option>
+                  {productInterest.map((p) => <option value={p}>{p}</option>)}
+                </select>
+              </div>
+
+              <button
+                type="submit"
+                class="w-full rounded bg-amber-400 px-5 py-3 font-semibold text-charcoal-900 transition-colors hover:bg-amber-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-charcoal-800"
+              >
+                Request Free Material Samples
+              </button>
+            </fieldset>
+          </form>
+        </div>
+      </div>
+    </section>
+  </article>
+</BaseLayout>

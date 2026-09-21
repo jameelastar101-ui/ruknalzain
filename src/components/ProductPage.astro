@@ -1,0 +1,174 @@
+---
+/**
+ * ProductPage.astro — product spoke. AEO definition under the H1, GEO spec
+ * <table>, benefits / applications lists, a keyword-anchored link back up to the
+ * parent hub, and an FAQ block.
+ */
+import type { CollectionEntry } from 'astro:content';
+import { getEntry } from 'astro:content';
+import { Image } from 'astro:assets';
+
+import Breadcrumbs from '@components/Breadcrumbs.astro';
+import SpecTable from '@components/SpecTable.astro';
+import Faq from '@components/Faq.astro';
+
+import acoustic from '@assets/placeholders/acoustic.jpg';
+import gym from '@assets/placeholders/gym.jpg';
+import animal from '@assets/placeholders/animal.jpg';
+
+const images = { acoustic, gym, animal };
+
+export interface Props {
+  entry: CollectionEntry<'products'>;
+}
+const { entry } = Astro.props;
+const d = entry.data;
+
+const hub = await getEntry(d.hub);
+const productName = d.h1.split(' — ')[0];
+const hero = images[d.image];
+---
+<article>
+  <div class="border-b border-industrial-300 bg-industrial-100">
+    <div class="mx-auto max-w-content px-4 py-4 sm:px-6 lg:px-8">
+      <Breadcrumbs
+        trail={[
+          { name: 'Home', href: '/' },
+          { name: hub.data.navLabel, href: hub.data.path },
+          { name: productName },
+        ]}
+      />
+    </div>
+  </div>
+
+  <div class="mx-auto max-w-content px-4 py-12 sm:px-6 lg:px-8">
+    <div class="grid gap-10 lg:grid-cols-2">
+      <div>
+        <h1 class="text-3xl font-extrabold leading-tight sm:text-4xl">{d.h1}</h1>
+
+        {/* AEO direct-answer block */}
+        <p class="mt-4 border-l-[3px] border-amber-400 pl-4 text-lg text-charcoal-700">
+          {d.definition}
+        </p>
+
+        {
+          d.contentPending && (
+            <p class="mt-4 rounded border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-charcoal-700">
+              This page is published with limited information while product details are confirmed
+              with the manufacturer.
+            </p>
+          )
+        }
+
+        <div class="mt-6 flex flex-wrap gap-3">
+          <a
+            href="/contact"
+            class="rounded bg-amber-400 px-5 py-3 font-semibold text-charcoal-900 hover:bg-amber-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700"
+          >
+            Request a Quote
+          </a>
+          <a
+            href="https://wa.me/971505698195"
+            target="_blank"
+            rel="noopener"
+            class="rounded border border-charcoal-300 px-5 py-3 font-semibold text-charcoal hover:border-charcoal-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700"
+          >
+            WhatsApp
+          </a>
+        </div>
+      </div>
+
+      <div>
+        <Image
+          src={hero}
+          alt={d.imageAlt}
+          widths={[400, 800]}
+          sizes="(min-width: 1024px) 32rem, 100vw"
+          class="h-auto w-full rounded border border-industrial-300"
+          loading="eager"
+        />
+        {/* TODO: Missing spec — replace category placeholder with real product photography. */}
+      </div>
+    </div>
+
+    {
+      d.benefits.length > 0 && (
+        <section aria-labelledby="benefits-heading" class="mt-14 max-w-3xl">
+          <h2 id="benefits-heading" class="text-2xl font-bold">
+            Key benefits
+          </h2>
+          <ul class="mt-4 space-y-2">
+            {d.benefits.map((b) => (
+              <li class="flex gap-3 text-charcoal-700">
+                <span aria-hidden="true" class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-400" />
+                <span>{b}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+
+    <section aria-labelledby="specs-heading" class="mt-14">
+      <h2 id="specs-heading" class="text-2xl font-bold">Technical specifications</h2>
+      <div class="mt-4 max-w-2xl">
+        <SpecTable specs={d.specs} productName={productName} />
+      </div>
+    </section>
+
+    {
+      d.applications.length > 0 && (
+        <section aria-labelledby="applications-heading" class="mt-14 max-w-3xl">
+          <h2 id="applications-heading" class="text-2xl font-bold">
+            Where it is used
+          </h2>
+          <ul class="mt-4 grid gap-2 sm:grid-cols-2">
+            {d.applications.map((a) => (
+              <li class="rounded border border-industrial-300 bg-industrial-100 px-4 py-2.5 text-sm text-charcoal-700">
+                {a}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+
+    {
+      d.installation && (
+        <section aria-labelledby="install-heading" class="mt-14 max-w-3xl">
+          <h2 id="install-heading" class="text-2xl font-bold">
+            Installation notes
+          </h2>
+          <p class="mt-3 text-charcoal-700">{d.installation}</p>
+        </section>
+      )
+    }
+
+    {
+      d.climateNote && (
+        <section aria-labelledby="climate-heading" class="mt-14 max-w-3xl">
+          <h2 id="climate-heading" class="text-2xl font-bold">
+            Performance in the UAE climate
+          </h2>
+          <p class="mt-3 text-charcoal-700">{d.climateNote}</p>
+        </section>
+      )
+    }
+
+    {/* Internal link: spoke → hub, keyword anchor text */}
+    <section class="mt-14 max-w-3xl rounded border border-industrial-300 bg-industrial-100 p-6">
+      <p class="text-charcoal-700">
+        {productName} is part of Rukn Al Zain's{' '}
+        <a
+          href={hub.data.path}
+          class="font-semibold text-amber-700 underline hover:text-amber-800"
+        >
+          {d.hubAnchor}
+        </a>
+        . See the full range and related products on the category hub.
+      </p>
+    </section>
+  </div>
+
+  <Faq faqs={d.faqs} heading={`${productName} — frequently asked questions`} id="product-faq" />
+</article>

@@ -1,0 +1,559 @@
+---
+/**
+ * /about-us — company profile, specialisations, USPs, 4-step supply process,
+ * UAE delivery coverage, FAQ and a contact CTA block. Content is supplied
+ * verbatim by the build request (approved marketing copy).
+ *
+ * GEO (CLAUDE.md §3): company name, physical location and the exact service
+ * offerings are stated in plain readable prose in the hero and the
+ * specialisations section for LLM entity extraction.
+ *
+ * Images: native <img> elements (not astro:assets <Image />), matching
+ * src/pages/contact.astro — explicit width/height, decoding="async",
+ * loading="eager" for the hero and "lazy" below the fold. Files live in
+ * /public/images/about-us/.
+ *
+ * Structured data: a single inline @graph with LocalBusiness (CLAUDE.md §5),
+ * BreadcrumbList (CLAUDE.md §5) and FAQPage (CLAUDE.md §2, generated 1:1 from
+ * the on-page FAQ). The sitewide Organization node is emitted by BaseLayout, so
+ * it is not repeated here — this mirrors the sibling spoke pages
+ * (see src/pages/acoustic-strips.astro).
+ *
+ * FLAGS (deviations from the build request — raised per CLAUDE.md §6):
+ *  1. The request's schema/canonical use the host "rukanalzain.com"; the
+ *     configured production domain is "https://ruknalzain.ae"
+ *     (astro.config.mjs). All URLs below are built from Astro.site so canonical,
+ *     Open Graph and JSON-LD stay consistent and duplicate indexing is avoided.
+ *  2. The request emits a standalone Organization node; it is omitted here
+ *     because BaseLayout already outputs the sitewide Organization schema.
+ *  3. postOfficeBoxNumber holds "36528" (the box number only) to match
+ *     BaseLayout / the contact page, not the string "P.O. Box 36528".
+ *  4. The primary CTA points to "/contact" (no trailing slash) to match
+ *     trailingSlash: 'never' in astro.config.mjs; the request wrote "/contact/".
+ *  5. LocalBusiness has no geo / openingHours block — no GPS coordinates or
+ *     published hours are in the brief (same TODO as BaseLayout / contact).
+ */
+import BaseLayout from '@layouts/BaseLayout.astro';
+
+const SITE = (Astro.site ?? new URL('https://ruknalzain.ae')).origin;
+const PATH = '/about-us';
+
+/** Standard NAP — keep identical here, in Footer.astro and BaseLayout.astro. */
+const PHONE = '+971505698195';
+const PHONE_DISPLAY = '+971 50 569 8195';
+const WHATSAPP = 'https://wa.me/971505698195';
+
+const HERO_IMG = '/images/about-us/rukn-al-zain-hero-banner.jpg';
+const HERO_ALT =
+  'Rukn Al Zain General Trading commercial rubber flooring warehouse and corporate showroom in Dubai';
+
+/* ─── Section 2 — core specialisations ─────────────────────────────────── */
+const specializations = [
+  {
+    title: 'Acoustic & Soundproofing Underlay',
+    body:
+      'High-density SBR acoustic systems designed for high-rise residential towers, multi-story buildings, and commercial construction projects to minimize impact noise transmission and vibration through concrete sub-slabs.',
+    href: '/acoustic-soundproofing-flooring',
+  },
+  {
+    title: 'Gym & Fitness Flooring',
+    body:
+      'Commercial-grade, impact-resistant rubber tiles, interlocks, and continuous rolls (SBR/EPDM blends) built for high-traffic fitness facilities, weight rooms, and home gyms.',
+    href: '/gym-fitness-flooring',
+  },
+  {
+    title: 'Agricultural & Equestrian Flooring',
+    body:
+      'Heavy-duty rubber mats, pavers, and interlocking pads tailored for horse stables, dairy farms, wash bays, and livestock pens.',
+    href: '/animal-agricultural-flooring',
+  },
+];
+
+/* ─── Section 3 — why partner with Rukn Al Zain (USPs) ─────────────────── */
+const usps = [
+  {
+    title: 'Direct Local Stock',
+    body:
+      'We maintain extensive central warehouse reserves in Dubai to eliminate long supply lead times and support rapid project timelines.',
+    icon:
+      '<path d="m3 7 9-4 9 4-9 4-9-4Z"/><path d="M3 7v10l9 4 9-4V7"/><path d="m12 11 0 10"/>',
+  },
+  {
+    title: 'GCC-Engineered Durability',
+    body:
+      'Our products feature heat-resistant polyurethane binders that remain stable under extreme ambient heat and frequent AC cooling cycles without warping, edge lifting, or off-gassing.',
+    icon:
+      '<circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M17 7l2.1-2.1M4.9 19.1 7 17"/>',
+  },
+  {
+    title: 'Sustainability Focus',
+    body:
+      'We prioritize environmental responsibility by delivering eco-friendly, high-performance ground solutions manufactured from recycled SBR rubber granules.',
+    icon:
+      '<path d="M11 20a7 7 0 0 1-7-7c0-6 7-9 16-9 0 9-3 16-9 16Z"/><path d="M4 20c2-4.5 5.5-7.8 10-9.5"/>',
+  },
+  {
+    title: 'Technical Guidance',
+    body:
+      'We offer comprehensive support, including site layout evaluations, subfloor preparation recommendations, and adhesive selection advice.',
+    icon:
+      '<path d="M9 4h6v2H9z"/><path d="M8 5H6a1 1 0 0 0-1 1v13a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1h-2"/><path d="m9 13 2 2 4-4"/>',
+  },
+];
+
+/* ─── Section 4 — 4-step order & supply process ───────────────────────── */
+const steps = [
+  {
+    n: '1',
+    title: 'Consultation & Analysis',
+    body:
+      'Share your project dimensions and site requirements with our technical team for a tailored recommendation.',
+  },
+  {
+    n: '2',
+    title: 'Free Physical Samples',
+    body:
+      'We deliver physical material samples and technical spec sheets straight to your office or job site across the UAE for inspection.',
+  },
+  {
+    n: '3',
+    title: 'Direct Site Dispatch',
+    body:
+      'Orders are loaded directly from our Dubai hub and dispatched to your facility with 24-to-48-hour delivery across the UAE.',
+  },
+  {
+    n: '4',
+    title: 'Installation Support',
+    body:
+      'Receive clear, practical instructions on seam bonding, subfloor prep, and perimeter isolation to ensure optimal product performance.',
+  },
+];
+
+/* ─── Section 5 — UAE delivery coverage ───────────────────────────────── */
+const coverage = [
+  {
+    area: 'Dubai (Central Hub & Headquarters)',
+    body:
+      'Al Quoz, Business Bay, Downtown Dubai, Dubai Marina, JLT, Palm Jumeirah, Dubai Hills Estate, Sheikh Zayed Road, DIFC, Al Khawaneej, Nad Al Sheba, MBR City, and surrounding areas.',
+  },
+  {
+    area: 'Abu Dhabi & Al Ain',
+    body:
+      'Comprehensive coverage for commercial gyms, fitness centers, residential towers, and sports venues.',
+  },
+  {
+    area: 'Sharjah',
+    body:
+      'Direct supply for educational facilities, commercial fitness hubs, and industrial projects.',
+  },
+  {
+    area: 'Northern Emirates (Ajman, RAK, Fujairah, UAQ)',
+    body:
+      'Complete logistics coverage for commercial fit-outs, agricultural projects, and private facilities.',
+  },
+];
+
+/* ─── Section 6 — FAQ (drives the visible accordion + FAQPage JSON-LD) ── */
+const faqs = [
+  {
+    question: 'Where is Rukn Al Zain General Trading LLC located?',
+    answer:
+      'Rukn Al Zain General Trading LLC is based in Dubai, United Arab Emirates (P.O. Box 36528), operating a central distribution warehouse that services projects across all seven Emirates.',
+  },
+  {
+    question: 'What industries and application segments does Rukn Al Zain cover?',
+    answer:
+      'We specialize in three core rubber flooring segments across the GCC: acoustic and soundproofing underlayments for multi-story construction, gym and commercial fitness flooring, and heavy-duty equestrian and agricultural rubber mats.',
+  },
+  {
+    question: 'How fast can Rukn Al Zain deliver rubber flooring products across the UAE?',
+    answer:
+      'We maintain extensive central warehouse reserves in Dubai, allowing us to dispatch orders directly to project sites across the UAE within 24 to 48 hours.',
+  },
+  {
+    question: 'Are Rukn Al Zain rubber flooring materials suitable for GCC climate conditions?',
+    answer:
+      'Yes, our products are engineered with heat-resistant polyurethane binders that withstand extreme ambient temperatures and continuous AC cooling cycles without warping, edge lifting, or off-gassing.',
+  },
+  {
+    question: 'Does Rukn Al Zain provide physical product samples before ordering?',
+    answer:
+      'Yes, we offer free physical sample kits and technical spec sheets delivered directly to offices or job sites across Dubai and the UAE.',
+  },
+  {
+    question: 'Does Rukn Al Zain supply recycled and eco-friendly products?',
+    answer:
+      'Yes, sustainability is a core pillar. Our products are manufactured using high-density recycled SBR rubber granules, contributing to green building standards in the UAE.',
+  },
+  {
+    question: 'Can Rukn Al Zain assist with technical installation and site preparation?',
+    answer:
+      'We offer complete technical guidance, including layout planning, subfloor prep recommendations, perimeter isolation strategies, and adhesive selection advice.',
+  },
+  {
+    question: 'How can contractors or facility managers get a quote?',
+    answer:
+      'You can request a tailored project quote by calling or messaging our sales team via WhatsApp at +971 50 569 8195 or by sending an inquiry through our site contact form.',
+  },
+];
+
+/* ─── Structured data — single combined @graph ────────────────────────── */
+const localBusinessSchema = {
+  '@type': 'LocalBusiness',
+  '@id': `${SITE}${PATH}#localbusiness`,
+  name: 'Rukn Al Zain General Trading LLC',
+  url: `${SITE}${PATH}`,
+  telephone: PHONE,
+  address: {
+    '@type': 'PostalAddress',
+    postOfficeBoxNumber: '36528',
+    addressLocality: 'Dubai',
+    addressCountry: 'AE',
+  },
+  areaServed: [
+    'Dubai',
+    'Abu Dhabi',
+    'Sharjah',
+    'Ajman',
+    'Ras Al Khaimah',
+    'Umm Al Quwain',
+    'Fujairah',
+  ].map((name) => ({ '@type': 'AdministrativeArea', name })),
+};
+
+const breadcrumbSchema = {
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE}/` },
+    { '@type': 'ListItem', position: 2, name: 'About Us', item: `${SITE}${PATH}` },
+  ],
+};
+
+const faqSchema = {
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((f) => ({
+    '@type': 'Question',
+    name: f.question,
+    acceptedAnswer: { '@type': 'Answer', text: f.answer },
+  })),
+};
+
+const graphSchema = {
+  '@context': 'https://schema.org',
+  '@graph': [localBusinessSchema, breadcrumbSchema, faqSchema],
+};
+
+/* ─── Shared class helpers — mirror the sibling hub / spoke pages ──────── */
+const container = 'mx-auto max-w-content px-4 sm:px-6 lg:px-8';
+const sectionShell = 'border-t border-industrial-300 py-14 sm:py-16';
+const h2 = 'text-2xl font-bold text-charcoal';
+const lede = 'mt-4 max-w-3xl text-charcoal-600';
+const primaryCta =
+  'inline-flex items-center justify-center rounded bg-amber-400 px-5 py-3 font-semibold text-charcoal-900 transition-colors hover:bg-amber-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2';
+const waCta =
+  'inline-flex items-center justify-center gap-2 rounded bg-emerald-600 px-5 py-3 font-semibold text-white transition-colors hover:bg-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2';
+const ghostCta =
+  'inline-flex items-center justify-center gap-2 rounded border border-charcoal-300 px-5 py-3 font-semibold text-charcoal transition-colors hover:border-charcoal-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700';
+const iconChip =
+  'mb-3 grid h-11 w-11 place-items-center rounded bg-white text-amber-700 ring-1 ring-industrial-300';
+const crumbLink =
+  'rounded hover:text-amber-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700';
+
+/* Small WhatsApp glyph for the green CTAs (matches src/pages/outdoor-pavers.astro). */
+const waGlyph =
+  '<path d="M17.6 6.32A7.85 7.85 0 0 0 12.05 4a7.94 7.94 0 0 0-6.9 11.9L4 20l4.2-1.1a7.9 7.9 0 0 0 3.8.97h.01A7.94 7.94 0 0 0 17.6 6.32ZM12.05 18.5a6.6 6.6 0 0 1-3.36-.92l-.24-.14-2.49.65.66-2.43-.16-.25a6.59 6.59 0 1 1 5.6 3.09Zm3.62-4.93c-.2-.1-1.17-.58-1.35-.64s-.31-.1-.44.1-.51.64-.62.77-.23.15-.43.05a5.4 5.4 0 0 1-1.59-.98 6 6 0 0 1-1.1-1.37c-.11-.2 0-.3.09-.4s.2-.23.3-.35a1.34 1.34 0 0 0 .2-.33.37.37 0 0 0 0-.35c0-.1-.44-1.07-.6-1.46s-.32-.34-.44-.34h-.38a.72.72 0 0 0-.52.24 2.19 2.19 0 0 0-.69 1.63 3.82 3.82 0 0 0 .8 2.02 8.74 8.74 0 0 0 3.35 2.96c.47.2.83.32 1.11.42a2.68 2.68 0 0 0 1.23.08 2 2 0 0 0 1.32-.93 1.64 1.64 0 0 0 .11-.93c-.05-.08-.18-.13-.38-.23Z"/>';
+---
+<BaseLayout
+  title="About Us | Rukn Al Zain General Trading LLC, Dubai"
+  description="Learn about Rukn Al Zain General Trading LLC, a Dubai-based supplier of sustainable rubber flooring and acoustic solutions across the UAE."
+  canonical="/about-us"
+  ogImage={HERO_IMG}
+  ogImageAlt={HERO_ALT}
+>
+  {/* ── Breadcrumb strip — the BreadcrumbList JSON-LD is in the @graph below ── */}
+  <div class="border-b border-industrial-300 bg-industrial-100">
+    <div class={`${container} py-4`}>
+      <nav aria-label="Breadcrumb" class="text-sm">
+        <ol class="flex flex-wrap items-center gap-x-2 gap-y-1 text-charcoal-500">
+          <li class="flex items-center gap-x-2">
+            <a href="/" class={crumbLink}>Home</a>
+          </li>
+          <li class="flex items-center gap-x-2">
+            <span aria-hidden="true" class="text-charcoal-300">/</span>
+            <span aria-current="page" class="font-medium text-charcoal">About Us</span>
+          </li>
+        </ol>
+      </nav>
+    </div>
+  </div>
+
+  {/* ═══ 1. HERO ═══════════════════════════════════════════════════════════ */}
+  <header class="bg-charcoal-700 text-white">
+    <div class={`${container} py-14 sm:py-16`}>
+      <div class="grid items-center gap-10 lg:grid-cols-2">
+        <div>
+          <h1 class="text-4xl font-extrabold leading-tight text-white sm:text-5xl">
+            About Rukn Al Zain General Trading LLC
+          </h1>
+
+          {/* AEO direct-answer block */}
+          <p class="mt-5 max-w-xl border-l-[3px] border-amber-400 pl-4 text-lg text-industrial-100">
+            Rukn Al Zain General Trading LLC is a leading, Dubai-based supplier of specialized
+            rubber flooring, technical acoustic systems, and surface isolation solutions across
+            the United Arab Emirates. Engineered to meet the structural, safety, and environmental
+            demands of modern GCC facilities, our materials cater to contractors, architects,
+            facility owners, and residential clients seeking high-performance surfaces built for
+            long-term durability.
+          </p>
+
+          <div class="mt-7 flex flex-wrap gap-3">
+            <a href="/contact" class={`${primaryCta} focus-visible:ring-offset-charcoal-700`}>
+              Request Project Quote
+            </a>
+            <a
+              href={WHATSAPP}
+              target="_blank"
+              rel="noopener"
+              class={`${waCta} focus-visible:ring-offset-charcoal-700`}
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                class="h-5 w-5"
+                aria-hidden="true"
+                set:html={waGlyph}
+              />
+              WhatsApp Sales ({PHONE_DISPLAY})
+            </a>
+          </div>
+        </div>
+
+        <div>
+          <img
+            src={HERO_IMG}
+            alt={HERO_ALT}
+            width={1200}
+            height={675}
+            loading="eager"
+            decoding="async"
+            class="w-full rounded border border-charcoal-500 object-cover shadow-lift"
+          />
+        </div>
+      </div>
+    </div>
+  </header>
+
+  {/* ═══ 2. CORE SPECIALISATIONS ═════════════════════════════════════════ */}
+  <section aria-labelledby="specializations-h" class={sectionShell}>
+    <div class={container}>
+      <h2 id="specializations-h" class={h2}>Our Core Specializations</h2>
+      <p class={lede}>
+        We specialize in recycled-rubber products tailored specifically for GCC climatic
+        conditions, operating across three core industry segments:
+      </p>
+
+      <ul class="mt-8 grid gap-6 md:grid-cols-3">
+        {
+          specializations.map((s) => (
+            <li class="flex flex-col rounded border border-industrial-300 bg-white p-6 shadow-card">
+              <h3 class="font-heading text-lg font-semibold text-charcoal">{s.title}</h3>
+              <p class="mt-2 flex-1 text-sm leading-relaxed text-charcoal-600">{s.body}</p>
+              <a
+                href={s.href}
+                class="mt-4 inline-flex items-center gap-1 rounded text-sm font-semibold text-amber-700 hover:text-amber-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700"
+              >
+                View the range
+                <span aria-hidden="true">&rarr;</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  {/* ═══ 3. WHY PARTNER WITH RUKN AL ZAIN (USPs) ═════════════════════════ */}
+  <section aria-labelledby="usps-h" class={`${sectionShell} bg-industrial-100`}>
+    <div class={container}>
+      <h2 id="usps-h" class={h2}>Why Partner With Rukn Al Zain?</h2>
+
+      <ul class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {
+          usps.map((u) => (
+            <li class="rounded border border-industrial-300 bg-white p-6 shadow-card">
+              <span class={iconChip}>
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.75"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="h-6 w-6"
+                  aria-hidden="true"
+                  set:html={u.icon}
+                />
+              </span>
+              <h3 class="font-heading text-base font-semibold text-charcoal">{u.title}</h3>
+              <p class="mt-2 text-sm leading-relaxed text-charcoal-600">{u.body}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  {/* ═══ 4. OUR 4-STEP ORDER & SUPPLY PROCESS ════════════════════════════ */}
+  <section aria-labelledby="process-h" class="border-t border-industrial-300 bg-charcoal-700 py-14 text-white sm:py-16">
+    <div class={container}>
+      <h2 id="process-h" class="text-2xl font-bold text-white">Our Simple 4-Step Supply Process</h2>
+
+      <ol class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {
+          steps.map((s) => (
+            <li class="rounded border border-charcoal-500 bg-charcoal-800 p-6">
+              <span class="inline-flex h-10 w-10 items-center justify-center rounded bg-amber-400 font-heading text-lg font-bold text-charcoal-900">
+                {s.n}
+              </span>
+              <h3 class="mt-4 font-heading text-base font-semibold text-white">
+                Step {s.n}: {s.title}
+              </h3>
+              <p class="mt-2 text-sm leading-relaxed text-industrial-200">{s.body}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  {/* ═══ 5. UAE DELIVERY COVERAGE ════════════════════════════════════════ */}
+  <section aria-labelledby="coverage-h" class={sectionShell}>
+    <div class={container}>
+      <h2 id="coverage-h" class={h2}>UAE-Wide Delivery &amp; Service Area</h2>
+      <p class={lede}>
+        Operating from our central logistics hub in Dubai, we provide direct site delivery across
+        all seven Emirates.
+      </p>
+
+      <div class="mt-8 grid items-start gap-10 lg:grid-cols-2">
+        <ul class="grid gap-5">
+          {
+            coverage.map((c) => (
+              <li class="rounded border border-industrial-300 bg-white p-6 shadow-card">
+                <h3 class="font-heading text-lg font-semibold text-charcoal">{c.area}</h3>
+                <p class="mt-2 text-sm leading-relaxed text-charcoal-600">{c.body}</p>
+              </li>
+            ))
+          }
+        </ul>
+
+        <img
+          src="/images/about-us/uae-delivery-logistics.jpg"
+          alt="Rukn Al Zain delivery fleet dispatching rubber flooring pallets to project sites across the UAE"
+          width={800}
+          height={600}
+          loading="lazy"
+          decoding="async"
+          class="w-full rounded border border-industrial-300 object-cover shadow-card lg:sticky lg:top-24"
+        />
+      </div>
+    </div>
+  </section>
+
+  {/* ═══ 6. FREQUENTLY ASKED QUESTIONS — native <details>, zero-JS ════════ */}
+  <section aria-labelledby="faq-h" class={`${sectionShell} bg-industrial-100`}>
+    <div class={container}>
+      <h2 id="faq-h" class={h2}>Frequently Asked Questions</h2>
+
+      <div class="mt-6 max-w-3xl divide-y divide-industrial-300 border-y border-industrial-300">
+        {
+          faqs.map((f, i) => (
+            <details class="group" open={i === 0}>
+              <summary class="flex cursor-pointer items-center justify-between gap-4 py-4 font-heading text-base font-semibold text-charcoal marker:content-none [&::-webkit-details-marker]:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700">
+                <span>{f.question}</span>
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  class="h-5 w-5 shrink-0 text-amber-700 transition-transform duration-200 group-open:-rotate-180"
+                  aria-hidden="true"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" d="m6 9 6 6 6-6" />
+                </svg>
+              </summary>
+              <p class="pb-4 text-charcoal-600">{f.answer}</p>
+            </details>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  {/* ═══ 7. CONTACT & LOCATION CTA BLOCK ═════════════════════════════════ */}
+  <section
+    aria-labelledby="contact-cta-h"
+    class="border-t border-industrial-300 bg-charcoal-700 py-14 text-white sm:py-16"
+  >
+    <div class={container}>
+      <div class="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-center">
+        <div>
+          <h2 id="contact-cta-h" class="text-2xl font-bold text-white">
+            Get in Touch with Our Dubai Team
+          </h2>
+          <dl class="mt-6 space-y-4 text-sm leading-relaxed text-industrial-200">
+            <div>
+              <dt class="font-semibold uppercase tracking-wide text-white">Company</dt>
+              <dd class="mt-0.5">Rukn Al Zain General Trading LLC</dd>
+            </div>
+            <div>
+              <dt class="font-semibold uppercase tracking-wide text-white">Address / Location</dt>
+              <dd class="mt-0.5">P.O. Box 36528, Dubai, United Arab Emirates</dd>
+            </div>
+            <div>
+              <dt class="font-semibold uppercase tracking-wide text-white">Phone / WhatsApp</dt>
+              <dd class="mt-0.5">
+                <a
+                  href={`tel:${PHONE}`}
+                  class="rounded font-medium text-amber-300 hover:text-amber-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+                >
+                  {PHONE_DISPLAY}
+                </a>
+              </dd>
+            </div>
+          </dl>
+        </div>
+
+        <div class="flex flex-col gap-3 sm:flex-row lg:flex-col">
+          <a
+            href={`tel:${PHONE}`}
+            class={`${primaryCta} focus-visible:ring-offset-charcoal-700`}
+          >
+            Call {PHONE_DISPLAY}
+          </a>
+          <a
+            href={WHATSAPP}
+            target="_blank"
+            rel="noopener"
+            class={`${waCta} focus-visible:ring-offset-charcoal-700`}
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              class="h-5 w-5"
+              aria-hidden="true"
+              set:html={waGlyph}
+            />
+            WhatsApp Chat
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* Combined LocalBusiness + BreadcrumbList + FAQPage structured data (@graph).
+      Kept in-body to match the sibling pages (BaseLayout exposes no <head>
+      slot); crawlers parse it identically. Organization JSON-LD is emitted
+      sitewide by BaseLayout. */}
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(graphSchema)} />
+</BaseLayout>

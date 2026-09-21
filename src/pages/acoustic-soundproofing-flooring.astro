@@ -1,0 +1,1095 @@
+---
+/**
+ * /acoustic-soundproofing-flooring — Acoustic & Soundproofing Flooring hub (Dubai).
+ *
+ * This route is intentionally a dedicated page rather than the YAML-driven
+ * generic HubPage, so the `acoustic` hub is excluded from getStaticPaths in
+ * src/pages/[...slug].astro to avoid a route collision.
+ *
+ * NOTE (redesign): per an explicit later instruction this page's metadata,
+ * <h1> and FAQ set were re-authored to a Dubai-focused brief and now
+ * intentionally DIVERGE from src/content/hubs/acoustic.yaml (which still
+ * carries the older UAE-wide "…Solutions in the UAE" copy consumed by nav and
+ * the four child product pages). Keep that YAML in mind if those need to match.
+ *
+ * Body copy is reproduced verbatim from the supplied content brief. Notes:
+ *  - The "Trusted Local Supply" block is authored as H3 in the source; promoted
+ *    to H2 here to keep a strict H1 -> H2 -> H3 outline (CLAUDE.md §1).
+ *  - Source "Explore Product" links point at google.com/search URLs that embed
+ *    internal slugs; mapped to the real product routes (CLAUDE.md §6).
+ *  - public/ images use <img> (astro:assets <Image /> only optimises
+ *    src/assets). Explicit width/height + lazy loading keep CLS/perf in check.
+ */
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Breadcrumbs from '@components/Breadcrumbs.astro';
+
+const IMG = '/images/acoustic-flooring';
+const HERO_IMG = `${IMG}/acoustic-rubber-underlay-dubai-installation.jpg`;
+const HERO_ALT =
+  'High-performance recycled rubber acoustic underlay laid on concrete floor in a Dubai high-rise project.';
+
+const trustedSupply = [
+  {
+    icon: 'shield',
+    term: 'Al Sa’fat & DBC Compliant',
+    desc: 'Helps your project meet Dubai Municipality and Dubai Building Code acoustic standards.',
+  },
+  {
+    icon: 'truck',
+    term: 'Fast Site Delivery',
+    desc: 'Direct site delivery across all major Dubai developments.',
+  },
+  {
+    icon: 'recycle',
+    term: '100% Recycled Crumb Rubber',
+    desc: 'Sustainable, durable, and engineered for high-heat UAE conditions.',
+  },
+];
+
+const noiseTypes = [
+  {
+    icon: 'airborne',
+    term: 'Airborne Noise',
+    desc: 'Sound waves that travel through the air, such as human voices, background music, or television audio. These waves hit walls or floors and cause them to vibrate, sending sound into the next room.',
+  },
+  {
+    icon: 'impact',
+    term: 'Impact Noise',
+    desc: 'Physical vibration caused by direct contact with a structure, such as footsteps, moving furniture, or dropped objects. The kinetic energy travels straight through concrete slabs and radiates into the space below.',
+  },
+];
+
+const systems = [
+  {
+    name: '1. Zain Acoustic Underlay',
+    img: {
+      src: `${IMG}/zain-acoustic-underlay-dubai.jpg`,
+      alt: 'Zain Acoustic Underlay recycled rubber roll by Rukn Al Zain for floor soundproofing under tiles and wood in Dubai.',
+      title: 'Zain Acoustic Underlay - Rukn Al Zain',
+    },
+    rows: [
+      ['Best For', 'Apartments, hotels, and luxury villas.'],
+      [
+        'Compatible Floors',
+        'Fits directly under ceramic tile, marble, vinyl, and engineered wood.',
+      ],
+      [
+        'Key Benefit',
+        'Reduces impact noise between vertical apartments without adding unnecessary floor height.',
+      ],
+    ],
+    cta: {
+      label: 'View Zain Acoustic Rubber Underlay Details',
+      href: '/acoustic-underlay',
+    },
+  },
+  {
+    name: '2. Zain Prime (Sports Floor Underlay)',
+    img: {
+      src: `${IMG}/zain-prime-sports-floor-underlay-dubai.jpg`,
+      alt: 'Zain Prime sports floor acoustic rubber underlay roll by Rukn Al Zain for sports halls and fitness studios in Dubai.',
+      title: 'Zain Prime Sports Floor Underlay - Rukn Al Zain',
+    },
+    rows: [
+      ['Best For', 'School sports halls, indoor courts, and fitness studios.'],
+      ['Compatible Floors', 'Fits under sports vinyl, hardwood, and synthetic surfaces.'],
+      [
+        'Key Benefit',
+        'Protects athlete joints with shock absorption while lowering room echo.',
+      ],
+    ],
+    cta: {
+      label: 'View Zain Prime Sports Floor Underlay Details',
+      href: '/sports-track-underlay',
+    },
+  },
+  {
+    name: '3. Zain Silence (Screed Isolation)',
+    img: {
+      src: `${IMG}/zain-silence-screed-isolation-dubai.jpg`,
+      alt: 'Zain Silence screed isolation acoustic rubber membrane roll by Rukn Al Zain for under-screed soundproofing in commercial towers and high-rises in Dubai.',
+      title: 'Zain Silence Screed Isolation - Rukn Al Zain',
+    },
+    rows: [
+      ['Best For', 'Heavy-load commercial towers and mixed-use developments.'],
+      ['Compatible Floors', 'Placed beneath concrete screed floors.'],
+      [
+        'Key Benefit',
+        'Creates a floating screed floor that stops extreme impact vibration from traveling through structural beams.',
+      ],
+    ],
+    cta: {
+      label: 'View Zain Silence Screed Isolation System Details',
+      href: '/screed-isolation',
+    },
+  },
+  {
+    name: '4. Zain Acoustic Strip',
+    img: {
+      src: `${IMG}/zain-acoustic-perimeter-strip-dubai.jpg`,
+      alt: 'Zain Acoustic Strip self-adhesive rubber perimeter isolation tape by Rukn Al Zain for preventing wall flanking noise in Dubai.',
+      title: 'Zain Acoustic Strip - Rukn Al Zain',
+    },
+    rows: [
+      ['Best For', 'Wall perimeters and wooden decking joists.'],
+      ['Installation', 'Self-adhesive backing for easy application.'],
+      [
+        'Key Benefit',
+        'Prevents "flanking noise"—sound that sneaks around acoustic underlays through side walls.',
+      ],
+    ],
+    cta: {
+      label: 'View Zain Rubber Acoustic Perimeter Strip Details',
+      href: '/acoustic-strips',
+    },
+  },
+];
+
+const comparisonRows = [
+  [
+    'Zain Acoustic Underlay',
+    'Recycled SBR Crumb Rubber',
+    '3mm – 10mm',
+    'Direct under tile/wood',
+    'Apartment & hotel footstep isolation',
+  ],
+  [
+    'Zain Prime',
+    'High-Density SBR / EPDM',
+    '4mm – 12mm',
+    'Under sports surfaces',
+    'Athletic shock & echo absorption',
+  ],
+  [
+    'Zain Silence',
+    'Recycled Isolation Sheet',
+    '5mm – 15mm',
+    'Under concrete screed',
+    'High-load floating screed isolation',
+  ],
+  [
+    'Zain Acoustic Strip',
+    'Elastomeric Rubber',
+    '3mm – 5mm',
+    'Wall perimeters & joists',
+    'Preventing flanking noise transmission',
+  ],
+];
+
+const thicknessGuide = [
+  {
+    term: '3mm to 5mm Thickness',
+    desc: 'Best for standard residential apartments, hotel guest rooms, and low-traffic areas. Fits easily under porcelain tiles or parquet without changing door clearances.',
+  },
+  {
+    term: '6mm to 8mm Thickness',
+    desc: 'Ideal for luxury penthouses, high-end residential villas, and light commercial spaces. Provides enhanced impact absorption under heavy marble or thick engineered wood.',
+  },
+  {
+    term: '10mm+ Thickness',
+    desc: 'Engineered for high-vibration environments, school sports halls, and multi-purpose fitness areas. Absorbs heavy structural impact from equipment and fast movement.',
+  },
+];
+
+const installSteps = [
+  [
+    'Subfloor Preparation',
+    'Clean the concrete slab thoroughly. Remove all dust, wet plaster, debris, and sharp points. Ensure the subfloor is level and dry before starting.',
+  ],
+  [
+    'Apply Perimeter Isolation Strips',
+    'Stick Zain Acoustic Strips along all lower walls, columns, and pipe penetrations before laying floor mats. This step prevents acoustic bridging between the floor and side walls.',
+  ],
+  [
+    'Roll Out Acoustic Underlay',
+    'Unroll the rubber mats flat across the slab. Butt all edges tightly together without overlapping or leaving gaps.',
+  ],
+  [
+    'Seal All Seams',
+    'Apply heavy-duty joint tape over every seam. Sealing the joints stops tile adhesive or liquid screed from running between the mats and touching the concrete slab.',
+  ],
+  [
+    'Install Floor Finish',
+    'Lay your ceramic tile, marble, or parquet directly on the underlay using a compatible flexible adhesive, or pour your sand-cement screed layer. Trim any excess perimeter strip flush with the finished floor level.',
+  ],
+];
+
+const dubaiHubs = [
+  {
+    icon: 'tower',
+    term: 'Downtown Dubai & Business Bay',
+    desc: 'Soundproofing materials for high-rise commercial offices and luxury residential towers.',
+  },
+  {
+    icon: 'waves',
+    term: 'Dubai Marina, JBR & Palm Jumeirah',
+    desc: 'Impact noise control under tile and marble flooring for waterfront apartments.',
+  },
+  {
+    icon: 'briefcase',
+    term: 'DIFC & Sheikh Zayed Road',
+    desc: 'Vibration control strips and isolation mats for corporate office fit-outs.',
+  },
+  {
+    icon: 'home',
+    term: 'Dubai Hills Estate & MBR City',
+    desc: 'Acoustic underlays for modern villas, sports halls, and community centers.',
+  },
+];
+
+const sustainability = [
+  {
+    term: 'Eco-Friendly Construction',
+    desc: 'Made from 100% recycled tire rubber, supporting local green building goals.',
+  },
+  {
+    term: 'UAE Heat Resistance',
+    desc: 'Our materials do not dry out, crumble, or lose flexibility in hot GCC climates.',
+  },
+  {
+    term: 'Heavy Load Support',
+    desc: 'Supports heavy furniture and equipment weight without losing acoustic thickness over time.',
+  },
+];
+
+/** Redesign FAQ set — visible accordion below is driven by this same array so
+ *  the DOM stays 1:1 with the FAQPage JSON-LD (Google requires the Q&A to be
+ *  present and visible on the page). */
+const faqs = [
+  {
+    question:
+      'How fast can Rukn Al Zain deliver acoustic materials to project sites in Dubai?',
+    answer:
+      'We dispatch orders directly from our central Dubai warehouse, delivering to site locations across Dubai within 24 to 48 hours.',
+  },
+  {
+    question:
+      'Does Rukn Al Zain provide technical sample kits and data sheets for specifiers?',
+    answer:
+      'Yes, we provide physical product samples and technical datasheets directly to acoustic consultants, architects, and contractors across the UAE.',
+  },
+  {
+    question: 'What is the difference between ZainAcoustic Underlay and ZainSilence?',
+    answer:
+      'ZainAcoustic Underlay is designed for thin application directly beneath floor finishes like tile, marble, or wood. ZainSilence is a heavy-duty mat engineered to sit beneath wet concrete screeds to support high structural loads.',
+  },
+  {
+    question:
+      'Can ZainAcoustic underlay be installed under natural marble and porcelain tile?',
+    answer:
+      'Yes, ZainAcoustic underlayment is engineered for installation beneath hard surface flooring, providing impact noise reduction without creating joint movement.',
+  },
+  {
+    question:
+      'How do rubber acoustic underlays reduce sound transfer between building floors?',
+    answer:
+      'Rubber underlays act as a resilient layer between the subfloor and finished flooring, absorbing kinetic impact energy before it can travel through the concrete slab as sound.',
+  },
+  {
+    question:
+      'Why is perimeter edge isolation necessary when installing acoustic underlayment?',
+    answer:
+      'Using self-adhesive acoustic strips along wall perimeters prevents the floor finish from touching vertical walls, blocking flanking noise paths.',
+  },
+  {
+    question:
+      'How do Dubai indoor air-conditioning cycles affect floor underlayment stability?',
+    answer:
+      'Frequent air-conditioning continuous cycles cause temperature fluctuations that warp low-grade materials. Our underlays use non-degrading polyurethane binders to stay dimensionally flat.',
+  },
+  {
+    question:
+      'Why are recycled rubber acoustic underlays preferred for construction projects in the UAE?',
+    answer:
+      'Recycled rubber provides long-term compression resistance under heavy loads while supporting green building sustainability goals across GCC developments.',
+  },
+];
+
+const productInterest = [
+  'Zain Acoustic Underlay',
+  'Zain Prime (Sports Floor Underlay)',
+  'Zain Silence (Screed Isolation)',
+  'Zain Acoustic Strip',
+  'Not sure yet — need advice',
+];
+
+/**
+ * AEO: FAQPage JSON-LD only. Organization is emitted sitewide by BaseLayout and
+ * the BreadcrumbList by Breadcrumbs.astro, so the redesign brief's combined
+ * @graph is trimmed here to just the FAQ node to avoid duplicate schema types.
+ * mainEntity is 1:1 with the visible accordion; answers stay in the DOM (native
+ * <details> collapse, not removed) so they remain extractable.
+ */
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((f) => ({
+    '@type': 'Question',
+    name: f.question,
+    acceptedAnswer: { '@type': 'Answer', text: f.answer },
+  })),
+};
+
+const sectionShell = 'border-t border-industrial-300 py-14 sm:py-16';
+const container = 'mx-auto max-w-content px-4 sm:px-6 lg:px-8';
+const h2 = 'text-2xl font-bold text-charcoal';
+const lede = 'mt-4 max-w-3xl text-charcoal-600';
+const primaryCta =
+  'inline-flex items-center justify-center rounded bg-amber-400 px-5 py-3 font-semibold text-charcoal-900 transition-colors hover:bg-amber-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2';
+---
+
+<BaseLayout
+  title="Acoustic Underlay & Soundproof Flooring Dubai | Rukn Al Zain"
+  description="High-density rubber acoustic underlayments and screed isolation systems engineered for high-rises and commercial developments across Dubai and the UAE."
+  canonical="/acoustic-soundproofing-flooring"
+  ogImage={HERO_IMG}
+  ogImageAlt={HERO_ALT}
+>
+  <article>
+    {/* Breadcrumb strip */}
+    <div class="border-b border-industrial-300 bg-industrial-100">
+      <div class={`${container} py-4`}>
+        <Breadcrumbs trail={[{ name: 'Home', href: '/' }, { name: 'Acoustic Flooring' }]} />
+      </div>
+    </div>
+
+    {/* Hero */}
+    <header class="bg-charcoal-700 text-white">
+      <div class={`${container} py-14 sm:py-16`}>
+        <div class="grid items-center gap-10 lg:grid-cols-2">
+          <div>
+            <h1 class="text-4xl font-extrabold leading-tight text-white sm:text-5xl">
+              Acoustic &amp; Soundproofing Flooring Solutions in Dubai
+            </h1>
+
+            {/* AEO direct-answer block */}
+            <p
+              class="mt-5 max-w-xl border-l-[3px] border-amber-400 pl-4 text-lg text-industrial-100"
+            >
+              Stop unwanted noise in your building projects. Rukn Al Zain supplies
+              high-performance rubber acoustic underlays, screed isolation mats, and perimeter
+              strips across Dubai.
+            </p>
+            <p class="mt-4 max-w-xl text-industrial-200">
+              Our products cut down impact noise from footsteps, moving furniture, and heavy
+              equipment. Whether you are building residential towers in Dubai Marina or fitting
+              out commercial offices in Business Bay, we provide reliable soundproofing made
+              from recycled materials.
+            </p>
+
+            <div class="mt-7 flex flex-wrap gap-3">
+              <a href="#request-quote" class={`${primaryCta} focus-visible:ring-offset-charcoal-700`}>
+                Request Specification Sheet
+              </a>
+              <a
+                href="https://wa.me/971505698195"
+                target="_blank"
+                rel="noopener"
+                class="inline-flex items-center justify-center rounded border border-white/25 px-5 py-3 font-semibold text-white transition-colors hover:border-white/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+              >
+                Chat on WhatsApp
+              </a>
+            </div>
+          </div>
+
+          <figure class="m-0">
+            <img
+              src={HERO_IMG}
+              alt={HERO_ALT}
+              title="Recycled rubber acoustic underlay installation on a Dubai high-rise concrete slab"
+              width="1376"
+              height="768"
+              fetchpriority="high"
+              decoding="async"
+              class="h-auto w-full rounded border border-white/10"
+            />
+            <figcaption class="mt-2 text-sm text-industrial-300">
+              High-performance recycled rubber acoustic underlay laid across concrete slabs in a
+              Dubai high-rise project.
+            </figcaption>
+          </figure>
+        </div>
+      </div>
+    </header>
+
+    {/* Trusted Local Supply Across Dubai (authored H3 -> promoted to H2) */}
+    <section aria-labelledby="trusted-supply-h" class={`${sectionShell} bg-white`}>
+      <div class={container}>
+        <h2 id="trusted-supply-h" class={h2}>Trusted Local Supply Across Dubai</h2>
+        <dl class="mt-8 grid gap-5 sm:grid-cols-3">
+          {
+            trustedSupply.map((it) => (
+              <div class="rounded border border-industrial-300 border-l-[3px] border-l-amber-400 bg-industrial-100 p-5">
+                <span
+                  class="mb-3 grid h-11 w-11 place-items-center rounded bg-white text-amber-700 ring-1 ring-industrial-300"
+                  aria-hidden="true"
+                >
+                  {it.icon === 'shield' && (
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.75"
+                      class="h-6 w-6"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M9 12.75 11.25 15 15 9.75M12 3l7.5 3v5.25c0 4.28-2.96 8.29-7.5 9.75-4.54-1.46-7.5-5.47-7.5-9.75V6L12 3z"
+                      />
+                    </svg>
+                  )}
+                  {it.icon === 'truck' && (
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.75"
+                      class="h-6 w-6"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M8.25 18.75a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h6m-9 0H3.375c-.621 0-1.125-.504-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h1.125c.621 0 1.125-.504 1.125-1.125v-2.25m-16.5-3.75h13.5m-13.5 0V6.375c0-.621.504-1.125 1.125-1.125h9.75c.621 0 1.125.504 1.125 1.125v3.75m0 0h2.25l2.25 2.25v2.25M14.25 10.5v6.75"
+                      />
+                    </svg>
+                  )}
+                  {it.icon === 'recycle' && (
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.75"
+                      class="h-6 w-6"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M16.023 9.348h4.992V4.356M3.985 15.653H8.977v4.992M4.031 9.75a8.25 8.25 0 0 1 13.803-3.7L21 9m-1.031 5.25a8.25 8.25 0 0 1-13.803 3.7L3 15"
+                      />
+                    </svg>
+                  )}
+                </span>
+                <dt class="font-heading font-semibold text-charcoal">{it.term}</dt>
+                <dd class="mt-1.5 text-sm text-charcoal-600">{it.desc}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+    </section>
+
+    {/* Understanding Sound Isolation */}
+    <section aria-labelledby="sound-isolation-h" class={`${sectionShell} bg-industrial-100`}>
+      <div class={container}>
+        <h2 id="sound-isolation-h" class={h2}>
+          Understanding Sound Isolation: Airborne vs. Impact Noise
+        </h2>
+        <p class={lede}>
+          To choose the right soundproofing material, it helps to understand the two main ways
+          sound travels through a building:
+        </p>
+        <dl class="mt-8 grid gap-5 sm:grid-cols-2">
+          {
+            noiseTypes.map((it) => (
+              <div class="rounded border border-industrial-300 bg-white p-6">
+                <span
+                  class="grid h-11 w-11 place-items-center rounded bg-industrial-100 text-amber-700 ring-1 ring-industrial-300"
+                  aria-hidden="true"
+                >
+                  {it.icon === 'airborne' && (
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.75"
+                      class="h-6 w-6"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M6.75 8.25H4.5a1.5 1.5 0 0 0-1.5 1.5v4.5a1.5 1.5 0 0 0 1.5 1.5h2.25l4.28 3.53a.75.75 0 0 0 1.22-.58V5.3a.75.75 0 0 0-1.22-.58L6.75 8.25Zm9.53-.53a5.25 5.25 0 0 1 0 8.56m2.65-11.2a9 9 0 0 1 0 13.84"
+                      />
+                    </svg>
+                  )}
+                  {it.icon === 'impact' && (
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.75"
+                      class="h-6 w-6"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M12 3v9m0 0 3.5-3.5M12 12 8.5 8.5M4.5 20.25h15M6 15l-1.75 3.5M18 15l1.75 3.5"
+                      />
+                    </svg>
+                  )}
+                </span>
+                <dt class="mt-3 font-heading text-lg font-semibold text-charcoal">{it.term}</dt>
+                <dd class="mt-2 text-sm text-charcoal-600">{it.desc}</dd>
+              </div>
+            ))
+          }
+        </dl>
+        <p class="mt-6 max-w-3xl text-charcoal-600">
+          Concrete floor slabs in modern high-rise towers are very good at blocking airborne
+          noise because they are thick and dense. However, concrete naturally transfers impact
+          noise very quickly. Our recycled rubber acoustic underlays and screed isolation mats
+          act as a shock absorber. They decouple the finished floor from the concrete slab,
+          stopping impact energy before it becomes sound.
+        </p>
+
+        <figure class="m-0 mt-10">
+          <img
+            src={`${IMG}/airborne-vs-impact-noise-sound-transfer-diagram.jpg`}
+            alt="Diagram comparing airborne noise and impact noise travelling through a concrete floor slab between building levels, with a recycled rubber acoustic underlay absorbing the impact energy."
+            title="Airborne vs. impact noise transfer through a floor slab - Rukn Al Zain"
+            width="1408"
+            height="768"
+            loading="lazy"
+            decoding="async"
+            class="h-auto w-full rounded border border-industrial-300"
+          />
+          <figcaption class="mt-2 text-sm text-charcoal-500">
+            How airborne and impact noise move between floors, and where a resilient rubber layer
+            interrupts the impact path.
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    {/* Meeting Dubai Acoustic & Building Standards */}
+    <section aria-labelledby="dubai-standards-h" class={`${sectionShell} bg-white`}>
+      <div class={container}>
+        <h2 id="dubai-standards-h" class={h2}>Meeting Dubai Acoustic &amp; Building Standards</h2>
+
+        <div class="mt-8 grid gap-10 lg:grid-cols-2 lg:items-start">
+          {/* Text — left */}
+          <div>
+            <p class="text-charcoal-600">
+              High-rise buildings in Dubai feature dense concrete structures. Concrete blocks
+              structural strength, but it easily transfers impact sound—like heavy footsteps or
+              dropped items—straight through floors.
+            </p>
+            <p class="mt-4 text-charcoal-600">
+              Dubai Municipality enforces strict indoor noise limits under the <strong
+                class="font-semibold text-charcoal">Al Sa’fat Green Building System</strong> and the
+              <strong class="font-semibold text-charcoal">Dubai Building Code</strong>. Developers
+              and contractors must hit target ratings for Impact Insulation Class (IIC) and Sound
+              Transmission Class (STC).
+            </p>
+            <p class="mt-4 text-charcoal-600">
+              Rukn Al Zain acoustic solutions cushion your floor slabs. They absorb energy before
+              it turns into noise, helping your project pass acoustic testing smoothly.
+            </p>
+          </div>
+
+          {/* Image — right */}
+          <figure class="m-0">
+            <img
+              src={`${IMG}/dubai-building-code-concrete-subfloor-inspection.jpg`}
+              alt="Engineer inspecting a concrete subfloor before acoustic underlay installation in a Dubai high-rise."
+              title="Concrete subfloor inspection ahead of acoustic underlay installation, Dubai"
+              width="1376"
+              height="768"
+              loading="lazy"
+              decoding="async"
+              class="h-auto w-full rounded border border-industrial-300"
+            />
+            <figcaption class="mt-2 text-sm text-charcoal-500">
+              Smooth subfloor concrete ready for acoustic membrane laying to pass strict sound
+              inspections.
+            </figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    {/* Explore Our Floor Soundproofing Systems */}
+    <section aria-labelledby="systems-h" class={`${sectionShell} bg-industrial-100`}>
+      <div class={container}>
+        <h2 id="systems-h" class={h2}>Explore Our Floor Soundproofing Systems</h2>
+
+        <p class={lede}>
+          We stock four specialized soundproofing lines to cover every part of your building
+          fit-out:
+        </p>
+
+        {/* TODO: Missing spec from brief — source "Explore Product" links use google.com/search
+            URLs embedding these slugs; mapped to the real product routes. Confirm targets. */}
+        <div class="mt-8 grid gap-6 lg:grid-cols-2">
+          {
+            systems.map((s) => (
+              <article class="flex flex-col overflow-hidden rounded border border-industrial-300 bg-white shadow-card">
+                <img
+                  src={s.img.src}
+                  alt={s.img.alt}
+                  title={s.img.title}
+                  width="1376"
+                  height="768"
+                  loading="lazy"
+                  decoding="async"
+                  class="aspect-[16/9] w-full border-b border-industrial-300 object-cover"
+                />
+                <div class="flex flex-1 flex-col p-6">
+                  <h3 class="font-heading text-lg font-bold text-charcoal">{s.name}</h3>
+                  <dl class="mt-3 space-y-2.5 text-sm">
+                    {s.rows.map(([k, v]) => (
+                      <div>
+                        <dt class="font-semibold text-charcoal">{k}</dt>
+                        <dd class="mt-0.5 text-charcoal-600">{v}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                  <a
+                    href={s.cta.href}
+                    class="mt-auto inline-block rounded pt-4 text-sm font-semibold text-amber-700 hover:text-amber-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700"
+                  >
+                    {s.cta.label} &rarr;
+                  </a>
+                </div>
+              </article>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    {/* Technical Specifications Comparison */}
+    <section aria-labelledby="comparison-h" class={`${sectionShell} bg-white`}>
+      <div class={container}>
+        <h2 id="comparison-h" class={h2}>Technical Specifications Comparison</h2>
+        <p class={lede}>
+          Use this quick comparison table to match your floor assembly with the right acoustic
+          product:
+        </p>
+
+        <div class="mt-6 overflow-x-auto">
+          <table class="w-full min-w-[46rem] border-collapse text-left text-sm tabular-nums">
+            <caption class="sr-only">
+              Technical specifications comparison of Rukn Al Zain acoustic flooring product lines
+            </caption>
+            <thead>
+              <tr class="border-b-2 border-charcoal-300 bg-industrial-100">
+                <th scope="col" class="px-4 py-3 font-semibold text-charcoal">Product Line</th>
+                <th scope="col" class="px-4 py-3 font-semibold text-charcoal">Primary Material</th>
+                <th scope="col" class="px-4 py-3 font-semibold text-charcoal">Thickness Range</th>
+                <th scope="col" class="px-4 py-3 font-semibold text-charcoal">Ideal Placement</th>
+                <th scope="col" class="px-4 py-3 font-semibold text-charcoal">Main Sound Goal</th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                comparisonRows.map((row, i) => (
+                  <tr
+                    class:list={[
+                      'border-b border-industrial-300',
+                      i % 2 === 1 && 'bg-industrial-100',
+                    ]}
+                  >
+                    <th scope="row" class="px-4 py-3 align-top font-semibold text-charcoal">
+                      {row[0]}
+                    </th>
+                    <td class="px-4 py-3 align-top text-charcoal-600">{row[1]}</td>
+                    <td class="px-4 py-3 align-top text-charcoal-600">{row[2]}</td>
+                    <td class="px-4 py-3 align-top text-charcoal-600">{row[3]}</td>
+                    <td class="px-4 py-3 align-top text-charcoal-600">{row[4]}</td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <figure class="m-0 mt-10">
+          <img
+            src={`${IMG}/rukn-al-zain-acoustic-flooring-specifications-comparison.jpg`}
+            alt="Comparison chart of Rukn Al Zain acoustic flooring product lines — Zain Acoustic Underlay, Zain Prime, Zain Silence and Zain Acoustic Strip — showing material, thickness range and typical placement."
+            title="Rukn Al Zain acoustic flooring specifications comparison"
+            width="1376"
+            height="768"
+            loading="lazy"
+            decoding="async"
+            class="h-auto w-full rounded border border-industrial-300"
+          />
+          <figcaption class="mt-2 text-sm text-charcoal-500">
+            The four Zain acoustic flooring lines at a glance, from thin residential underlay to
+            high-load screed isolation.
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    {/* How to Choose the Right Underlay Thickness */}
+    <section aria-labelledby="thickness-h" class={`${sectionShell} bg-industrial-100`}>
+      <div class={container}>
+        <h2 id="thickness-h" class={h2}>How to Choose the Right Underlay Thickness</h2>
+        <p class={lede}>
+          Selecting the correct thickness ensures your building meets target sound ratings
+          without adding unnecessary height to doorways and transitions:
+        </p>
+        <dl class="mt-8 max-w-3xl space-y-4">
+          {
+            thicknessGuide.map((it) => (
+              <div class="rounded border border-industrial-300 border-l-[3px] border-l-amber-400 bg-white p-5">
+                <dt class="font-heading font-semibold text-charcoal">{it.term}</dt>
+                <dd class="mt-1.5 text-sm text-charcoal-600">{it.desc}</dd>
+              </div>
+            ))
+          }
+        </dl>
+
+        <figure class="m-0 mt-10">
+          <img
+            src={`${IMG}/rukn-al-zain-underlay-thickness-selection-guide.jpg`}
+            alt="Rukn Al Zain acoustic underlay thickness selection guide showing recommended 3–5 mm, 6–8 mm and 10 mm-plus recycled rubber underlay ranges for residential, luxury and high-vibration projects."
+            title="Rukn Al Zain acoustic underlay thickness selection guide"
+            width="1376"
+            height="768"
+            loading="lazy"
+            decoding="async"
+            class="h-auto w-full rounded border border-industrial-300"
+          />
+          <figcaption class="mt-2 text-sm text-charcoal-500">
+            Matching underlay thickness to project type, from thin residential builds to
+            high-impact sports halls.
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    {/* Contractor Guide: Step-by-Step Installation Workflow */}
+    <section aria-labelledby="installation-h" class={`${sectionShell} bg-white`}>
+      <div class={container}>
+        <h2 id="installation-h" class={h2}>
+          Contractor Guide: Step-by-Step Installation Workflow
+        </h2>
+        <p class={lede}>
+          Follow these standard steps on your job site to ensure your acoustic system delivers
+          maximum noise reduction:
+        </p>
+        <ol class="mt-8 max-w-3xl space-y-5">
+          {
+            installSteps.map(([k, v], i) => (
+              <li class="flex gap-4">
+                <span
+                  class="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-amber-400 font-heading text-sm font-bold text-charcoal-900"
+                  aria-hidden="true"
+                >
+                  {i + 1}
+                </span>
+                <div>
+                  <h3 class="font-heading text-base font-bold text-charcoal">{k}</h3>
+                  <p class="mt-1 text-charcoal-600">{v}</p>
+                </div>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </section>
+
+    {/* Supplying Fit-Out Projects Across Major Dubai Hubs */}
+    <section aria-labelledby="dubai-hubs-h" class={`${sectionShell} bg-industrial-100`}>
+      <div class={container}>
+        <h2 id="dubai-hubs-h" class={h2}>
+          Supplying Fit-Out Projects Across Major Dubai Hubs
+        </h2>
+        <p class={lede}>
+          We deliver acoustic underlays directly to contractor staging areas and job sites
+          throughout key Dubai districts:
+        </p>
+        <dl class="mt-8 grid gap-5 sm:grid-cols-2">
+          {
+            dubaiHubs.map((it) => (
+              <div class="rounded border border-industrial-300 bg-white p-5">
+                <span
+                  class="grid h-11 w-11 place-items-center rounded bg-industrial-100 text-amber-700 ring-1 ring-industrial-300"
+                  aria-hidden="true"
+                >
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.75"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="h-6 w-6"
+                  >
+                    {it.icon === 'tower' && (
+                      <path d="M3 21h18M6 21V5.25C6 4.56 6.56 4 7.25 4h6.5C14.44 4 15 4.56 15 5.25V21M15 10.5h2.75c.69 0 1.25.56 1.25 1.25V21M9 8h3M9 11.5h3M9 15h3" />
+                    )}
+                    {it.icon === 'waves' && (
+                      <path d="M3 8.25c1.5 0 1.5 1.5 3 1.5s1.5-1.5 3-1.5 1.5 1.5 3 1.5 1.5-1.5 3-1.5 1.5 1.5 3 1.5 1.5-1.5 3-1.5M3 14.25c1.5 0 1.5 1.5 3 1.5s1.5-1.5 3-1.5 1.5 1.5 3 1.5 1.5-1.5 3-1.5 1.5 1.5 3 1.5 1.5-1.5 3-1.5" />
+                    )}
+                    {it.icon === 'briefcase' && (
+                      <path d="M8 7V5.5C8 4.67 8.67 4 9.5 4h5c.83 0 1.5.67 1.5 1.5V7M4 8.5C4 7.67 4.67 7 5.5 7h13c.83 0 1.5.67 1.5 1.5v9c0 .83-.67 1.5-1.5 1.5h-13C4.67 19 4 18.33 4 17.5v-9ZM4 12.5c2.5 1.2 5.2 1.8 8 1.8s5.5-.6 8-1.8M12 13v2" />
+                    )}
+                    {it.icon === 'home' && (
+                      <path d="M3 11.5 12 4l9 7.5M5.25 9.75V19c0 .55.45 1 1 1H9.5v-4.25c0-.55.45-1 1-1h3c.55 0 1 .45 1 1V20h3.25c.55 0 1-.45 1-1V9.75" />
+                    )}
+                  </svg>
+                </span>
+                <dt class="mt-3 font-heading font-semibold text-charcoal">{it.term}</dt>
+                <dd class="mt-1.5 text-sm text-charcoal-600">{it.desc}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+    </section>
+
+    {/* Engineered for Performance & Sustainability */}
+    <section aria-labelledby="sustainability-h" class={`${sectionShell} bg-white`}>
+      <div class={container}>
+        <h2 id="sustainability-h" class={h2}>
+          Engineered for Performance &amp; Sustainability
+        </h2>
+
+        <div class="mt-8 grid gap-10 lg:grid-cols-2 lg:items-start">
+          {/* Points — left */}
+          <dl class="space-y-4">
+            {
+              sustainability.map((it) => (
+                <div class="rounded border border-industrial-300 bg-industrial-100 p-5">
+                  <dt class="font-heading font-semibold text-charcoal">{it.term}</dt>
+                  <dd class="mt-1.5 text-sm text-charcoal-600">{it.desc}</dd>
+                </div>
+              ))
+            }
+          </dl>
+
+          {/* Image — right */}
+          <figure class="m-0">
+            <img
+              src={`${IMG}/recycled-rubber-crumb-acoustic-mat-texture.jpg`}
+              alt="Close-up macro texture of compressed recycled crumb rubber used in acoustic floor underlays."
+              title="Macro texture of compressed recycled crumb rubber in an acoustic floor underlay"
+              width="1376"
+              height="768"
+              loading="lazy"
+              decoding="async"
+              class="h-auto w-full rounded border border-industrial-300"
+            />
+            <figcaption class="mt-2 text-sm text-charcoal-500">
+              Recycled rubber granules used to create high-density acoustic membranes.
+            </figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    {/* Screed isolation site photo — sits directly above the FAQ */}
+    <section
+      aria-label="Screed isolation mat installation on a Dubai site"
+      class={`${sectionShell} bg-industrial-100`}
+    >
+      <div class={container}>
+        <figure class="m-0 mx-auto max-w-4xl">
+          <img
+            src={`${IMG}/screed-acoustic-isolation-mat-dubai-installation.jpg`}
+            alt="Construction worker laying a heavy-duty recycled rubber screed isolation mat on a concrete slab in Dubai."
+            title="Heavy-duty recycled rubber screed isolation mat being laid on a Dubai concrete slab"
+            width="1376"
+            height="768"
+            loading="lazy"
+            decoding="async"
+            class="h-auto w-full rounded border border-industrial-300"
+          />
+          <figcaption class="mt-2 text-sm text-charcoal-500">
+            Contractors laying heavy-duty screed isolation sheets prior to pouring the top
+            concrete layer.
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    {/* Frequently Asked Questions — accordion (native <details>, zero-JS) */}
+    <section aria-labelledby="acoustic-faq-h" class={`${sectionShell} bg-white`}>
+      <div class={container}>
+        <h2 id="acoustic-faq-h" class={h2}>Frequently Asked Questions</h2>
+        <div class="mt-6 max-w-3xl divide-y divide-industrial-300 border-y border-industrial-300">
+          {
+            faqs.map((f, i) => (
+              <details class="group" open={i === 0}>
+                <summary class="flex cursor-pointer items-center justify-between gap-4 py-4 font-heading text-base font-semibold text-charcoal marker:content-none [&::-webkit-details-marker]:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700">
+                  <span>{f.question}</span>
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    class="h-5 w-5 shrink-0 text-amber-700 transition-transform duration-200 group-open:-rotate-180"
+                    aria-hidden="true"
+                  >
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m6 9 6 6 6-6" />
+                  </svg>
+                </summary>
+                <p class="pb-4 text-charcoal-600">{f.answer}</p>
+              </details>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(faqSchema)} />
+
+    {/* Request Technical Specs or a Fast Quote */}
+    <section
+      id="request-quote"
+      aria-labelledby="request-quote-h"
+      class="border-t border-industrial-300 bg-charcoal-700 text-white"
+    >
+      <div class={`${container} py-16`}>
+        <div class="grid gap-10 lg:grid-cols-[1fr_1.1fr]">
+          <div>
+            <h2 id="request-quote-h" class="text-2xl font-bold text-white">
+              Request Technical Specs or a Fast Quote
+            </h2>
+            <p class="mt-4 max-w-md text-industrial-200">
+              Need acoustic test data, technical specification sheets, or bulk pricing for your
+              Dubai project? Fill out the quick form below or reach out to our technical sales
+              team directly.
+            </p>
+
+            <dl class="mt-6 space-y-3 text-sm">
+              <div class="flex flex-wrap gap-x-2">
+                <dt class="font-semibold text-white">Phone / WhatsApp:</dt>
+                <dd>
+                  <a
+                    href="tel:+971505698195"
+                    class="rounded font-medium text-amber-400 hover:text-amber-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+                  >
+                    +971 50 569 8195
+                  </a>
+                </dd>
+              </div>
+              <div class="flex flex-wrap gap-x-2">
+                <dt class="font-semibold text-white">Location:</dt>
+                <dd class="text-industrial-200">Dubai, United Arab Emirates</dd>
+              </div>
+            </dl>
+
+            <a
+              href="https://wa.me/971505698195"
+              target="_blank"
+              rel="noopener"
+              class="mt-6 inline-flex items-center justify-center rounded border border-white/25 px-5 py-3 font-semibold text-white transition-colors hover:border-white/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+            >
+              Chat on WhatsApp
+            </a>
+          </div>
+
+          {/*
+            Lead form (brief placeholder: Name | Phone | Project Location | Required Sq. Meters
+            | Product Interest). Wired to Netlify Forms as a zero-JS default for this stack.
+            TODO: Missing spec from brief — confirm form handler / CRM endpoint, success page
+            and privacy policy link.
+          */}
+          <form
+            name="acoustic-quote"
+            method="POST"
+            data-netlify="true"
+            netlify-honeypot="bot-field"
+            action="/contact"
+            class="rounded border border-white/15 bg-charcoal-800 p-6"
+          >
+            <input type="hidden" name="form-name" value="acoustic-quote" />
+            <p class="hidden">
+              <label>
+                Do not fill this out if you are human: <input name="bot-field" />
+              </label>
+            </p>
+
+            <fieldset class="m-0 space-y-4 border-0 p-0">
+              <legend class="mb-2 font-heading text-lg font-semibold text-white">
+                Get your specification sheet
+              </legend>
+
+              <div>
+                <label for="lf-name" class="block text-sm font-medium text-industrial-100">
+                  Name
+                </label>
+                <input
+                  id="lf-name"
+                  name="name"
+                  type="text"
+                  autocomplete="name"
+                  required
+                  class="mt-1 w-full rounded border border-charcoal-300 bg-white px-3 py-2 text-charcoal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+                />
+              </div>
+
+              <div>
+                <label for="lf-phone" class="block text-sm font-medium text-industrial-100">
+                  Phone
+                </label>
+                <input
+                  id="lf-phone"
+                  name="phone"
+                  type="tel"
+                  autocomplete="tel"
+                  required
+                  class="mt-1 w-full rounded border border-charcoal-300 bg-white px-3 py-2 text-charcoal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+                />
+              </div>
+
+              <div>
+                <label for="lf-location" class="block text-sm font-medium text-industrial-100">
+                  Project Location
+                </label>
+                <input
+                  id="lf-location"
+                  name="project-location"
+                  type="text"
+                  autocomplete="address-level2"
+                  placeholder="e.g. Business Bay, Dubai"
+                  class="mt-1 w-full rounded border border-charcoal-300 bg-white px-3 py-2 text-charcoal placeholder:text-charcoal-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+                />
+              </div>
+
+              <div>
+                <label for="lf-area" class="block text-sm font-medium text-industrial-100">
+                  Required Sq. Meters
+                </label>
+                <input
+                  id="lf-area"
+                  name="required-sq-meters"
+                  type="number"
+                  min="1"
+                  inputmode="numeric"
+                  placeholder="e.g. 850"
+                  class="mt-1 w-full rounded border border-charcoal-300 bg-white px-3 py-2 text-charcoal tabular-nums placeholder:text-charcoal-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+                />
+              </div>
+
+              <div>
+                <label for="lf-product" class="block text-sm font-medium text-industrial-100">
+                  Product Interest
+                </label>
+                <select
+                  id="lf-product"
+                  name="product-interest"
+                  class="mt-1 w-full rounded border border-charcoal-300 bg-white px-3 py-2 text-charcoal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+                >
+                  <option value="" selected>Select a product line</option>
+                  {productInterest.map((p) => <option value={p}>{p}</option>)}
+                </select>
+              </div>
+
+              <button
+                type="submit"
+                class="w-full rounded bg-amber-400 px-5 py-3 font-semibold text-charcoal-900 transition-colors hover:bg-amber-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-charcoal-800"
+              >
+                Request Specification Sheet
+              </button>
+            </fieldset>
+          </form>
+        </div>
+      </div>
+    </section>
+  </article>
+</BaseLayout>

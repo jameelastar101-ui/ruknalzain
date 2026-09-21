@@ -1,0 +1,32 @@
+# build output
+dist/
+.output/
+
+# dependencies
+node_modules/
+
+# generated Astro types / cache
+.astro/
+
+# environment
+.env
+.env.*
+!.env.example
+
+# logs
+*-debug.log*
+npm-debug.log*
+yarn-error.log*
+
+# os / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# netlify
+.netlify/
+
+# local tooling / caches
+.cache/
+.claude/

@@ -1,0 +1,44 @@
+---
+/**
+ * Faq.astro — visible Q&A block + FAQPage JSON-LD (AEO requirement, CLAUDE.md §2).
+ * Answers are always-visible and self-contained so they can be extracted by
+ * search and answer engines.
+ */
+export interface FaqItem {
+  question: string;
+  answer: string;
+}
+export interface Props {
+  faqs: FaqItem[];
+  heading?: string;
+  id?: string;
+}
+
+const { faqs, heading = 'Frequently asked questions', id = 'faq' } = Astro.props;
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((f) => ({
+    '@type': 'Question',
+    name: f.question,
+    acceptedAnswer: { '@type': 'Answer', text: f.answer },
+  })),
+};
+---
+<section aria-labelledby={`${id}-heading`} class="border-t border-industrial-300 bg-white py-14">
+  <div class="mx-auto max-w-content px-4 sm:px-6 lg:px-8">
+    <h2 id={`${id}-heading`} class="text-2xl font-bold">{heading}</h2>
+    <div class="mt-6 max-w-3xl divide-y divide-industrial-300 border-y border-industrial-300">
+      {
+        faqs.map((f) => (
+          <div class="py-5">
+            <h3 class="text-base font-semibold text-charcoal">{f.question}</h3>
+            <p class="mt-2 text-charcoal-600">{f.answer}</p>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+<script type="application/ld+json" is:inline set:html={JSON.stringify(schema)} />

@@ -1,0 +1,1153 @@
+---
+/**
+ * /horse-mats — "Zain Horse Mat — Heavy-Duty Horse Stable Flooring in Dubai"
+ * conversion + SEO / AEO / GEO product landing page.
+ *
+ * Bespoke page (not the YAML-driven generic ProductPage), built to mirror the
+ * sibling spokes src/pages/hammer-top.astro, src/pages/acoustic-strips.astro,
+ * src/pages/screed-isolation.astro, src/pages/acoustic-underlay.astro and
+ * src/pages/sports-track-underlay.astro — same class helpers,
+ * progressive-enhancement scroll-reveal motion, hand-rolled breadcrumb and
+ * combined JSON-LD @graph (prefix `hm-`).
+ *
+ * ─── ROUTING ─────────────────────────────────────────────────────────────
+ * This file serves /horse-mats. The content entry
+ * src/content/products/horse-mats.yaml has been re-slugged from
+ * `/horse-stable-mats/horse-mats` to `path: /horse-mats` and the matching branch
+ * filtered out of getStaticPaths in src/pages/[...slug].astro — the same pattern
+ * already used for acoustic-underlay, sports-track-underlay, screed-isolation,
+ * acoustic-strips, hammer-top, zainfit, zainsquare, zainduo, zainactive-rolls
+ * and curb-stone (and the /outdoor-pavers/dogbone + /hexagon re-slug). The YAML
+ * entry stays as data (still a child of the `animal` hub); this file serves the
+ * URL. Internal links that pointed at the old nested path were updated in
+ * animal-agricultural-flooring.astro, shop.astro, hammer-top.astro,
+ * blog/[slug].astro and src/content/posts/best-flooring-horse-stables-uae-climate.md.
+ *
+ * ─── DECISIONS TAKEN / FLAGS (CLAUDE.md §0 "Data Integrity" + §6) ─────────
+ *  - PARENT HUB: the build request's breadcrumb JSON-LD names the parent
+ *    "Horse Stable Mats" at /horse-stable-mats on host rukanalzain.com. That
+ *    route does not exist in this project — the real parent hub is the animal
+ *    category hub /animal-agricultural-flooring (horse-mats.yaml `hub: animal`,
+ *    and that hub already lists this page under `children`). Both the visible
+ *    breadcrumb and the BreadcrumbList JSON-LD below use the real path with the
+ *    label "Animal & Agricultural Flooring" — the same substitution already made
+ *    on the hammer-top and acoustic siblings. NOTE: public/images/
+ *    horse-stable-mats-hub/ and the old `/horse-stable-mats/*` path prefix
+ *    suggest a dedicated "Horse Stable Mats" sub-hub is planned. TODO: confirm
+ *    the intended parent hub label / slug with the client; if the sub-hub ships,
+ *    repoint crumb #2.
+ *  - CANONICAL HOST: the request shows "rukanalzain.com/horse-mats"; the
+ *    configured site is "ruknalzain.ae" (astro.config.mjs — note the
+ *    spelling: ruk*n*alzain, not ruk*an*alzain). Canonical + all schema URLs are
+ *    built from the configured site via BaseLayout `canonical={PATH}` (same
+ *    choice as the siblings). TODO: confirm the production domain / spelling.
+ *  - DESIGN SYSTEM: the request describes a "Deep Navy/Slate #0f172a" theme with
+ *    a #f59e0b accent and React/Lucide-React icons. This is a static Astro site
+ *    (zero-JS) on the live charcoal / industrial-grey design system with a single
+ *    amber action accent (tailwind.config.mjs, DESIGN-NOTES.md). The page follows
+ *    that system; Lucide icons are inlined as raw SVG path data (no runtime) and
+ *    the FAQ accordion uses native <details>/<summary>.
+ *  - IMAGE PATHS: the request lists `src="/public/images/horse-mats/…"`. In Astro
+ *    the `public/` directory IS the web root, so the served path is
+ *    `/images/horse-mats/…` (used below).
+ *  - TECHNICAL SPECIFICATIONS: horse-mats.yaml lists "Mat size" (mm),
+ *    "Thickness" (mm) and "Surface texture options" as null "to collect", and
+ *    DESIGN-NOTES.md / CLAUDE.md §6 say not to invent densities, thicknesses or
+ *    tensile figures. Every spec row rendered below — including the density band
+ *    (900–1100 kg/m³) and the 12/15/17/20 mm thickness list — is copy from the
+ *    page-build request, NOT numeric data from
+ *    "Rukn_Al_Zain_SEO_Content_Brief V2.docx" or a manufacturer certificate.
+ *    Treat the whole table as PROVISIONAL and confirm against real product data
+ *    before go-live.
+ *  - STRUCTURED DATA: a single combined @graph (BreadcrumbList + Product +
+ *    FAQPage) is emitted inline. The request supplied BreadcrumbList + Product +
+ *    FAQPage. The FAQPage node is reproduced 1:1 from the on-page FAQ (the three
+ *    questions from the request). The Product node keeps the request's `name`,
+ *    `sku` (RZ-ZHM-01) and `brand`; the request's `offers` node is omitted — it
+ *    carried no `price` (an incomplete Offer Google flags) and `areaServed` is
+ *    not a valid Offer property. `areaServed` is kept on the Product instead,
+ *    matching the hammer-top sibling. Organization JSON-LD is emitted sitewide
+ *    by BaseLayout.
+ *
+ * ─── IMAGE ASSETS ───────────────────────────────────────────────────────
+ * public/images/horse-mats/ — intrinsic dimensions vary and are wired per-image
+ * below to prevent layout shift. public/ images use a plain <img> (astro:assets
+ * <Image /> only optimises src/assets imports; there is no
+ * src/assets/images/horse-mats/ directory). Mapping request → file on disk:
+ *   - zain-horse-mat-hero.jpg                     (1408×768, exact match)
+ *   - zain-horse-mat-problem-solution.jpg         (1376×768, exact match)
+ *   - zain-horse-mat-technical-specs.jpg          (1024×1024) — renamed on disk
+ *       from "zain-horse-mat-technical-specs (2).jpg" (the asset-drop name) to
+ *       drop the space before wiring it here.
+ *   - zain-horse-mat-applications.jpg             (1024×1024, exact match)
+ *   - zain-horse-mat-dubai-geographic-signals.jpg (1408×768, exact match)
+ * TODO: convert to optimised WebP; add a purpose-built 1200×630 OG card
+ * (og:image currently falls back to the hero file).
+ */
+import BaseLayout from '@layouts/BaseLayout.astro';
+
+const SITE = (Astro.site ?? new URL('https://ruknalzain.ae')).origin;
+const IMG = '/images/horse-mats';
+const PATH = '/horse-mats';
+
+const HERO_IMG = `${IMG}/zain-horse-mat-hero.jpg`; // 1408×768
+const HERO_ALT =
+  'Zain Horse Mat non-slip rubber stable mat with official Rukn Al Zain product label installed in a Dubai stable';
+const PS_IMG = `${IMG}/zain-horse-mat-problem-solution.jpg`; // 1376×768
+const PS_ALT =
+  'Side-by-side comparison diagram showing concrete subfloor joint stress versus Zain Horse Mat rubber protection in a Dubai stable';
+const SPEC_IMG = `${IMG}/zain-horse-mat-technical-specs.jpg`; // 1024×1024
+const SPEC_ALT =
+  'Technical 3D cross-section diagram of Zain Horse Mat highlighting SBR rubber composition, top non-slip texture, thermal concrete barrier and channelled drainage grooves';
+const APPS_IMG = `${IMG}/zain-horse-mat-applications.jpg`; // 1024×1024
+const APPS_ALT =
+  'Three-panel showcase illustration of Zain Horse Mat applications: equestrian stables, dairy and livestock enclosures, and wash bays and transport trailers in Dubai';
+const GEO_IMG = `${IMG}/zain-horse-mat-dubai-geographic-signals.jpg`; // 1408×768
+const GEO_ALT =
+  'Non-slip Zain SBR horse stable mats installed in an equestrian barn in Al Khawaneej, Dubai, with desert sand paddock views and native palm foliage';
+const OG_IMG = HERO_IMG; // fallback share image — no purpose-built 1200×630 card yet
+
+const WHATSAPP_HERO =
+  'https://wa.me/971505698195?text=Hello%20Rukn%20Al%20Zain,%20I%20am%20interested%20in%20Zain%20Horse%20Mats';
+const WHATSAPP_PLAIN = 'https://wa.me/971505698195';
+
+/* ─── Inline Lucide icon path data (24×24, currentColor stroke) ─────────── */
+const icon: Record<string, string> = {
+  'shield-check':
+    '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/>',
+  droplets:
+    '<path d="M7 16.3c2.2 0 4-1.83 4-4.05 0-1.16-.57-2.26-1.71-3.19S7.29 4.24 7 2c-.29 2.24-1.14 4.13-2.29 5.06S3 11.1 3 12.25c0 2.22 1.8 4.05 4 4.05z"/><path d="M12.56 6.6A10.97 10.97 0 0 0 14 3.02c.5 2.5 2 4.9 4 6.5s3 3.5 3 5.5a6.98 6.98 0 0 1-11.91 4.97"/>',
+  sun:
+    '<circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>',
+  truck:
+    '<path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/>',
+  footprints:
+    '<path d="M4 16v-2.38C4 11.5 2.97 10.5 3 8c.03-2.72 1.49-6 4.5-6C9.37 2 10 3.8 10 5.5c0 3.11-2 5.66-2 8.68V16a2 2 0 1 1-4 0Z"/><path d="M20 20v-2.38c0-2.12 1.03-3.12 1-5.62-.03-2.72-1.49-6-4.5-6C14.63 6 14 7.8 14 9.5c0 3.11 2 5.66 2 8.68V20a2 2 0 1 0 4 0Z"/><path d="M16 17h4"/><path d="M4 13h4"/>',
+  layers:
+    '<path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"/><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"/>',
+  'thermometer-sun':
+    '<path d="M12 9a4 4 0 0 0-2 7.5"/><path d="M12 3v2"/><path d="m6.6 18.4-1.4 1.4"/><path d="M20 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0Z"/><path d="M4 13H2"/><path d="M6.34 7.34 4.93 5.93"/>',
+  coins:
+    '<circle cx="8" cy="8" r="6"/><path d="M18.09 10.37A6 6 0 1 1 10.34 18"/><path d="M7 6h1v4"/><path d="m16.71 13.88.7.71-2.82 2.82"/>',
+  sparkles:
+    '<path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .962 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.962 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/>',
+  milk:
+    '<path d="M8 2h8"/><path d="M9 2v2.789a4 4 0 0 1-.672 2.219l-.656.984A4 4 0 0 0 7 10.212V20a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-9.788a4 4 0 0 0-.672-2.22l-.656-.984A4 4 0 0 1 15 4.788V2"/><path d="M7 15a6.472 6.472 0 0 1 5 0 6.47 6.47 0 0 0 5 0"/>',
+  'shower-head':
+    '<path d="m4 4 2.5 2.5"/><path d="M13.5 6.5a4.95 4.95 0 0 0-7 7"/><path d="M15 5 5 15"/><path d="M14 17v.01"/><path d="M10 16v.01"/><path d="M13 13v.01"/><path d="M16 10v.01"/><path d="M11 20v.01"/><path d="M17 14v.01"/><path d="M20 11v.01"/>',
+  house:
+    '<path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
+  warehouse:
+    '<path d="M22 8.35V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8.35A2 2 0 0 1 3.26 6.5l8-3.2a2 2 0 0 1 1.48 0l8 3.2A2 2 0 0 1 22 8.35Z"/><path d="M6 18h12"/><path d="M6 14h12"/><rect width="12" height="12" x="6" y="10"/>',
+  wrench:
+    '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>',
+  clipboard:
+    '<rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/>',
+  'map-pin':
+    '<path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/>',
+};
+
+/* ─── 1. Hero — key points (from the request's AEO lead) ──────────────── */
+const heroPoints = [
+  {
+    term: 'Anti-Fatigue Joint Cushioning',
+    desc: 'High-density SBR rubber absorbs impact and shields horse joints, tendons and hooves from concrete stress.',
+  },
+  {
+    term: 'Thermal Concrete Protection',
+    desc: 'Isolates the stall from extreme sub-slab heat during Dubai’s peak summer.',
+  },
+  {
+    term: 'Non-Slip Safety, Wet or Dry',
+    desc: 'Textured surface keeps footing sure through stall activity and daily washdowns.',
+  },
+  {
+    term: 'Direct Dubai Inventory',
+    desc: 'Local stock for fast 24–48 hour dispatch across all seven emirates.',
+  },
+];
+
+/* ─── 2. Trust bar (verbatim from the request) ────────────────────────── */
+const trustCards = [
+  {
+    icon: 'layers',
+    term: 'High-Density SBR Rubber Matrix',
+    desc: 'Vulcanised recycled-rubber body built for continuous animal weight.',
+  },
+  {
+    icon: 'truck',
+    term: '24–48 Hour Express Delivery',
+    desc: 'Dispatched from central Dubai stock across Dubai and the UAE.',
+  },
+  {
+    icon: 'droplets',
+    term: 'Non-Porous & Moisture Resistant',
+    desc: 'Sealed rubber surface stops urine and washdown water soaking in.',
+  },
+  {
+    icon: 'sun',
+    term: 'Proven GCC Thermal & UV Resistance',
+    desc: 'Formulated to resist heat, humidity and UV without warping.',
+  },
+];
+
+/* ─── 3. Problem / Solution — paired blocks (verbatim from the request) ── */
+const problemPoints = [
+  {
+    term: 'Trapped Thermal Heat',
+    desc: 'Bare concrete stall floors absorb and hold intense ground heat, leaving animals standing on a hot slab through the Dubai summer.',
+  },
+  {
+    term: 'Joint, Tendon & Hoof Stress',
+    desc: 'Raw concrete exerts continuous high-impact stress on an animal’s joints, tendons and hooves, and turns slippery the moment it is wet.',
+  },
+  {
+    term: 'Waste Absorption & Odour',
+    desc: 'Porous concrete soaks up urine and organic waste, leading to bacteria buildup, strong ammonia odours and high recurring bedding costs.',
+  },
+];
+const solutionPoints = [
+  {
+    term: 'Heavy-Duty Protective Barrier',
+    desc: 'The Zain Horse Mat forms a dense rubber barrier over the concrete sub-slab, taking the load the concrete used to pass straight to the animal.',
+  },
+  {
+    term: 'Anti-Fatigue, Non-Slip Surface',
+    desc: 'A cushioned, textured top protects joints and keeps footing sure during stall activity and washdowns, wet or dry.',
+  },
+  {
+    term: 'Bottom Drainage Channels',
+    desc: 'Channelled underside drains fluids away, suppresses odour, reduces bedding churn and keeps the slab beneath dry.',
+  },
+];
+
+/* ─── 4. Key product benefits (verbatim from the request) ─────────────── */
+const benefits = [
+  {
+    icon: 'footprints',
+    term: 'Anti-Fatigue Joint Cushioning',
+    desc: 'High-density SBR rubber absorbs impact energy, shielding horse joints and tendons from concrete floor stress.',
+  },
+  {
+    icon: 'thermometer-sun',
+    term: 'Thermal Heat Insulation',
+    desc: 'Acts as a thermal barrier, isolating stalls from extreme sub-slab concrete temperatures during Dubai’s peak heat.',
+  },
+  {
+    icon: 'droplets',
+    term: 'Wet & Dry Slip Traction',
+    desc: 'Textured non-slip surface ensures sure-footed movement during stall activity and washdowns.',
+  },
+  {
+    icon: 'sparkles',
+    term: 'Hygienic Waste Management',
+    desc: 'Non-porous SBR rubber prevents waste absorption, controls odours and slashes organic bedding expenses.',
+  },
+  {
+    icon: 'shield-check',
+    term: 'Heavy Impact Durability',
+    desc: 'Vulcanised rubber compound resists tear, heavy hoof abrasion and long-term deformation.',
+  },
+];
+
+/* ─── 5. Technical specifications — PROVISIONAL (see data-integrity flags) */
+const specRows: [string, string][] = [
+  ['Material Base', 'Vulcanised high-tensile SBR rubber compound bonded with elastomeric binders'],
+  ['Material Density', '900 kg/m³ to 1100 kg/m³ heavy-duty construction'],
+  ['Thickness Options', '12 mm, 15 mm, 17 mm, 20 mm'],
+  ['Surface Finish', 'Non-slip textured surface for multi-directional traction'],
+  ['Underside Profile', 'Channelled drainage grooves for rapid fluid runoff'],
+  ['Chemical Resistance', 'Resists animal waste, urine, mild acids and UV degradation'],
+  ['Maintenance', 'Washable via high-pressure water hose'],
+];
+
+/* ─── 6. Ideal applications — text cards + one composite image (request §6) */
+const applications = [
+  {
+    icon: 'house',
+    term: 'Equestrian Stables & Barn Stalls',
+    desc: 'Protects resting horses, insulates against cold or heated sub-slabs and minimises bedding churn.',
+  },
+  {
+    icon: 'milk',
+    term: 'Livestock & Dairy Farms',
+    desc: 'Offers a hygienic, shock-absorbing floor for heavy dairy cattle and milking parlours.',
+  },
+  {
+    icon: 'shower-head',
+    term: 'Equine Wash Bays & Trailers',
+    desc: 'Provides non-slip traction in wet, high-moisture environments and transport vehicles.',
+  },
+];
+
+/* ─── 8. About Rukn Al Zain — 3-step order flow (verbatim from request) ── */
+const processSteps = [
+  {
+    n: '01',
+    icon: 'clipboard',
+    term: 'Consultation & Sample',
+    desc: 'Request physical material samples and technical datasheets directly from our team.',
+  },
+  {
+    n: '02',
+    icon: 'warehouse',
+    term: 'Order Processing',
+    desc: 'Orders are picked and packed directly at our central Dubai warehouse facility.',
+  },
+  {
+    n: '03',
+    icon: 'truck',
+    term: 'Site Dispatch',
+    desc: 'Rapid direct site delivery within 24 to 48 hours across the UAE.',
+  },
+];
+
+const coverageAreas = [
+  'Dubai',
+  'Abu Dhabi',
+  'Sharjah',
+  'Ajman',
+  'Ras Al Khaimah',
+  'Umm Al Quwain',
+  'Fujairah',
+];
+
+/* Project-location dropdown for the lead form. */
+const emirates = [...coverageAreas, 'Outside the UAE'];
+
+/* ─── 9. FAQ (AEO) — self-contained answers, 1:1 with the JSON-LD below ──
+   Reproduced verbatim from the FAQPage schema supplied in the build request. */
+const faqs = [
+  {
+    question: 'How do Zain Horse Mats help reduce overall stall operational costs?',
+    answer:
+      'By providing built-in thermal protection and impact cushioning, these mats dramatically reduce the volume of organic bedding required per stall, lowering recurring supply costs and cleanup labor.',
+  },
+  {
+    question: 'Are Zain Horse Mats easy to clean and wash down daily?',
+    answer:
+      'Yes, the non-porous rubber finish and channelled underside allow fluids and washdown water to drain rapidly without trapping moisture beneath the mat.',
+  },
+  {
+    question: 'How do these mats hold up under extreme Dubai heat and humidity?',
+    answer:
+      'Manufactured with high-density polyurethane-bound SBR rubber, the mats resist UV degradation, moisture absorption, and thermal warping under GCC climate conditions.',
+  },
+];
+
+/* ─── Structured data — single combined @graph ───────────────────────────
+   BreadcrumbList (from the build request, with the parent repointed to the real
+   hub — see FLAGS) + a Product node (request's name / sku / brand kept; the
+   incomplete `offers` node dropped — see FLAGS) + FAQPage reproduced 1:1 from
+   the on-page FAQ. The visible breadcrumb trail is hand-rolled below (not the
+   <Breadcrumbs /> component) so the BreadcrumbList is declared exactly once.
+   Organization JSON-LD is emitted sitewide by BaseLayout. */
+const breadcrumbSchema = {
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE}/` },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: 'Animal & Agricultural Flooring',
+      item: `${SITE}/animal-agricultural-flooring`,
+    },
+    { '@type': 'ListItem', position: 3, name: 'Zain Horse Mat', item: `${SITE}${PATH}` },
+  ],
+};
+
+const productSchema = {
+  '@type': 'Product',
+  name: 'Zain Horse Mat',
+  description:
+    'Durable, non-slip high-density SBR rubber mat for horse stables, dairy farms and animal enclosures in Dubai. Laid over concrete sub-slabs to give animals anti-fatigue joint cushioning, non-slip footing wet or dry, and a thermal barrier against sub-slab heat, while the non-porous surface resists urine and washes down with a high-pressure hose.',
+  image: `${SITE}${OG_IMG}`,
+  sku: 'RZ-ZHM-01',
+  category: 'Animal & Agricultural Rubber Flooring',
+  url: `${SITE}${PATH}`,
+  brand: { '@type': 'Brand', name: 'Rukn Al Zain' },
+  manufacturer: { '@type': 'Organization', name: 'Rukn Al Zain General Trading LLC' },
+  material: 'High-density SBR rubber compound bonded with elastomeric binders',
+  areaServed: 'United Arab Emirates',
+};
+
+const faqSchema = {
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((f) => ({
+    '@type': 'Question',
+    name: f.question,
+    acceptedAnswer: { '@type': 'Answer', text: f.answer },
+  })),
+};
+
+const graphSchema = {
+  '@context': 'https://schema.org',
+  '@graph': [breadcrumbSchema, productSchema, faqSchema],
+};
+
+/* Shared class helpers — mirrors src/pages/hammer-top.astro. */
+const sectionShell = 'border-t border-industrial-300 py-14 sm:py-16';
+const container = 'mx-auto max-w-content px-4 sm:px-6 lg:px-8';
+const h2 = 'text-2xl font-bold text-charcoal';
+const lede = 'mt-4 max-w-3xl text-charcoal-600';
+const primaryCta =
+  'inline-flex items-center justify-center rounded bg-amber-400 px-5 py-3 font-semibold text-charcoal-900 transition-colors hover:bg-amber-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2';
+const ghostCta =
+  'inline-flex items-center justify-center rounded border border-white/25 px-5 py-3 font-semibold text-white transition-colors hover:border-white/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400';
+const iconChip =
+  'mb-3 grid h-11 w-11 place-items-center rounded bg-white text-amber-700 ring-1 ring-industrial-300';
+const crumbLink =
+  'rounded hover:text-amber-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700';
+const fieldClass =
+  'mt-1.5 block w-full rounded border border-charcoal-300 bg-white px-3 py-2.5 text-charcoal shadow-sm focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-700';
+const labelClass = 'block text-sm font-medium text-charcoal';
+---
+
+<BaseLayout
+  title="Horse Stable Mats Dubai | Rubber Stall Mats Dubai | Rukn Al Zain"
+  description="Durable, non-slip rubber mats for horse stables, dairy farms and animal enclosures in Dubai. Provides anti-fatigue cushioning, thermal insulation and easy washdown cleaning."
+  canonical={PATH}
+  ogImage={OG_IMG}
+  ogImageAlt="Zain Horse Mat non-slip high-density SBR rubber stable mat by Rukn Al Zain, Dubai UAE."
+>
+  <article class="hm-page">
+    {/*
+      Mark the document as JS-capable ASAP so scroll-reveal elements start hidden
+      only when the animation engine is available. A failsafe timer guarantees
+      content becomes visible even if the observer below never runs, and
+      reduced-motion visitors skip the effect entirely.
+    */}
+    <script is:inline>
+      (function () {
+        document.documentElement.classList.add('hm-js');
+        var sel = '.hm-page [data-reveal], .hm-page [data-reveal-group]';
+        var showAll = function () {
+          document.querySelectorAll(sel).forEach(function (el) {
+            el.classList.add('in');
+          });
+        };
+        var reduce =
+          window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (reduce) {
+          if (document.readyState === 'loading')
+            document.addEventListener('DOMContentLoaded', showAll);
+          else showAll();
+        } else {
+          setTimeout(showAll, 1600);
+        }
+      })();
+    </script>
+
+    {/* Breadcrumb strip — Home > Animal & Agricultural Flooring > Zain Horse Mat.
+        Hand-rolled (not <Breadcrumbs />) so the BreadcrumbList JSON-LD is
+        declared once, in the combined @graph at the foot of this file. The
+        request named a "Horse Stable Mats" /horse-stable-mats parent that does
+        not exist yet — see FLAGS. */}
+    <div class="border-b border-industrial-300 bg-industrial-100">
+      <div class={`${container} py-4`}>
+        <nav aria-label="Breadcrumb" class="text-sm">
+          <ol class="flex flex-wrap items-center gap-x-2 gap-y-1 text-charcoal-500">
+            <li class="flex items-center gap-x-2">
+              <a href="/" class={crumbLink}>Home</a>
+            </li>
+            <li class="flex items-center gap-x-2">
+              <span aria-hidden="true" class="text-charcoal-300">/</span>
+              <a href="/animal-agricultural-flooring" class={crumbLink}>
+                Animal &amp; Agricultural Flooring
+              </a>
+            </li>
+            <li class="flex items-center gap-x-2">
+              <span aria-hidden="true" class="text-charcoal-300">/</span>
+              <span aria-current="page" class="font-medium text-charcoal">Zain Horse Mat</span>
+            </li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+
+    {/* ─── 1. HERO ─────────────────────────────────────────────────────────── */}
+    <header class="bg-charcoal-700 text-white">
+      <div class={`${container} py-14 sm:py-16`}>
+        <div class="grid items-center gap-10 lg:grid-cols-2">
+          <div data-hero>
+            <p class="font-heading text-sm font-semibold uppercase tracking-wide text-amber-400">
+              Heavy-Duty Horse Stable Flooring
+            </p>
+            <h1 class="mt-3 text-4xl font-extrabold leading-tight text-white sm:text-5xl">
+              Zain Horse Mat — Heavy-Duty Horse Stable Flooring in Dubai
+            </h1>
+
+            {/* AEO direct-answer block — sits immediately under the H1 */}
+            <p class="mt-5 max-w-xl border-l-[3px] border-amber-400 pl-4 text-lg text-industrial-100">
+              Rukn Al Zain provides high-density SBR rubber stable mats engineered specifically for
+              equestrian facilities, dairy farms and livestock enclosures across Dubai. Designed to
+              withstand demanding conditions, the Zain Horse Mat delivers superior joint cushioning,
+              non-slip safety and thermal concrete protection for animal health and comfort.
+            </p>
+
+            <ul class="mt-6 grid gap-3 sm:grid-cols-2">
+              {
+                heroPoints.map((p) => (
+                  <li class="rounded border border-white/10 bg-white/5 p-4">
+                    <p class="font-heading text-sm font-semibold text-white">{p.term}</p>
+                    <p class="mt-1 text-sm text-industrial-200">{p.desc}</p>
+                  </li>
+                ))
+              }
+            </ul>
+
+            <div class="mt-8 flex flex-wrap gap-3">
+              <a href="#lead-capture" class={`${primaryCta} focus-visible:ring-offset-charcoal-700`}>
+                Request Quote &amp; Sample Kit
+              </a>
+              <a
+                href={WHATSAPP_HERO}
+                target="_blank"
+                rel="noopener"
+                class={`${ghostCta} focus-visible:ring-offset-charcoal-700`}
+              >
+                Chat on WhatsApp (+971 50 569 8195)
+              </a>
+            </div>
+          </div>
+
+          <figure class="m-0" data-hero>
+            <img
+              src={HERO_IMG}
+              alt={HERO_ALT}
+              title="Zain Horse Mat non-slip recycled-SBR rubber stable mat — Rukn Al Zain, Dubai"
+              width="1408"
+              height="768"
+              loading="eager"
+              fetchpriority="high"
+              decoding="async"
+              class="h-auto w-full rounded border border-white/10"
+            />
+          </figure>
+        </div>
+      </div>
+    </header>
+
+    {/* ─── 2. TRUST BAR ───────────────────────────────────────────────────── */}
+    <section aria-labelledby="trust-h" class={`${sectionShell} bg-white`}>
+      <div class={container}>
+        <h2 id="trust-h" class={h2} data-reveal>
+          High-Density Stable Mats Stocked in Dubai
+        </h2>
+        <dl class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4" data-reveal-group>
+          {
+            trustCards.map((it) => (
+              <div class="card-lift rounded border border-industrial-300 border-l-[3px] border-l-amber-400 bg-industrial-100 p-5">
+                <span class={iconChip} aria-hidden="true">
+                  <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" set:html={icon[it.icon]} />
+                </span>
+                <dt class="font-heading font-semibold text-charcoal">{it.term}</dt>
+                <dd class="mt-1.5 text-sm text-charcoal-600">{it.desc}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+    </section>
+
+    {/* ─── 3. PROBLEM & SOLUTION ──────────────────────────────────────────── */}
+    <section aria-labelledby="ps-h" class={`${sectionShell} bg-industrial-100`}>
+      <div class={container}>
+        <h2 id="ps-h" class={h2} data-reveal>
+          Eliminating Concrete Floor Stress in Equestrian Facilities
+        </h2>
+
+        <div class="mt-8 grid gap-6 lg:grid-cols-2" data-reveal-group>
+          {/* The Problem */}
+          <div class="rounded border border-industrial-300 border-l-[3px] border-l-danger bg-white p-6">
+            <h3 class="font-heading text-lg font-bold text-charcoal">
+              The Problem: Trapped Heat, Joint Stress and Waste Absorption
+            </h3>
+            <dl class="mt-4 space-y-4">
+              {
+                problemPoints.map((p) => (
+                  <div>
+                    <dt class="flex gap-2 font-heading text-sm font-semibold text-charcoal">
+                      <span class="mt-0.5 text-danger" aria-hidden="true">&#10007;</span>
+                      <span>{p.term}</span>
+                    </dt>
+                    <dd class="mt-1 pl-6 text-sm text-charcoal-600">{p.desc}</dd>
+                  </div>
+                ))
+              }
+            </dl>
+          </div>
+
+          {/* The Solution */}
+          <div class="rounded border border-industrial-300 border-l-[3px] border-l-success bg-white p-6">
+            <h3 class="font-heading text-lg font-bold text-charcoal">
+              The Solution: Zain Horse Mat Protective Rubber Barrier
+            </h3>
+            <dl class="mt-4 space-y-4">
+              {
+                solutionPoints.map((s) => (
+                  <div>
+                    <dt class="flex gap-2 font-heading text-sm font-semibold text-charcoal">
+                      <span class="mt-0.5 text-success" aria-hidden="true">&#10003;</span>
+                      <span>{s.term}</span>
+                    </dt>
+                    <dd class="mt-1 pl-6 text-sm text-charcoal-600">{s.desc}</dd>
+                  </div>
+                ))
+              }
+            </dl>
+          </div>
+        </div>
+
+        <figure class="m-0 mt-10" data-reveal>
+          <img
+            src={PS_IMG}
+            alt={PS_ALT}
+            title="Concrete subfloor joint stress versus Zain Horse Mat rubber protection in a Dubai stable"
+            width="1376"
+            height="768"
+            loading="lazy"
+            decoding="async"
+            class="h-auto w-full rounded border border-industrial-300"
+          />
+        </figure>
+      </div>
+    </section>
+
+    {/* ─── 4. KEY PRODUCT BENEFITS ────────────────────────────────────────── */}
+    <section aria-labelledby="benefits-h" class={`${sectionShell} bg-white`}>
+      <div class={container}>
+        <h2 id="benefits-h" class={h2} data-reveal>Key Advantages of Zain Horse Mats</h2>
+        <dl class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3" data-reveal-group>
+          {
+            benefits.map((it) => (
+              <div class="card-lift rounded border border-industrial-300 bg-industrial-100 p-5">
+                <span class={iconChip} aria-hidden="true">
+                  <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" set:html={icon[it.icon]} />
+                </span>
+                <dt class="font-heading font-semibold text-charcoal">{it.term}</dt>
+                <dd class="mt-1.5 text-sm text-charcoal-600">{it.desc}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+    </section>
+
+    {/* ─── 5. TECHNICAL SPECIFICATIONS ────────────────────────────────────── */}
+    <section aria-labelledby="specs-h" class={`${sectionShell} bg-industrial-100`}>
+      <div class={container}>
+        <h2 id="specs-h" class={h2} data-reveal>Technical Specifications &amp; Dimensions</h2>
+        <p class={lede} data-reveal>
+          Material base, density, thickness options, surface and underside profile, chemical
+          resistance and maintenance for the Zain Horse Mat. Figures are
+          <span class="font-semibold text-amber-700"> provisional</span> pending confirmation against
+          manufacturer product data and test certificates.
+        </p>
+
+        <div class="mt-8 grid gap-10 lg:grid-cols-2 lg:items-start" data-reveal-group>
+          <div class="overflow-x-auto">
+            <table class="w-full border-collapse text-left text-sm tabular-nums">
+              <caption class="sr-only">
+                Zain Horse Mat technical specifications and dimensions
+              </caption>
+              <thead>
+                <tr class="border-b-2 border-charcoal-300">
+                  <th scope="col" class="w-2/5 px-4 py-3 font-heading font-bold text-charcoal">
+                    Specification
+                  </th>
+                  <th scope="col" class="px-4 py-3 font-heading font-bold text-charcoal">
+                    Technical Details
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {
+                  specRows.map(([label, value], i) => (
+                    <tr class:list={['border-b border-industrial-300', i % 2 === 1 && 'bg-white']}>
+                      <th scope="row" class="w-2/5 px-4 py-3 align-top font-semibold text-charcoal">
+                        {label}
+                      </th>
+                      <td class="px-4 py-3 align-top text-charcoal-600">{value}</td>
+                    </tr>
+                  ))
+                }
+              </tbody>
+            </table>
+          </div>
+
+          <figure class="m-0">
+            <img
+              src={SPEC_IMG}
+              alt={SPEC_ALT}
+              title="SBR rubber composition, non-slip top texture, thermal concrete barrier and channelled drainage grooves of the Zain Horse Mat"
+              width="1024"
+              height="1024"
+              loading="lazy"
+              decoding="async"
+              class="mx-auto h-auto w-full max-w-md rounded border border-industrial-300 lg:max-w-none"
+            />
+          </figure>
+        </div>
+
+        {/* TODO: Missing spec from brief — horse-mats.yaml lists "Mat size" (mm),
+            "Thickness" (mm) and "Surface texture options" as null "to collect",
+            and DESIGN-NOTES.md / CLAUDE.md §6 say not to invent densities,
+            thicknesses or tensile figures. The density band (900–1100 kg/m³),
+            the 12/15/17/20 mm thickness list and every row above are descriptive
+            copy from the page-build request, not manufacturer-certified data.
+            Confirm the recycled-rubber composition, mat sizes, thickness options,
+            density and any tested slip-resistance figures against real product
+            data / manufacturer certificates before go-live. */}
+        <p class="mt-3 text-xs text-charcoal-500" data-reveal>
+          Specifications are provisional pending final manufacturer product data and test
+          certificates. Request the current Zain Horse Mat technical datasheet for confirmed mat
+          sizes, thickness and density figures.
+        </p>
+      </div>
+    </section>
+
+    {/* ─── 6. BEST FOR / IDEAL APPLICATIONS ───────────────────────────────── */}
+    <section aria-labelledby="apps-h" class={`${sectionShell} bg-white`}>
+      <div class={container}>
+        <h2 id="apps-h" class={h2} data-reveal>Recommended Applications</h2>
+        <dl class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3" data-reveal-group>
+          {
+            applications.map((it) => (
+              <div class="card-lift rounded border border-industrial-300 border-l-[3px] border-l-amber-400 bg-industrial-100 p-5">
+                <span class={iconChip} aria-hidden="true">
+                  <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" set:html={icon[it.icon]} />
+                </span>
+                <dt class="font-heading font-semibold text-charcoal">{it.term}</dt>
+                <dd class="mt-1.5 text-sm text-charcoal-600">{it.desc}</dd>
+              </div>
+            ))
+          }
+        </dl>
+
+        <figure class="m-0 mt-10" data-reveal>
+          <img
+            src={APPS_IMG}
+            alt={APPS_ALT}
+            title="Zain Horse Mat applications: equestrian stables, dairy and livestock enclosures, and wash bays and trailers in Dubai"
+            width="1024"
+            height="1024"
+            loading="lazy"
+            decoding="async"
+            class="mx-auto h-auto w-full max-w-2xl rounded border border-industrial-300"
+          />
+        </figure>
+      </div>
+    </section>
+
+    {/* ─── 7. GEOGRAPHIC SIGNALS ──────────────────────────────────────────── */}
+    <section aria-labelledby="geo-h" class={`${sectionShell} bg-industrial-100`}>
+      <div class={container}>
+        <h2 id="geo-h" class={h2} data-reveal>
+          Formulated for Dubai Stables &amp; GCC Climate Conditions
+        </h2>
+
+        <div class="mt-8 grid gap-10 lg:grid-cols-2 lg:items-center">
+          <figure class="m-0" data-reveal>
+            <img
+              src={GEO_IMG}
+              alt={GEO_ALT}
+              title="Zain SBR horse stable mats installed in an equestrian barn in Al Khawaneej, Dubai"
+              width="1408"
+              height="768"
+              loading="lazy"
+              decoding="async"
+              class="h-auto w-full rounded border border-industrial-300"
+            />
+          </figure>
+
+          <div class="space-y-5" data-reveal>
+            <div class="rounded border border-industrial-300 border-l-[3px] border-l-amber-400 bg-white p-6">
+              <h3 class="font-heading text-base font-bold text-charcoal">Thermal Isolation</h3>
+              <p class="mt-2 text-charcoal-600">
+                Concrete sub-slabs in key stable regions like Meydan, Al Khawaneej, Nad Al Sheba and
+                Al Marmoom trap extreme ground heat. Zain Horse Mats provide essential thermal
+                insulation to keep animal stalls cool and comfortable.
+              </p>
+            </div>
+            <div class="rounded border border-industrial-300 border-l-[3px] border-l-amber-400 bg-white p-6">
+              <h3 class="font-heading text-base font-bold text-charcoal">
+                Humidity &amp; Bacteria Prevention
+              </h3>
+              <p class="mt-2 text-charcoal-600">
+                High atmospheric humidity accelerates bacteria and ammonia growth in organic bedding.
+                Our non-porous rubber prevents fluid penetration into subfloors, maintaining high
+                hygiene standards.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {/* ─── 8. ABOUT RUKN AL ZAIN & DELIVERY ───────────────────────────────── */}
+    <section aria-labelledby="rzn-h" class={`${sectionShell} bg-white`}>
+      <div class={container}>
+        <h2 id="rzn-h" class={h2} data-reveal>Why Choose Rukn Al Zain?</h2>
+        <p class={lede} data-reveal>
+          Rukn Al Zain General Trading LLC is a leading Dubai-based supplier of specialized rubber
+          flooring, sports surfaces and agricultural mats across the UAE.
+        </p>
+
+        <h3 class="mt-10 font-heading text-lg font-bold text-charcoal" data-reveal>
+          Order &amp; Delivery Process
+        </h3>
+        <ol class="mt-6 grid gap-5 sm:grid-cols-3" data-reveal-group>
+          {
+            processSteps.map((s) => (
+              <li class="card-lift flex h-full flex-col rounded border border-industrial-300 bg-industrial-100 p-5">
+                <div class="flex items-center justify-between">
+                  <span class="grid h-11 w-11 place-items-center rounded bg-white text-amber-700 ring-1 ring-industrial-300" aria-hidden="true">
+                    <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" set:html={icon[s.icon]} />
+                  </span>
+                  <span class="font-heading text-2xl font-extrabold text-industrial-400" aria-hidden="true">
+                    {s.n}
+                  </span>
+                </div>
+                <h4 class="mt-3 font-heading text-base font-bold text-charcoal">{s.term}</h4>
+                <p class="mt-1.5 text-sm text-charcoal-600">{s.desc}</p>
+              </li>
+            ))
+          }
+        </ol>
+
+        <h3 class="mt-12 font-heading text-lg font-bold text-charcoal" data-reveal>
+          Delivery Coverage Across the UAE
+        </h3>
+        <p class="mt-4 max-w-3xl text-charcoal-600" data-reveal>
+          <span class="font-semibold text-charcoal">Dubai hub:</span> Meydan, Al Khawaneej, Nad Al
+          Sheba, Al Barsha, Al Quoz and Downtown. 24 to 48-hour site delivery to
+          {' '}{coverageAreas.slice(0, -1).join(', ')}, and {coverageAreas.at(-1)}.
+        </p>
+        <ul class="mt-5 flex flex-wrap gap-2.5" data-reveal-group>
+          {
+            coverageAreas.map((area) => (
+              <li class="inline-flex items-center gap-1.5 rounded border border-industrial-300 bg-industrial-100 px-3 py-1.5 text-sm font-medium text-charcoal">
+                <svg class="h-4 w-4 text-amber-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" set:html={icon['map-pin']} aria-hidden="true" />
+                {area}
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </section>
+
+    {/* ─── 9. FAQ — accordion (native <details>, zero-JS) ─────────────────── */}
+    <section aria-labelledby="faq-h" class={`${sectionShell} bg-industrial-100`}>
+      <div class={container}>
+        <h2 id="faq-h" class={h2} data-reveal>Frequently Asked Questions</h2>
+        <div
+          class="mt-6 max-w-3xl divide-y divide-industrial-300 border-y border-industrial-300"
+          data-reveal-group
+        >
+          {
+            faqs.map((f, i) => (
+              <details class="group" open={i === 0}>
+                <summary class="flex cursor-pointer items-center justify-between gap-4 py-4 font-heading text-base font-semibold text-charcoal marker:content-none [&::-webkit-details-marker]:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700">
+                  <span>{f.question}</span>
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    class="h-5 w-5 shrink-0 text-amber-700 transition-transform duration-200 group-open:-rotate-180"
+                    aria-hidden="true"
+                  >
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m6 9 6 6 6-6" />
+                  </svg>
+                </summary>
+                <p class="pb-4 text-charcoal-600">{f.answer}</p>
+              </details>
+            ))
+          }
+        </div>
+
+        {/* Internal link: spoke → hub + animal sibling, keyword anchor text */}
+        <p class="mt-8 max-w-3xl text-sm text-charcoal-600" data-reveal>
+          Zain Horse Mat is part of Rukn Al Zain&rsquo;s{' '}
+          <a
+            href="/animal-agricultural-flooring"
+            class="rounded font-semibold text-amber-700 hover:text-amber-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700"
+          >
+            animal &amp; agricultural rubber flooring range
+          </a>. For high-traffic stable aisles, wash bays and barrow routes, see{' '}
+          <a
+            href="/hammer-top"
+            class="rounded font-semibold text-amber-700 hover:text-amber-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700"
+          >
+            Zain Hammer Top
+          </a>.
+        </p>
+      </div>
+    </section>
+
+    {/* Combined BreadcrumbList + Product + FAQPage structured data (@graph).
+        Kept in-body to match the sibling spoke pages (BaseLayout exposes no
+        <head> slot); crawlers parse it identically. Organization JSON-LD is
+        emitted sitewide by BaseLayout. */}
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(graphSchema)} />
+
+    {/* ─── 10. LEAD CAPTURE & BOTTOM CTA ──────────────────────────────────── */}
+    <section
+      id="lead-capture"
+      aria-labelledby="cta-h"
+      class="border-t border-industrial-300 bg-charcoal-700 text-white"
+    >
+      <div class={`${container} py-16`}>
+        <div class="grid gap-10 lg:grid-cols-[1fr_1.05fr] lg:items-start">
+          <div data-reveal>
+            <h2 id="cta-h" class="text-2xl font-bold text-white">
+              Request Your Free Sample Kit &amp; Bulk Project Quote
+            </h2>
+            <p class="mt-4 max-w-xl text-industrial-200">
+              Contact our Dubai technical supply team today for volume pricing, technical datasheets
+              or physical sample kits delivered directly to your site.
+            </p>
+            <dl class="mt-6 space-y-3 text-sm">
+              <div class="flex flex-wrap gap-x-2">
+                <dt class="font-semibold text-white">Phone / WhatsApp:</dt>
+                <dd>
+                  <a
+                    href="tel:+971505698195"
+                    class="rounded font-medium text-amber-400 hover:text-amber-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+                  >
+                    +971 50 569 8195
+                  </a>
+                </dd>
+              </div>
+              <div class="flex flex-wrap gap-x-2">
+                <dt class="font-semibold text-white">Location:</dt>
+                <dd class="text-industrial-200">
+                  Rukn Al Zain General Trading LLC, P.O. Box 36528, Dubai, United Arab Emirates
+                </dd>
+              </div>
+            </dl>
+
+            <div class="mt-6">
+              <a
+                href={WHATSAPP_PLAIN}
+                target="_blank"
+                rel="noopener"
+                class={`${ghostCta} focus-visible:ring-offset-charcoal-700`}
+              >
+                Chat on WhatsApp (+971 50 569 8195)
+              </a>
+            </div>
+          </div>
+
+          {/*
+            Standard HTML POST form wired for Netlify Forms (zero JS): captured
+            automatically on a Netlify deploy. Locally (`astro preview`) the POST
+            has no handler — that is expected. Mirrors src/pages/hammer-top.astro.
+            An Email field is kept (not in the build request's field list) as the
+            primary reply channel, consistent with the sibling lead forms.
+            TODO: add a branded /thank-you success page and point `action` at it.
+          */}
+          <div class="rounded border border-industrial-300 bg-white p-6 text-charcoal" data-reveal>
+            <form
+              name="horse-mats-quote"
+              method="POST"
+              action={PATH}
+              data-netlify="true"
+              netlify-honeypot="bot-field"
+              class="space-y-5"
+            >
+              <input type="hidden" name="form-name" value="horse-mats-quote" />
+              <input type="hidden" name="product" value="Zain Horse Mat" />
+              <p class="hidden">
+                <label>Leave this field empty if you are human: <input name="bot-field" /></label>
+              </p>
+
+              <div class="grid gap-5 sm:grid-cols-2">
+                <div>
+                  <label class={labelClass} for="name">
+                    Full Name <span class="text-amber-700">*</span>
+                  </label>
+                  <input
+                    class={fieldClass}
+                    type="text"
+                    id="name"
+                    name="name"
+                    autocomplete="name"
+                    required
+                  />
+                </div>
+                <div>
+                  <label class={labelClass} for="email">
+                    Email <span class="text-amber-700">*</span>
+                  </label>
+                  <input
+                    class={fieldClass}
+                    type="email"
+                    id="email"
+                    name="email"
+                    autocomplete="email"
+                    required
+                  />
+                </div>
+                <div>
+                  <label class={labelClass} for="phone">
+                    Phone / WhatsApp <span class="text-amber-700">*</span>
+                  </label>
+                  <input
+                    class={fieldClass}
+                    type="tel"
+                    id="phone"
+                    name="phone"
+                    autocomplete="tel"
+                    inputmode="tel"
+                    required
+                  />
+                </div>
+                <div>
+                  <label class={labelClass} for="location">Project Location / Emirate</label>
+                  <select class={fieldClass} id="location" name="location">
+                    <option value="" selected disabled>Select an emirate</option>
+                    {emirates.map((e) => <option value={e}>{e}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label class={labelClass} for="coverage">Coverage Area (m²)</label>
+                  <input
+                    class={fieldClass}
+                    type="number"
+                    id="coverage"
+                    name="coverage"
+                    min="0"
+                    step="1"
+                    inputmode="numeric"
+                    placeholder="e.g. 120"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label class={labelClass} for="message">Message</label>
+                <textarea
+                  class={fieldClass}
+                  id="message"
+                  name="message"
+                  rows="4"
+                  placeholder="Tell us about your facility — number of stalls, animal type, subfloor, thickness needed, timeline"
+                ></textarea>
+              </div>
+
+              <div class="flex flex-wrap gap-3">
+                <button
+                  type="submit"
+                  class="inline-flex items-center justify-center rounded bg-amber-400 px-5 py-3 font-semibold text-charcoal-900 transition-colors hover:bg-amber-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700 focus-visible:ring-offset-2"
+                >
+                  Request Free Sample &amp; Quote
+                </button>
+                <a
+                  href={WHATSAPP_PLAIN}
+                  target="_blank"
+                  rel="noopener"
+                  class="inline-flex items-center justify-center rounded border border-charcoal-300 px-5 py-3 font-semibold text-charcoal transition-colors hover:border-charcoal-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700"
+                >
+                  Chat on WhatsApp (+971 50 569 8195)
+                </a>
+              </div>
+              <p class="text-xs text-charcoal-400">
+                Submissions are handled by Netlify Forms on the live site.
+              </p>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {/* ─── SUBTLE MOTION ──────────────────────────────────────────────────────
+        One-shot CSS load-in for the hero and a staggered scroll-reveal for
+        headings, card groups, figures and the spec table. Progressive
+        enhancement only — content is fully visible without JS, and every effect
+        is disabled under prefers-reduced-motion. Mirrors hammer-top.astro. */}
+    <style is:global>
+      .hm-js .hm-page [data-hero] {
+        animation: hm-rise 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      @keyframes hm-rise {
+        from {
+          opacity: 0;
+          transform: translateY(16px);
+        }
+      }
+
+      .hm-js .hm-page [data-reveal],
+      .hm-js .hm-page [data-reveal-group] > * {
+        opacity: 0;
+        transform: translateY(14px);
+        transition:
+          opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+          transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .hm-js .hm-page [data-reveal].in,
+      .hm-js .hm-page [data-reveal-group].in > * {
+        opacity: 1;
+        transform: none;
+      }
+      .hm-js .hm-page [data-reveal-group].in > *:nth-child(2) { transition-delay: 0.06s; }
+      .hm-js .hm-page [data-reveal-group].in > *:nth-child(3) { transition-delay: 0.12s; }
+      .hm-js .hm-page [data-reveal-group].in > *:nth-child(4) { transition-delay: 0.18s; }
+      .hm-js .hm-page [data-reveal-group].in > *:nth-child(5) { transition-delay: 0.24s; }
+      .hm-js .hm-page [data-reveal-group].in > *:nth-child(n + 6) { transition-delay: 0.3s; }
+
+      .hm-page .card-lift {
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
+      }
+      .hm-page .card-lift:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 24px -6px rgb(42 45 52 / 0.18);
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .hm-js .hm-page [data-hero] {
+          animation: none;
+        }
+        .hm-js .hm-page [data-reveal],
+        .hm-js .hm-page [data-reveal-group] > * {
+          opacity: 1;
+          transform: none;
+          transition: none;
+        }
+        .hm-page .card-lift,
+        .hm-page .card-lift:hover {
+          transition: none;
+          transform: none;
+        }
+      }
+    </style>
+
+    <script>
+      const targets = document.querySelectorAll(
+        '.hm-page [data-reveal], .hm-page [data-reveal-group]',
+      );
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const revealAll = () => targets.forEach((el) => el.classList.add('in'));
+
+      if (reduce || !('IntersectionObserver' in window)) {
+        revealAll();
+      } else {
+        const io = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (!entry.isIntersecting) continue;
+              entry.target.classList.add('in');
+              io.unobserve(entry.target);
+            }
+          },
+          { rootMargin: '0px 0px -8% 0px' },
+        );
+        targets.forEach((el) => io.observe(el));
+        window.addEventListener('load', () => setTimeout(revealAll, 1200));
+      }
+    </script>
+  </article>
+</BaseLayout>

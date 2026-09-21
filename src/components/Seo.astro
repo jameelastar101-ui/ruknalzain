@@ -1,0 +1,70 @@
+---
+/**
+ * Seo.astro — per-page metadata: title, description, canonical, robots,
+ * Open Graph and Twitter Card tags. Render inside <head> (BaseLayout does this).
+ *
+ * Text values must come from Rukn_Al_Zain_SEO_Content_Brief.docx (CLAUDE.md §1).
+ */
+export interface Props {
+  /** Full <title> text for this page. */
+  title: string;
+  /** Meta description (~150–160 chars). */
+  description: string;
+  /** Path or absolute URL. Defaults to the current path. Normalised to no
+   *  trailing slash to match astro.config `trailingSlash: 'never'`. */
+  canonical?: string;
+  /** Path or absolute URL to the share image.
+   *  TODO: Missing spec from brief — supply a purpose-built 1200×630 OG image
+   *  per page / section (CLAUDE.md §1). Falls back to the logo for now. */
+  ogImage?: string;
+  ogImageAlt?: string;
+  /** og:type — 'website' for most pages, 'article' for future blog posts. */
+  type?: 'website' | 'article' | 'profile';
+  /** Emit noindex,nofollow (use on temporary or thin pages). */
+  noindex?: boolean;
+}
+
+const {
+  title,
+  description,
+  canonical,
+  ogImage = '/logo.jpg',
+  ogImageAlt = 'Rukn Al Zain General Trading LLC',
+  type = 'website',
+  noindex = false,
+} = Astro.props;
+
+const SITE_NAME = 'Rukn Al Zain General Trading LLC';
+const site = Astro.site ?? new URL('https://ruknalzain.ae');
+
+const canonicalURL = new URL(canonical ?? Astro.url.pathname, site);
+if (canonicalURL.pathname !== '/' && canonicalURL.pathname.endsWith('/')) {
+  canonicalURL.pathname = canonicalURL.pathname.replace(/\/+$/, '');
+}
+
+const ogImageURL = new URL(ogImage, site);
+const robots = noindex
+  ? 'noindex, nofollow'
+  : 'index, follow, max-image-preview:large, max-snippet:-1';
+---
+<title>{title}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonicalURL.href} />
+<meta name="robots" content={robots} />
+
+{/* Open Graph — WhatsApp / LinkedIn / Facebook previews */}
+<meta property="og:type" content={type} />
+<meta property="og:site_name" content={SITE_NAME} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonicalURL.href} />
+<meta property="og:locale" content="en_AE" />
+<meta property="og:image" content={ogImageURL.href} />
+<meta property="og:image:alt" content={ogImageAlt} />
+
+{/* Twitter Card */}
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={ogImageURL.href} />
+<meta name="twitter:image:alt" content={ogImageAlt} />

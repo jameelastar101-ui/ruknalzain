@@ -1,0 +1,1125 @@
+---
+/**
+ * /gym-flooring-rolls/zainduo — "ZainDuo — Duo Performance Gym Flooring System"
+ * conversion + SEO / AEO / GEO product page.
+ *
+ * Bespoke page (not the YAML-driven generic ProductPage), built to mirror the
+ * structure, class helpers and progressive-enhancement motion of the sibling
+ * spokes src/pages/rubber-gym-tiles/zainfit.astro and
+ * src/pages/rubber-gym-tiles/zainsquare.astro and the parent hub
+ * src/pages/gym-flooring-rolls.astro.
+ *
+ * ─── ROUTING ─────────────────────────────────────────────────────────────
+ * The content entry src/content/products/zainduo.yaml still carries
+ * `path: /gym-flooring-rolls/zainduo` (a child of the `gym` hub). To avoid a
+ * duplicate-route build error the matching branch is filtered out of
+ * getStaticPaths in src/pages/[...slug].astro — the same pattern already used
+ * for zainfit and zainsquare. The YAML entry stays as data; this file serves
+ * the URL.
+ *
+ * ─── DATA INTEGRITY FLAGS (CLAUDE.md §0 "Data Integrity" + §6) ────────────
+ * The zainduo.yaml spec sheet lists roll thickness, tile-base thickness, total
+ * system thickness and colours as `null` "to collect". Every technical figure
+ * rendered below (2–4 mm EPDM top roll, 10–30 mm SBR tile base, 12–34 mm total
+ * system, virgin-EPDM / recycled-SBR composition, MDI polyurethane binders,
+ * adhesive-or-interlock install) was supplied in the page-build request, NOT in
+ * Rukn_Al_Zain_SEO_Content_Brief.docx. Treat every value as PROVISIONAL and
+ * confirm against real product test data / manufacturer certificates before
+ * go-live.
+ *
+ * ─── IMAGE ASSETS ───────────────────────────────────────────────────────
+ * Client-supplied JPEGs in public/images/gym-flooring-rolls/, with intrinsic
+ * dimensions wired below to prevent layout shift:
+ *   - zainduo-hero-product.jpg               (hero, 1024×1024)
+ *   - zainduo-problem-solution-dramatic.jpg  (landscape, 1376×768)
+ *   - zainduo-technical-specs.jpg            (landscape, 1376×768)
+ *   - zainduo-applications-dramatic.jpg      (landscape, 1376×768)
+ *   - zainduo-dubai-marina-highrise.jpg      (landscape, 1376×768)
+ * TODO: convert to optimised WebP to match the zainsquare asset pipeline.
+ * og:image falls back to the hero file (no purpose-built 1200×630 card yet).
+ *
+ * ─── DECISIONS TAKEN ────────────────────────────────────────────────────
+ *   - Hero "Request Free Sample" CTA scrolls to the in-page lead-capture form
+ *     (id="lead-form", Section 10) — a Netlify Forms POST, matching the
+ *     zero-JS pattern in src/pages/contact.astro. The secondary button there
+ *     opens WhatsApp.
+ *   - Structured data: a single combined @graph (BreadcrumbList + Product +
+ *     FAQPage) is emitted inline per the build request. The visible breadcrumb
+ *     trail is hand-rolled here (not the <Breadcrumbs /> component) so the
+ *     BreadcrumbList is declared exactly once. Organization JSON-LD is still
+ *     emitted sitewide by BaseLayout.
+ *   - Canonical host: the request shows "rukanalzain.com"; the configured site
+ *     is "ruknalzain.ae" (astro.config.mjs) — canonical is built from that
+ *     via the BaseLayout `canonical` prop (same choice as the zainsquare
+ *     sibling).
+ */
+import BaseLayout from '@layouts/BaseLayout.astro';
+
+const SITE = (Astro.site ?? new URL('https://ruknalzain.ae')).origin;
+const IMG = '/images/gym-flooring-rolls';
+const PATH = '/gym-flooring-rolls/zainduo';
+
+/* Client-supplied ZainDuo photography — see IMAGE ASSETS note above. */
+const HERO_IMG = `${IMG}/zainduo-hero-product.jpg`; // 1024×1024
+const HERO_ALT =
+  'ZainDuo dual-layer rubber gym flooring sample roll with official Rukn Al Zain product packaging label in a Dubai boutique studio';
+const PS_IMG = `${IMG}/zainduo-problem-solution-dramatic.jpg`; // 1376×768
+const PS_ALT =
+  'Dramatic 3D architectural cross-section diagram showing ZainDuo fused EPDM top roll and SBR tile base absorbing dynamic weight drops in a Dubai gym';
+const SPEC_IMG = `${IMG}/zainduo-technical-specs.jpg`; // 1376×768
+const SPEC_ALT =
+  'Technical graphic of a ZainDuo floor build-up showing the EPDM performance roll fused over the dense SBR tile base with thickness callouts';
+const APPS_IMG = `${IMG}/zainduo-applications-dramatic.jpg`; // 1376×768
+const APPS_ALT =
+  'Dramatic 3-panel visual guide showing ZainDuo installed in boutique HIIT studios, commercial free-weight zones, and luxury hotel wellness centers';
+const GEO_IMG = `${IMG}/zainduo-dubai-marina-highrise.jpg`; // 1376×768
+const GEO_ALT =
+  'ZainDuo performance gym flooring installed in a Dubai Marina high-rise fitness facility with tower and waterfront views through floor-to-ceiling windows';
+const OG_IMG = HERO_IMG; // fallback share image — no purpose-built 1200×630 card yet
+
+const WHATSAPP_HERO =
+  'https://wa.me/971505698195?text=Hello%20Rukn%20Al%20Zain,%20I%20am%20interested%20in%20ZainDuo%20Flooring';
+const WHATSAPP_PLAIN = 'https://wa.me/971505698195';
+
+/* ─── Inline Lucide icon path data (24×24, currentColor stroke) ─────────── */
+const icon: Record<string, string> = {
+  layers:
+    '<path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"/><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"/><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"/>',
+  palette:
+    '<circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/>',
+  droplets:
+    '<path d="M7 16.3c2.2 0 4-1.83 4-4.05 0-1.16-.57-2.26-1.71-3.19S7.29 4.24 7 2c-.29 2.24-1.14 4.83-2.29 6.06S3 11.1 3 12.25c0 2.22 1.8 4.05 4 4.05z"/><path d="M12.56 6.6A10.97 10.97 0 0 0 14 3.02c.5 2.5 2 4.9 4 6.5s3 3.5 3 5.5a6.98 6.98 0 0 1-11.91 4.97"/>',
+  'volume-x':
+    '<path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"/><path d="m22 9-6 6"/><path d="m16 9 6 6"/>',
+  'shield-check':
+    '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/>',
+  sun:
+    '<circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>',
+  activity:
+    '<path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2"/>',
+  'building-2':
+    '<path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/>',
+  dumbbell:
+    '<path d="m6.5 6.5 11 11"/><path d="m21 21-1-1"/><path d="m3 3 1 1"/><path d="m18 22 4-4"/><path d="m2 6 4-4"/><path d="m3 10 7-7"/><path d="m14 21 7-7"/>',
+  home:
+    '<path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>',
+  hotel:
+    '<path d="M10 22v-6.57"/><path d="M12 11h.01"/><path d="M12 7h.01"/><path d="M14 15.43V22"/><path d="M15 16a5 5 0 0 0-6 0"/><path d="M16 11h.01"/><path d="M16 7h.01"/><path d="M8 11h.01"/><path d="M8 7h.01"/><rect x="4" y="2" width="16" height="20" rx="2"/>',
+  warehouse:
+    '<path d="M22 8.35V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8.35A2 2 0 0 1 3.26 6.5l8-3.2a2 2 0 0 1 1.48 0l8 3.2A2 2 0 0 1 22 8.35Z"/><path d="M6 18h12"/><path d="M6 14h12"/><path d="M6 10h12"/>',
+  'flask-conical':
+    '<path d="M14 2v6a2 2 0 0 0 .245.96l5.51 10.08A2 2 0 0 1 18 22H6a2 2 0 0 1-1.755-2.96l5.51-10.08A2 2 0 0 0 10 8V2"/><path d="M6.453 15h11.094"/><path d="M8.5 2h7"/>',
+  headset:
+    '<path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-5a9 9 0 0 1 18 0v5a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3"/>',
+  search: '<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',
+  package:
+    '<path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"/><path d="M12 22V12"/><polyline points="3.29 7 12 12 20.71 7"/><path d="m7.5 4.27 9 5.15"/>',
+  truck:
+    '<path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/>',
+  wrench:
+    '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>',
+  'map-pin':
+    '<path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/>',
+};
+
+/* ─── 2. Trust bar ────────────────────────────────────────────────────── */
+const trustCards = [
+  {
+    icon: 'layers',
+    term: 'Fused Dual-Layer Performance',
+    desc: 'Integrated EPDM top roll and dense SBR rubber tile base deliver non-slip traction and dynamic subfloor cushioning.',
+  },
+  {
+    icon: 'palette',
+    term: 'Boutique Aesthetic Options',
+    desc: 'Available in a wide spectrum of rich EPDM color options and fleck densities for custom architectural branding.',
+  },
+  {
+    icon: 'droplets',
+    term: 'GCC Heat & Moisture Resistance',
+    desc: 'Formulated with polyurethane binders that resist humidity, AC cycling, and heavy sweat without warping.',
+  },
+];
+
+/* ─── 3. Problem / Solution — paired lists ───────────────────────────── */
+const problemPoints = [
+  {
+    term: 'Seam Grid vs. Impact Trade-Off',
+    desc: 'Traditional single-layer rubber tiles absorb heavy impacts but leave visible seam grids across boutique facility floors.',
+  },
+  {
+    term: 'Thin Roll Vulnerability',
+    desc: 'Standard single-layer rubber rolls deliver a sleek appearance but lack sufficient base cushioning to handle heavy free-weight drops.',
+  },
+  {
+    term: 'Acoustic Noise Transmission',
+    desc: 'Dropped weights and heavy footfall on unbuffered floors transfer low-frequency kinetic vibrations directly through concrete slabs, leading to acoustic complaints in multi-story commercial towers.',
+  },
+  {
+    term: 'Subfloor Structural Cracking',
+    desc: 'Direct weight impacts on inadequate flooring can lead to permanent micro-fractures in concrete subfloors over time.',
+  },
+];
+const solutionPoints = [
+  {
+    term: 'Seamless EPDM Aesthetics',
+    desc: 'High-density top roll surface creates a continuous, high-end visual finish available in custom color flecks to elevate facility branding.',
+  },
+  {
+    term: 'SBR Base Shock Cushioning',
+    desc: 'Heavy-duty underlying SBR tile base absorbs dynamic kinetic shock, shielding concrete subfloors from cracking.',
+  },
+  {
+    term: 'Acoustic Isolation',
+    desc: 'Fused composite structure dampens low-frequency impact noise and floor vibration before it travels into the building frame.',
+  },
+  {
+    term: 'Hygienic Non-Porous Finish',
+    desc: 'Non-porous top layer resists liquid and sweat penetration, making daily cleaning fast and efficient while preserving floor integrity.',
+  },
+];
+
+/* ─── 4. Key product benefits ────────────────────────────────────────── */
+const benefits = [
+  {
+    icon: 'activity',
+    term: 'Dual-Layer Shock Mitigation',
+    desc: 'Absorbs dynamic heavy drops while providing an energetic rebound for functional training and HIIT work.',
+  },
+  {
+    icon: 'volume-x',
+    term: 'Acoustic Isolation',
+    desc: 'Dampens low-frequency impact noise and floor vibration in multi-story commercial and high-rise gym spaces.',
+  },
+  {
+    icon: 'palette',
+    term: 'Customizable Color Flecks',
+    desc: 'Endless color selection to create designated workout zones, tracks, or branded floor designs.',
+  },
+  {
+    icon: 'shield-check',
+    term: 'Subfloor Integrity',
+    desc: 'Distributes heavy equipment loads evenly, shielding underlying subfloors from structural cracking.',
+  },
+];
+
+/* ─── 5. Technical specifications — PROVISIONAL (see data-integrity flags) */
+const specRows: [string, string][] = [
+  ['System Structure', 'Fused Dual-Layer System (EPDM Top Roll + SBR Tile Base)'],
+  ['Top Surface Roll Thickness', '2 mm – 4 mm (High-Density EPDM Fleck/Solid)'],
+  ['Base Tile Thickness', '10 mm – 30 mm (Dense Recycled SBR Matrix)'],
+  ['Total System Thickness', '12 mm – 34 mm customizable'],
+  [
+    'Material Composition',
+    'Virgin EPDM granules (top) & recycled SBR granules (base) with MDI polyurethane binders',
+  ],
+  ['Color Options', 'Wide range of EPDM flecks, solid colors, and custom blends'],
+  ['Installation Method', 'Adhesive bonding or interlocking system dependent on project layout'],
+];
+
+/* ─── 6. Ideal applications ──────────────────────────────────────────── */
+const applications = [
+  {
+    icon: 'activity',
+    term: 'Boutique Fitness & HIIT Studios',
+    desc: 'Perfect for high-energy group class spaces needing a balance of comfort, foot traction, and color accents.',
+  },
+  {
+    icon: 'dumbbell',
+    term: 'Commercial Gym Free-Weight Zones',
+    desc: 'Dual-layer density absorbs dumbbell and kettlebell impacts in high-traffic facilities.',
+  },
+  {
+    icon: 'hotel',
+    term: 'Hotel & Corporate Wellness Centers',
+    desc: 'Provides a high-end visual appearance alongside low-noise structural insulation.',
+  },
+  {
+    icon: 'home',
+    term: 'Premium Home Gyms',
+    desc: 'Provides personal workout spaces with commercial-grade subfloor protection and aesthetic appeal.',
+  },
+];
+
+/* ─── 8. Why Rukn Al Zain — USP cards + process + delivery ────────────── */
+const uspCards = [
+  {
+    icon: 'warehouse',
+    term: 'Central Dubai Stock',
+    desc: 'Large stock reserves stored locally for rapid site dispatch.',
+  },
+  {
+    icon: 'flask-conical',
+    term: 'Quality Tested Materials',
+    desc: 'SBR and EPDM formulations tested for heavy wear and acoustic dampening.',
+  },
+  {
+    icon: 'headset',
+    term: 'Technical Guidance',
+    desc: 'Support on layout, subfloor prep, color selection, and installation techniques.',
+  },
+];
+const processSteps = [
+  {
+    n: '01',
+    icon: 'search',
+    term: 'Facility Consultation',
+    desc: 'We review your space, traffic profile and aesthetic targets to recommend the right roll and tile-base build-up.',
+  },
+  {
+    n: '02',
+    icon: 'package',
+    term: 'Sample Delivery',
+    desc: 'Physical EPDM color samples and the full technical data sheet delivered to your site or office.',
+  },
+  {
+    n: '03',
+    icon: 'truck',
+    term: 'Direct Site Dispatch',
+    desc: 'Swift loading and direct logistics to your job site anywhere in the UAE.',
+  },
+  {
+    n: '04',
+    icon: 'wrench',
+    term: 'Installation Support',
+    desc: 'Guidance on adhesive bonding or interlocking layout, subfloor prep and seam alignment.',
+  },
+];
+const deliveryAreas = [
+  {
+    term: 'Dubai (Primary Hub)',
+    desc: 'Downtown Dubai, Business Bay, Al Quoz, Dubai Marina, JLT, Palm Jumeirah, Dubai Hills Estate and DIFC.',
+    featured: true,
+  },
+  {
+    term: 'Abu Dhabi',
+    desc: 'Full coverage for commercial fitness centers, sports complexes and private facilities across the capital.',
+    featured: false,
+  },
+  {
+    term: 'Sharjah',
+    desc: 'Fast supply for educational sports facilities, community gyms and commercial fit-outs.',
+    featured: false,
+  },
+  {
+    term: 'Ajman',
+    desc: 'Direct delivery for hotel wellness centers, home gyms and commercial studios.',
+    featured: false,
+  },
+  {
+    term: 'Ras Al Khaimah',
+    desc: 'Site dispatch for resort fitness suites and commercial gym projects.',
+    featured: false,
+  },
+  {
+    term: 'Fujairah',
+    desc: 'Delivery for east-coast hospitality, sports and commercial facilities.',
+    featured: false,
+  },
+  {
+    term: 'Umm Al Quwain',
+    desc: 'Direct delivery service for all commercial and residential fit-out projects.',
+    featured: false,
+  },
+];
+
+/* Project-location dropdown for the lead form. */
+const emirates = [
+  'Dubai',
+  'Abu Dhabi',
+  'Sharjah',
+  'Ajman',
+  'Ras Al Khaimah',
+  'Umm Al Quwain',
+  'Fujairah',
+  'Outside the UAE',
+];
+
+/* ─── 9. FAQ (AEO) — self-contained answers, verbatim from the request ── */
+const faqs = [
+  {
+    question: 'What makes ZainDuo different from standard rubber tiles or rolls?',
+    answer:
+      'ZainDuo combines the best of both options: a thick SBR tile base for shock mitigation and an EPDM top roll layer for a seamless, colorful, non-porous finish.',
+  },
+  {
+    question: 'Can I customize the top surface color of ZainDuo?',
+    answer:
+      'Yes, the top EPDM surface is available in a wide spectrum of speckle densities and base colors to match your brand or gym aesthetic.',
+  },
+  {
+    question: 'Is ZainDuo suitable for high-rise gyms in Dubai?',
+    answer:
+      'Yes, the dual-layer system is engineered to reduce impact noise and vibration transfer through concrete floor slabs, making it ideal for multi-story towers.',
+  },
+];
+
+/* ─── Structured data — single combined @graph (build request §1) ─────── */
+const breadcrumbSchema = {
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE}/` },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: 'Gym Flooring Rolls',
+      item: `${SITE}/gym-flooring-rolls`,
+    },
+    { '@type': 'ListItem', position: 3, name: 'ZainDuo', item: `${SITE}${PATH}` },
+  ],
+};
+
+const productSchema = {
+  '@type': 'Product',
+  name: 'ZainDuo Duo Performance Fitness Flooring System',
+  description:
+    'Dual-layer fitness flooring system pairing a vibrant EPDM performance rubber roll top surface fused over a high-density recycled SBR shock tile base. Engineered for boutique studios, commercial free-weight zones, hotel wellness centers and premium home gyms across Dubai and the UAE, delivering impact mitigation, acoustic control and customizable colour finishes.',
+  image: `${SITE}${OG_IMG}`,
+  sku: 'RZ-DUO-SYS',
+  category: 'Gym Fitness Flooring',
+  url: `${SITE}${PATH}`,
+  brand: { '@type': 'Brand', name: 'Rukn Al Zain' },
+  manufacturer: { '@type': 'Organization', name: 'Rukn Al Zain General Trading LLC' },
+  material:
+    'Virgin EPDM rubber roll surface over recycled SBR rubber tile base with MDI polyurethane binders',
+  areaServed: 'United Arab Emirates',
+};
+
+const faqSchema = {
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((f) => ({
+    '@type': 'Question',
+    name: f.question,
+    acceptedAnswer: { '@type': 'Answer', text: f.answer },
+  })),
+};
+
+const graphSchema = {
+  '@context': 'https://schema.org',
+  '@graph': [breadcrumbSchema, productSchema, faqSchema],
+};
+
+/* Shared class helpers — mirrors src/pages/rubber-gym-tiles/zainsquare.astro. */
+const sectionShell = 'border-t border-industrial-300 py-14 sm:py-16';
+const container = 'mx-auto max-w-content px-4 sm:px-6 lg:px-8';
+const h2 = 'text-2xl font-bold text-charcoal';
+const lede = 'mt-4 max-w-3xl text-charcoal-600';
+const primaryCta =
+  'inline-flex items-center justify-center rounded bg-amber-400 px-5 py-3 font-semibold text-charcoal-900 transition-colors hover:bg-amber-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2';
+const ghostCta =
+  'inline-flex items-center justify-center rounded border border-white/25 px-5 py-3 font-semibold text-white transition-colors hover:border-white/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400';
+const iconChip =
+  'mb-3 grid h-11 w-11 place-items-center rounded bg-white text-amber-700 ring-1 ring-industrial-300';
+const crumbLink =
+  'rounded hover:text-amber-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700';
+const fieldClass =
+  'mt-1.5 block w-full rounded border border-charcoal-300 bg-white px-3 py-2.5 text-charcoal shadow-sm focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-700';
+const labelClass = 'block text-sm font-medium text-charcoal';
+---
+
+<BaseLayout
+  title="ZainDuo Performance Gym Flooring Dubai | Roll + Tile System | Rukn Al Zain"
+  description="ZainDuo combines a performance rubber roll surface with an SBR tile base for maximum shock absorption in Dubai commercial and home gyms."
+  canonical={PATH}
+  ogImage={OG_IMG}
+  ogImageAlt="ZainDuo dual-layer EPDM roll and SBR tile-base performance gym flooring system by Rukn Al Zain, Dubai UAE."
+>
+  <article class="zd-page">
+    {/*
+      Mark the document as JS-capable ASAP so scroll-reveal elements start hidden
+      only when the animation engine is available. A failsafe timer guarantees
+      content becomes visible even if the observer below never runs, and
+      reduced-motion visitors skip the effect entirely.
+    */}
+    <script is:inline>
+      (function () {
+        document.documentElement.classList.add('zd-js');
+        var sel = '.zd-page [data-reveal], .zd-page [data-reveal-group]';
+        var showAll = function () {
+          document.querySelectorAll(sel).forEach(function (el) {
+            el.classList.add('in');
+          });
+        };
+        var reduce =
+          window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (reduce) {
+          if (document.readyState === 'loading')
+            document.addEventListener('DOMContentLoaded', showAll);
+          else showAll();
+        } else {
+          setTimeout(showAll, 1600);
+        }
+      })();
+    </script>
+
+    {/* Breadcrumb strip — Home > Gym Flooring Rolls > ZainDuo.
+        Hand-rolled (not <Breadcrumbs />) so the BreadcrumbList JSON-LD is
+        declared once, in the combined @graph at the foot of this file. */}
+    <div class="border-b border-industrial-300 bg-industrial-100">
+      <div class={`${container} py-4`}>
+        <nav aria-label="Breadcrumb" class="text-sm">
+          <ol class="flex flex-wrap items-center gap-x-2 gap-y-1 text-charcoal-500">
+            <li class="flex items-center gap-x-2">
+              <a href="/" class={crumbLink}>Home</a>
+            </li>
+            <li class="flex items-center gap-x-2">
+              <span aria-hidden="true" class="text-charcoal-300">/</span>
+              <a href="/gym-flooring-rolls" class={crumbLink}>Gym Flooring Rolls</a>
+            </li>
+            <li class="flex items-center gap-x-2">
+              <span aria-hidden="true" class="text-charcoal-300">/</span>
+              <span aria-current="page" class="font-medium text-charcoal">ZainDuo</span>
+            </li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+
+    {/* ─── 1. HERO ─────────────────────────────────────────────────────────── */}
+    <header class="bg-charcoal-700 text-white">
+      <div class={`${container} py-14 sm:py-16`}>
+        <div class="grid items-center gap-10 lg:grid-cols-2">
+          <div data-hero>
+            <p class="font-heading text-sm font-semibold uppercase tracking-wide text-amber-400">
+              Duo Performance Fitness Flooring System
+            </p>
+            <h1 class="mt-3 text-4xl font-extrabold leading-tight text-white sm:text-5xl">
+              ZainDuo — Duo Performance Gym Flooring System UAE
+            </h1>
+
+            {/* AEO direct-answer block — sits immediately under the H1 */}
+            <p class="mt-5 max-w-xl border-l-[3px] border-amber-400 pl-4 text-lg text-industrial-100">
+              Rukn Al Zain supplies ZainDuo, a high-performance fitness flooring system engineered
+              for boutique studios, commercial facilities, and home gyms across the UAE. Combining a
+              vibrant EPDM rubber roll top layer fused over a high-density SBR shock base, ZainDuo
+              provides exceptional impact mitigation, acoustic control, and luxury visual appeal
+              without compromising on durability.
+            </p>
+
+            <div class="mt-7 flex flex-wrap gap-3">
+              <a href="#lead-form" class={`${primaryCta} focus-visible:ring-offset-charcoal-700`}>
+                Request Free Sample
+              </a>
+              <a
+                href={WHATSAPP_HERO}
+                target="_blank"
+                rel="noopener"
+                class={`${ghostCta} focus-visible:ring-offset-charcoal-700`}
+              >
+                WhatsApp Now
+              </a>
+            </div>
+          </div>
+
+          <figure class="m-0" data-hero>
+            <img
+              src={HERO_IMG}
+              alt={HERO_ALT}
+              title="ZainDuo dual-layer EPDM roll over SBR tile-base gym flooring — Rukn Al Zain"
+              width="1024"
+              height="1024"
+              loading="eager"
+              fetchpriority="high"
+              decoding="async"
+              class="h-auto w-full rounded border border-white/10"
+            />
+          </figure>
+        </div>
+      </div>
+    </header>
+
+    {/* ─── 2. TRUST BAR ───────────────────────────────────────────────────── */}
+    <section aria-labelledby="trust-h" class={`${sectionShell} bg-white`}>
+      <div class={container}>
+        <h2 id="trust-h" class={h2} data-reveal>
+          Engineered Dual-Layer Fitness Flooring System Across Dubai &amp; UAE
+        </h2>
+        <dl class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3" data-reveal-group>
+          {
+            trustCards.map((it) => (
+              <div class="card-lift rounded border border-industrial-300 border-l-[3px] border-l-amber-400 bg-industrial-100 p-5">
+                <span class={iconChip} aria-hidden="true">
+                  <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" set:html={icon[it.icon]} />
+                </span>
+                <dt class="font-heading font-semibold text-charcoal">{it.term}</dt>
+                <dd class="mt-1.5 text-sm text-charcoal-600">{it.desc}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+    </section>
+
+    {/* ─── 3. PROBLEM & SOLUTION ──────────────────────────────────────────── */}
+    <section aria-labelledby="ps-h" class={`${sectionShell} bg-industrial-100`}>
+      <div class={container}>
+        <h2 id="ps-h" class={h2} data-reveal>
+          The Challenge: Balancing Impact Protection with Premium Aesthetics
+        </h2>
+
+        <div class="mt-8 grid gap-6 lg:grid-cols-2" data-reveal-group>
+          {/* The Problem */}
+          <div class="rounded border border-industrial-300 border-l-[3px] border-l-danger bg-white p-6">
+            <h3 class="font-heading text-lg font-bold text-charcoal">
+              The Problem: Aesthetic vs. Performance Trade-Offs &amp; Acoustic Noise in High-Rise
+              Gyms
+            </h3>
+            <dl class="mt-4 space-y-4">
+              {
+                problemPoints.map((p) => (
+                  <div>
+                    <dt class="flex gap-2 font-heading text-sm font-semibold text-charcoal">
+                      <span class="mt-0.5 text-danger" aria-hidden="true">&#10007;</span>
+                      <span>{p.term}</span>
+                    </dt>
+                    <dd class="mt-1 pl-6 text-sm text-charcoal-600">{p.desc}</dd>
+                  </div>
+                ))
+              }
+            </dl>
+          </div>
+
+          {/* The Solution */}
+          <div class="rounded border border-industrial-300 border-l-[3px] border-l-success bg-white p-6">
+            <h3 class="font-heading text-lg font-bold text-charcoal">
+              The Solution: ZainDuo Fused Dual-Layer System
+            </h3>
+            <dl class="mt-4 space-y-4">
+              {
+                solutionPoints.map((s) => (
+                  <div>
+                    <dt class="flex gap-2 font-heading text-sm font-semibold text-charcoal">
+                      <span class="mt-0.5 text-success" aria-hidden="true">&#10003;</span>
+                      <span>{s.term}</span>
+                    </dt>
+                    <dd class="mt-1 pl-6 text-sm text-charcoal-600">{s.desc}</dd>
+                  </div>
+                ))
+              }
+            </dl>
+          </div>
+        </div>
+
+        <figure class="m-0 mt-10" data-reveal>
+          <img
+            src={PS_IMG}
+            alt={PS_ALT}
+            title="ZainDuo fused EPDM roll and SBR tile base absorbing a dynamic weight drop"
+            width="1376"
+            height="768"
+            loading="lazy"
+            decoding="async"
+            class="h-auto w-full rounded border border-industrial-300"
+          />
+        </figure>
+      </div>
+    </section>
+
+    {/* ─── 4. KEY PRODUCT BENEFITS ────────────────────────────────────────── */}
+    <section aria-labelledby="benefits-h" class={`${sectionShell} bg-white`}>
+      <div class={container}>
+        <h2 id="benefits-h" class={h2} data-reveal>Key Product Benefits</h2>
+        <dl class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4" data-reveal-group>
+          {
+            benefits.map((it) => (
+              <div class="card-lift rounded border border-industrial-300 bg-industrial-100 p-5">
+                <span class={iconChip} aria-hidden="true">
+                  <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" set:html={icon[it.icon]} />
+                </span>
+                <dt class="font-heading font-semibold text-charcoal">{it.term}</dt>
+                <dd class="mt-1.5 text-sm text-charcoal-600">{it.desc}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+    </section>
+
+    {/* ─── 5. TECHNICAL SPECIFICATIONS ────────────────────────────────────── */}
+    <section aria-labelledby="specs-h" class={`${sectionShell} bg-industrial-100`}>
+      <div class={container}>
+        <h2 id="specs-h" class={h2} data-reveal>Technical Specifications</h2>
+        <p class={lede} data-reveal>
+          System structure, layer thicknesses, total build-up height, material composition, colour
+          options and installation method for the ZainDuo roll-and-tile system. Figures are
+          <span class="font-semibold text-amber-700"> provisional</span> pending confirmation against
+          manufacturer product data.
+        </p>
+
+        <div class="mt-8 overflow-x-auto" data-reveal>
+          <table class="w-full border-collapse text-left text-sm tabular-nums">
+            <caption class="sr-only">
+              ZainDuo duo performance fitness flooring system technical specifications
+            </caption>
+            <tbody>
+              {
+                specRows.map(([label, value], i) => (
+                  <tr class:list={['border-b border-industrial-300', i % 2 === 1 && 'bg-white']}>
+                    <th scope="row" class="w-2/5 px-4 py-3 align-top font-semibold text-charcoal">
+                      {label}
+                    </th>
+                    <td class="px-4 py-3 align-top text-charcoal-600">{value}</td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <figure class="m-0 mt-10" data-reveal>
+          <img
+            src={SPEC_IMG}
+            alt={SPEC_ALT}
+            title="ZainDuo floor build-up — EPDM performance roll fused over the dense SBR tile base"
+            width="1376"
+            height="768"
+            loading="lazy"
+            decoding="async"
+            class="h-auto w-full rounded border border-industrial-300"
+          />
+        </figure>
+
+        {/* TODO: Missing spec from brief — zainduo.yaml lists roll thickness, tile-base
+            thickness, total system thickness and colours as null "to collect". Confirm
+            the 2–4 mm EPDM roll, 10–30 mm SBR base, 12–34 mm total, virgin-EPDM /
+            recycled-SBR composition, MDI binder and adhesive-or-interlock install against
+            real product test data / manufacturer certificates before go-live. */}
+        <p class="mt-3 text-xs text-charcoal-500" data-reveal>
+          Specifications are provisional pending final manufacturer product data and test
+          certificates.
+        </p>
+      </div>
+    </section>
+
+    {/* ─── 6. BEST FOR / IDEAL APPLICATIONS ───────────────────────────────── */}
+    <section aria-labelledby="apps-h" class={`${sectionShell} bg-white`}>
+      <div class={container}>
+        <h2 id="apps-h" class={h2} data-reveal>Best For / Ideal Applications</h2>
+
+        <figure class="m-0 mt-8" data-reveal>
+          <img
+            src={APPS_IMG}
+            alt={APPS_ALT}
+            title="ZainDuo in boutique HIIT studios, commercial free-weight zones and hotel wellness centers"
+            width="1376"
+            height="768"
+            loading="lazy"
+            decoding="async"
+            class="h-auto w-full rounded border border-industrial-300"
+          />
+        </figure>
+
+        <dl class="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4" data-reveal-group>
+          {
+            applications.map((it) => (
+              <div class="card-lift rounded border border-industrial-300 border-l-[3px] border-l-amber-400 bg-industrial-100 p-5">
+                <span class={iconChip} aria-hidden="true">
+                  <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" set:html={icon[it.icon]} />
+                </span>
+                <dt class="font-heading font-semibold text-charcoal">{it.term}</dt>
+                <dd class="mt-1.5 text-sm text-charcoal-600">{it.desc}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+    </section>
+
+    {/* ─── 7. GEOGRAPHIC SIGNALS ──────────────────────────────────────────── */}
+    <section aria-labelledby="geo-h" class={`${sectionShell} bg-industrial-100`}>
+      <div class={container}>
+        <h2 id="geo-h" class={h2} data-reveal>
+          Engineered Comfort &amp; Shock Base for Dubai Facilities
+        </h2>
+
+        <div class="mt-8 grid gap-10 lg:grid-cols-2 lg:items-center">
+          <figure class="m-0" data-reveal>
+            <img
+              src={GEO_IMG}
+              alt={GEO_ALT}
+              title="ZainDuo performance gym flooring in a Dubai Marina high-rise fitness facility"
+              width="1376"
+              height="768"
+              loading="lazy"
+              decoding="async"
+              class="h-auto w-full rounded border border-industrial-300"
+            />
+          </figure>
+
+          <div data-reveal>
+            <p class="text-charcoal-600">
+              Commercial centers and luxury developments across Al Quoz, Business Bay, Downtown Dubai,
+              and Palm Jumeirah demand high-spec flooring that meets both aesthetic standards and
+              strict noise insulation criteria. ZainDuo is engineered to perform reliably under
+              continuous indoor air conditioning, preventing material shrinkage, brittle edges, or
+              unpleasant odors. Rukn Al Zain provides fast local site delivery and expert technical
+              support across all Emirates to keep your fit-out schedule on track.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {/* ─── 8. ABOUT RUKN AL ZAIN & DELIVERY ───────────────────────────────── */}
+    <section aria-labelledby="rzn-h" class={`${sectionShell} bg-white`}>
+      <div class={container}>
+        <h2 id="rzn-h" class={h2} data-reveal>Why Choose Rukn Al Zain?</h2>
+        <p class={lede} data-reveal>
+          Rukn Al Zain General Trading LLC is a trusted UAE-based supplier of specialized rubber
+          flooring solutions for fitness, commercial, and industrial facilities (P.O. Box 36528,
+          Dubai, UAE). We back every order with local inventory, tested materials and hands-on
+          technical support.
+        </p>
+
+        <dl class="mt-8 grid gap-5 lg:grid-cols-3" data-reveal-group>
+          {
+            uspCards.map((it) => (
+              <div class="card-lift rounded border border-industrial-300 bg-industrial-100 p-5">
+                <span class={iconChip} aria-hidden="true">
+                  <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" set:html={icon[it.icon]} />
+                </span>
+                <dt class="font-heading font-semibold text-charcoal">{it.term}</dt>
+                <dd class="mt-1.5 text-sm text-charcoal-600">{it.desc}</dd>
+              </div>
+            ))
+          }
+        </dl>
+
+        <h3 class="mt-12 font-heading text-lg font-bold text-charcoal" data-reveal>
+          Our Work Process
+        </h3>
+        <ol class="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-4" data-reveal-group>
+          {
+            processSteps.map((s) => (
+              <li class="card-lift flex h-full flex-col rounded border border-industrial-300 bg-industrial-100 p-5">
+                <div class="flex items-center justify-between">
+                  <span class="grid h-11 w-11 place-items-center rounded bg-white text-amber-700 ring-1 ring-industrial-300" aria-hidden="true">
+                    <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" set:html={icon[s.icon]} />
+                  </span>
+                  <span class="font-heading text-2xl font-extrabold text-industrial-400" aria-hidden="true">
+                    {s.n}
+                  </span>
+                </div>
+                <h4 class="mt-3 font-heading text-base font-bold text-charcoal">{s.term}</h4>
+                <p class="mt-1.5 text-sm text-charcoal-600">{s.desc}</p>
+              </li>
+            ))
+          }
+        </ol>
+
+        <h3 class="mt-12 font-heading text-lg font-bold text-charcoal" data-reveal>
+          Delivery Coverage Across the UAE
+        </h3>
+        <dl class="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3" data-reveal-group>
+          {
+            deliveryAreas.map((a) => (
+              <div
+                class:list={[
+                  'card-lift rounded border border-industrial-300 bg-industrial-100 p-5',
+                  a.featured && 'border-l-[3px] border-l-amber-400 sm:col-span-2 lg:col-span-1',
+                ]}
+              >
+                <span class="grid h-11 w-11 place-items-center rounded bg-white text-amber-700 ring-1 ring-industrial-300" aria-hidden="true">
+                  <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" set:html={icon['map-pin']} />
+                </span>
+                <dt class="mt-3 font-heading font-semibold text-charcoal">{a.term}</dt>
+                <dd class="mt-1.5 text-sm text-charcoal-600">{a.desc}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+    </section>
+
+    {/* ─── 9. FAQ — accordion (native <details>, zero-JS) ─────────────────── */}
+    <section aria-labelledby="faq-h" class={`${sectionShell} bg-industrial-100`}>
+      <div class={container}>
+        <h2 id="faq-h" class={h2} data-reveal>Frequently Asked Questions (FAQ)</h2>
+        <div
+          class="mt-6 max-w-3xl divide-y divide-industrial-300 border-y border-industrial-300"
+          data-reveal-group
+        >
+          {
+            faqs.map((f, i) => (
+              <details class="group" open={i === 0}>
+                <summary class="flex cursor-pointer items-center justify-between gap-4 py-4 font-heading text-base font-semibold text-charcoal marker:content-none [&::-webkit-details-marker]:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700">
+                  <span>{f.question}</span>
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    class="h-5 w-5 shrink-0 text-amber-700 transition-transform duration-200 group-open:-rotate-180"
+                    aria-hidden="true"
+                  >
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m6 9 6 6 6-6" />
+                  </svg>
+                </summary>
+                <p class="pb-4 text-charcoal-600">{f.answer}</p>
+              </details>
+            ))
+          }
+        </div>
+
+        {/* Internal link: spoke → hub, keyword anchor text */}
+        <p class="mt-8 max-w-3xl text-sm text-charcoal-600" data-reveal>
+          ZainDuo is part of Rukn Al Zain's{' '}
+          <a
+            href="/gym-flooring-rolls"
+            class="rounded font-semibold text-amber-700 hover:text-amber-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700"
+          >
+            gym flooring rolls range
+          </a>. For dedicated heavy barbell drop zones, pair it with ZainExtreme tiles.
+        </p>
+      </div>
+    </section>
+
+    {/* Combined BreadcrumbList + Product + FAQPage structured data (@graph).
+        Kept in-body to match the sibling spoke pages (BaseLayout exposes no
+        <head> slot); crawlers parse it identically. Organization JSON-LD is
+        emitted sitewide by BaseLayout. */}
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(graphSchema)} />
+
+    {/* ─── 10. LEAD CAPTURE & BOTTOM CTA ──────────────────────────────────── */}
+    <section
+      id="lead-form"
+      aria-labelledby="cta-h"
+      class="border-t border-industrial-300 bg-charcoal-700 text-white"
+    >
+      <div class={`${container} py-16`}>
+        <div class="grid gap-10 lg:grid-cols-[1fr_1.05fr] lg:items-start">
+          <div data-reveal>
+            <h2 id="cta-h" class="text-2xl font-bold text-white">
+              Transform Your Gym Space with ZainDuo Performance Flooring
+            </h2>
+            <p class="mt-4 max-w-xl text-industrial-200">
+              Need free color samples, technical data sheets, or a project quote for your UAE
+              facility? Contact our sales engineering team today.
+            </p>
+            <dl class="mt-6 space-y-3 text-sm">
+              <div class="flex flex-wrap gap-x-2">
+                <dt class="font-semibold text-white">Phone / WhatsApp:</dt>
+                <dd>
+                  <a
+                    href="tel:+971505698195"
+                    class="rounded font-medium text-amber-400 hover:text-amber-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+                  >
+                    +971 50 569 8195
+                  </a>
+                </dd>
+              </div>
+              <div class="flex flex-wrap gap-x-2">
+                <dt class="font-semibold text-white">Address:</dt>
+                <dd class="text-industrial-200">
+                  Rukn Al Zain General Trading LLC, P.O. Box 36528, Dubai, UAE
+                </dd>
+              </div>
+            </dl>
+
+            <div class="mt-6">
+              <a
+                href={WHATSAPP_PLAIN}
+                target="_blank"
+                rel="noopener"
+                class={`${ghostCta} focus-visible:ring-offset-charcoal-700`}
+              >
+                Chat on WhatsApp
+              </a>
+            </div>
+          </div>
+
+          {/*
+            Standard HTML POST form wired for Netlify Forms (zero JS): captured
+            automatically on a Netlify deploy. Locally (`astro preview`) the POST
+            has no handler — that is expected. Mirrors src/pages/contact.astro.
+          */}
+          <div class="rounded border border-industrial-300 bg-white p-6 text-charcoal" data-reveal>
+            <form
+              name="zainduo-quote"
+              method="POST"
+              action={PATH}
+              data-netlify="true"
+              netlify-honeypot="bot-field"
+              class="space-y-5"
+            >
+              <input type="hidden" name="form-name" value="zainduo-quote" />
+              <input type="hidden" name="product" value="ZainDuo — Duo Performance Gym Flooring System" />
+              <p class="hidden">
+                <label>Leave this field empty if you are human: <input name="bot-field" /></label>
+              </p>
+
+              <div class="grid gap-5 sm:grid-cols-2">
+                <div>
+                  <label class={labelClass} for="name">
+                    Full name <span class="text-amber-700">*</span>
+                  </label>
+                  <input
+                    class={fieldClass}
+                    type="text"
+                    id="name"
+                    name="name"
+                    autocomplete="name"
+                    required
+                  />
+                </div>
+                <div>
+                  <label class={labelClass} for="phone">
+                    Phone / WhatsApp number <span class="text-amber-700">*</span>
+                  </label>
+                  <input
+                    class={fieldClass}
+                    type="tel"
+                    id="phone"
+                    name="phone"
+                    autocomplete="tel"
+                    inputmode="tel"
+                    required
+                  />
+                </div>
+                <div>
+                  <label class={labelClass} for="location">Project location</label>
+                  <select class={fieldClass} id="location" name="location">
+                    <option value="" selected disabled>Select an emirate</option>
+                    {emirates.map((e) => <option value={e}>{e}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label class={labelClass} for="area">Area needed (sq. metres)</label>
+                  <input
+                    class={fieldClass}
+                    type="number"
+                    id="area"
+                    name="area"
+                    min="1"
+                    inputmode="numeric"
+                    placeholder="e.g. 250"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label class={labelClass} for="colour">Color choice</label>
+                <input
+                  class={fieldClass}
+                  type="text"
+                  id="colour"
+                  name="colour"
+                  placeholder="e.g. grey fleck, solid black, brand blue"
+                />
+              </div>
+
+              <div class="flex flex-wrap gap-3">
+                <button
+                  type="submit"
+                  class="inline-flex items-center justify-center rounded bg-amber-400 px-5 py-3 font-semibold text-charcoal-900 transition-colors hover:bg-amber-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700 focus-visible:ring-offset-2"
+                >
+                  Request Project Quote
+                </button>
+                <a
+                  href={WHATSAPP_PLAIN}
+                  target="_blank"
+                  rel="noopener"
+                  class="inline-flex items-center justify-center rounded border border-charcoal-300 px-5 py-3 font-semibold text-charcoal transition-colors hover:border-charcoal-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700"
+                >
+                  WhatsApp Now
+                </a>
+              </div>
+              <p class="text-xs text-charcoal-400">
+                {/* TODO: add a branded /thank-you success page and point the form action at it. */}
+                Submissions are handled by Netlify Forms on the live site.
+              </p>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {/* ─── SUBTLE MOTION ──────────────────────────────────────────────────────
+        One-shot CSS load-in for the hero and a staggered scroll-reveal for
+        headings, card groups, figures and the spec table. Progressive
+        enhancement only — content is fully visible without JS, and every effect
+        is disabled under prefers-reduced-motion. Mirrors zainsquare.astro. */}
+    <style is:global>
+      .zd-js .zd-page [data-hero] {
+        animation: zd-rise 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      @keyframes zd-rise {
+        from {
+          opacity: 0;
+          transform: translateY(16px);
+        }
+      }
+
+      .zd-js .zd-page [data-reveal],
+      .zd-js .zd-page [data-reveal-group] > * {
+        opacity: 0;
+        transform: translateY(14px);
+        transition:
+          opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+          transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .zd-js .zd-page [data-reveal].in,
+      .zd-js .zd-page [data-reveal-group].in > * {
+        opacity: 1;
+        transform: none;
+      }
+      .zd-js .zd-page [data-reveal-group].in > *:nth-child(2) { transition-delay: 0.06s; }
+      .zd-js .zd-page [data-reveal-group].in > *:nth-child(3) { transition-delay: 0.12s; }
+      .zd-js .zd-page [data-reveal-group].in > *:nth-child(4) { transition-delay: 0.18s; }
+      .zd-js .zd-page [data-reveal-group].in > *:nth-child(5) { transition-delay: 0.24s; }
+      .zd-js .zd-page [data-reveal-group].in > *:nth-child(n + 6) { transition-delay: 0.3s; }
+
+      .zd-page .card-lift {
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
+      }
+      .zd-page .card-lift:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 24px -6px rgb(42 45 52 / 0.18);
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .zd-js .zd-page [data-hero] {
+          animation: none;
+        }
+        .zd-js .zd-page [data-reveal],
+        .zd-js .zd-page [data-reveal-group] > * {
+          opacity: 1;
+          transform: none;
+          transition: none;
+        }
+        .zd-page .card-lift,
+        .zd-page .card-lift:hover {
+          transition: none;
+          transform: none;
+        }
+      }
+    </style>
+
+    <script>
+      const targets = document.querySelectorAll(
+        '.zd-page [data-reveal], .zd-page [data-reveal-group]',
+      );
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const revealAll = () => targets.forEach((el) => el.classList.add('in'));
+
+      if (reduce || !('IntersectionObserver' in window)) {
+        revealAll();
+      } else {
+        const io = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (!entry.isIntersecting) continue;
+              entry.target.classList.add('in');
+              io.unobserve(entry.target);
+            }
+          },
+          { rootMargin: '0px 0px -8% 0px' },
+        );
+        targets.forEach((el) => io.observe(el));
+        window.addEventListener('load', () => setTimeout(revealAll, 1200));
+      }
+    </script>
+  </article>
+</BaseLayout>
