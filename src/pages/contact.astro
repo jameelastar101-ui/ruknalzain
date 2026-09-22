@@ -23,6 +23,24 @@ import Breadcrumbs from '@components/Breadcrumbs.astro';
 const SITE = (Astro.site ?? new URL('https://ruknalzain.ae')).origin;
 const PATH = '/contact';
 
+/**
+ * Success-state feedback for the 6 sitewide Netlify lead forms (this page's
+ * own `contact` form plus 5 product/hub forms) — they all POST with
+ * `action="/contact?submitted=true"`, so Netlify's default form redirect
+ * lands back here with `?submitted` set.
+ *
+ * NOTE: this page is static output (`astro.config.mjs` — no server adapter),
+ * so it is built ONCE and Netlify serves that same prebuilt HTML file for
+ * `/contact` regardless of query string — `Astro.url.searchParams` cannot
+ * differ per request after deploy (verified against the dev server: the
+ * query string never reaches `Astro.url` here either). Both states are
+ * therefore rendered into the static HTML below, and a small inline script
+ * (no framework, not hydrated) toggles which one is visible by reading
+ * `location.search` client-side. This never touches this page's <Seo />
+ * props or LocalBusiness JSON-LD, and there is still no separate
+ * /thank-you route.
+ */
+
 /** Standard NAP — keep identical here, in Footer.astro and BaseLayout.astro. */
 const PHONE = '+971505698195';
 const PHONE_DISPLAY = '+971 50 569 8195';
@@ -232,20 +250,45 @@ const localBusinessSchema = {
 
       {/* ---- Right: quote + sample request form ---- */}
       <div>
-        <h3 class="text-2xl font-bold">Request a technical quote &amp; free sample kit</h3>
-        <p class="mt-2 max-w-2xl text-charcoal-600">
-          Fields marked <span class="text-amber-700">*</span> are required. Our technical team
-          usually replies within one business day.
-        </p>
-
-        <form
-          name="contact"
-          method="POST"
-          action="/contact"
-          data-netlify="true"
-          netlify-honeypot="bot-field"
-          class="mt-6 max-w-2xl space-y-5"
+        {/* Success state — hidden by default; revealed client-side (see
+            script below) when the URL carries ?submitted from the Netlify
+            form redirect. Always present in the static HTML so it works
+            without a build-time/per-request query check (see NOTE above). */}
+        <div
+          id="quote-success"
+          role="status"
+          class="hidden max-w-2xl rounded border border-amber-400 bg-amber-50 p-6 sm:p-8"
         >
+          <h3 class="font-heading text-xl font-bold text-charcoal">
+            Thanks — we&rsquo;ll be in touch shortly
+          </h3>
+          <p class="mt-2 text-charcoal-600">
+            Your request has been received. Our technical team usually replies within one
+            business day with a tailored quote and, where requested, a free physical sample kit.
+          </p>
+          <a
+            href="/contact"
+            class="mt-5 inline-flex items-center rounded bg-amber-400 px-5 py-2.5 text-sm font-semibold text-charcoal-900 transition-colors hover:bg-amber-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700 focus-visible:ring-offset-2"
+          >
+            Submit another request
+          </a>
+        </div>
+
+        <div id="quote-form-panel">
+          <h3 class="text-2xl font-bold">Request a technical quote &amp; free sample kit</h3>
+          <p class="mt-2 max-w-2xl text-charcoal-600">
+            Fields marked <span class="text-amber-700">*</span> are required. Our technical team
+            usually replies within one business day.
+          </p>
+
+          <form
+            name="contact"
+            method="POST"
+            action="/contact?submitted=true"
+            data-netlify="true"
+            netlify-honeypot="bot-field"
+            class="mt-6 max-w-2xl space-y-5"
+          >
           <input type="hidden" name="form-name" value="contact" />
           <p class="hidden">
             <label>Leave this field empty if you are human: <input name="bot-field" /></label>
@@ -339,10 +382,22 @@ const localBusinessSchema = {
           <p class="text-xs text-charcoal-400">
             Submissions are handled by Netlify Forms on the live site.
           </p>
-        </form>
+          </form>
+        </div>
       </div>
     </div>
   </section>
+
+  <script is:inline>
+    // Progressive enhancement only: reveals the success banner in place of
+    // the quote form when the Netlify form redirect lands back here with
+    // ?submitted (see NOTE in the frontmatter above for why this can't be a
+    // server/build-time check on a statically-hosted page).
+    if (new URLSearchParams(window.location.search).has('submitted')) {
+      document.getElementById('quote-success')?.classList.remove('hidden');
+      document.getElementById('quote-form-panel')?.classList.add('hidden');
+    }
+  </script>
 
   {/* ============ 3. Material Sample Kit ============ */}
   <section aria-labelledby="sample-kit-heading" class="bg-industrial-100">

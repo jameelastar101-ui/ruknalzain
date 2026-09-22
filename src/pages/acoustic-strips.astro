@@ -939,13 +939,37 @@ const labelClass = 'block text-sm font-medium text-charcoal';
             Standard HTML POST form wired for Netlify Forms (zero JS): captured
             automatically on a Netlify deploy. Locally (`astro preview`) the POST
             has no handler — that is expected. Mirrors src/pages/screed-isolation.astro.
-            TODO: add a branded /thank-you success page and point `action` at it.
+            Success feedback: renders both states below; see src/pages/contact.astro
+            for the query-param + inline-script pattern (static output has no server
+            adapter, so this can't be a build/render-time check).
           */}
-          <div class="rounded border border-industrial-300 bg-white p-6 text-charcoal" data-reveal>
+          <div>
+            <div
+              id="quote-success"
+              role="status"
+              class="hidden rounded border border-amber-400 bg-amber-50 p-6 text-charcoal"
+            >
+              <h3 class="font-heading text-xl font-bold text-charcoal">
+                Thanks &mdash; we&rsquo;ll be in touch shortly
+              </h3>
+              <p class="mt-2 text-charcoal-600">
+                Your request has been received. Our technical team usually replies within one
+                business day with a tailored quote and, where requested, a free physical sample
+                kit.
+              </p>
+              <a
+                href={PATH}
+                class="mt-5 inline-flex items-center rounded bg-amber-400 px-5 py-2.5 text-sm font-semibold text-charcoal-900 transition-colors hover:bg-amber-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700 focus-visible:ring-offset-2"
+              >
+                Submit another request
+              </a>
+            </div>
+
+            <div id="quote-form-panel" class="rounded border border-industrial-300 bg-white p-6 text-charcoal" data-reveal>
             <form
               name="acoustic-strips-quote"
               method="POST"
-              action={PATH}
+              action={`${PATH}?submitted=true`}
               data-netlify="true"
               netlify-honeypot="bot-field"
               class="space-y-5"
@@ -1046,9 +1070,22 @@ const labelClass = 'block text-sm font-medium text-charcoal';
               </p>
             </form>
           </div>
+          </div>
         </div>
       </div>
     </section>
+
+    <script is:inline>
+      // Progressive enhancement only: reveals the success banner in place of
+      // the quote form when the Netlify form redirect lands back here with
+      // ?submitted (static output has no server adapter, so this can't be a
+      // build/render-time check — see src/pages/contact.astro for the same
+      // pattern and the fuller explanation).
+      if (new URLSearchParams(window.location.search).has('submitted')) {
+        document.getElementById('quote-success')?.classList.remove('hidden');
+        document.getElementById('quote-form-panel')?.classList.add('hidden');
+      }
+    </script>
 
     {/* ─── SUBTLE MOTION ──────────────────────────────────────────────────────
         One-shot CSS load-in for the hero and a staggered scroll-reveal for
