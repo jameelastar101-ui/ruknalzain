@@ -325,6 +325,13 @@ const productSchema = products.map((p) => ({
   brand: { '@type': 'Brand', name: 'Rukn Al Zain' },
   manufacturer: { '@type': 'Organization', name: 'Rukn Al Zain General Trading LLC' },
   areaServed: 'United Arab Emirates',
+  offers: {
+    '@type': 'Offer',
+    url: `${SITE}${p.href}`,
+    priceCurrency: 'AED',
+    availability: 'https://schema.org/InStock',
+    itemCondition: 'https://schema.org/NewCondition',
+  },
 }));
 
 /* Shared class helpers — mirrors the animal + gym hub pages. */

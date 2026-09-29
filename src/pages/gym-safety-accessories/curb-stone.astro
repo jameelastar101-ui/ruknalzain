@@ -400,6 +400,13 @@ const productSchema = {
   material:
     'Recycled SBR rubber granules bound with high-performance polyurethane binders',
   areaServed: 'United Arab Emirates',
+  offers: {
+    '@type': 'Offer',
+    url: `${SITE}${PATH}`,
+    priceCurrency: 'AED',
+    availability: 'https://schema.org/InStock',
+    itemCondition: 'https://schema.org/NewCondition',
+  },
 };
 
 const faqSchema = {

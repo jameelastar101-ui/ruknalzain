@@ -355,6 +355,13 @@ const productSchema = {
   manufacturer: { '@type': 'Organization', name: 'Rukn Al Zain General Trading LLC' },
   material: 'Recycled tire rubber (SBR granules) with high-tack self-adhesive backing',
   areaServed: 'United Arab Emirates',
+  offers: {
+    '@type': 'Offer',
+    url: `${SITE}${PATH}`,
+    priceCurrency: 'AED',
+    availability: 'https://schema.org/InStock',
+    itemCondition: 'https://schema.org/NewCondition',
+  },
 };
 
 const faqSchema = {

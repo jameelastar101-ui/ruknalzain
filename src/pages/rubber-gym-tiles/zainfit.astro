@@ -347,6 +347,13 @@ const productSchema = {
   manufacturer: { '@type': 'Organization', name: 'Rukn Al Zain General Trading LLC' },
   material: 'Recycled SBR rubber with polyurethane binders',
   areaServed: 'United Arab Emirates',
+  offers: {
+    '@type': 'Offer',
+    url: `${SITE}/rubber-gym-tiles/zainfit`,
+    priceCurrency: 'AED',
+    availability: 'https://schema.org/InStock',
+    itemCondition: 'https://schema.org/NewCondition',
+  },
 };
 
 /* Shared class helpers — mirrors src/pages/rubber-gym-tiles.astro. */

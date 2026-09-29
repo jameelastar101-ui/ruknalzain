@@ -369,6 +369,13 @@ const productSchema = {
   manufacturer: { '@type': 'Organization', name: 'Rukn Al Zain General Trading LLC' },
   material: 'High-density SBR rubber compound bonded with elastomeric binders',
   areaServed: 'United Arab Emirates',
+  offers: {
+    '@type': 'Offer',
+    url: `${SITE}${PATH}`,
+    priceCurrency: 'AED',
+    availability: 'https://schema.org/InStock',
+    itemCondition: 'https://schema.org/NewCondition',
+  },
 };
 
 const faqSchema = {
