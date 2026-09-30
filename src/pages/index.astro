@@ -15,9 +15,14 @@
  *  - WhatsApp CTAs use Tailwind's default emerald-600/700 (green) per the
  *    brief's "Button 2 (Emerald)" spec, matching the same deviation already
  *    used on /outdoor-pavers.
- *  - No new photography was supplied for the homepage in this update, so no
- *    <img> assets were added; existing bespoke pages already establish a
- *    photo-optional pattern for icon/text sections.
+ *  - Photography (2026-09-30 update): reused existing site assets rather than
+ *    inventing new photography — the hero banner and warehouse-delivery shots
+ *    from /images/about-us (already the canonical "brand" photo set shared
+ *    with contact.astro), and each product-hub card's own hero image from its
+ *    hub page (acoustic's shot was previously unused but lives in the correct
+ *    /images/acoustic-soundproofing-flooring folder). Native <img>, not
+ *    astro:assets <Image />, per the established bespoke-page pattern
+ *    (public/ assets aren't optimised by <Image />).
  *  - Technical spec figures (density, thickness, hardness, acoustic rating)
  *    are the brief's own "Universal Material Performance Standards" and are
  *    consistent with (a superset of) the per-product figures already
@@ -60,7 +65,10 @@ const trustBar = [
   },
 ];
 
-/* Section 3: Product Hub Overview */
+/* Section 3: Product Hub Overview — photos reused from each hub's own hero
+   image (or, for acoustic, an unused-but-fitting shot from the same asset
+   folder) so the cards stay visually anchored to real product photography
+   rather than stock icons. */
 const productHubs = [
   {
     title: 'Acoustic & Construction Soundproofing',
@@ -68,6 +76,8 @@ const productHubs = [
     products: ['Zain Acoustic Underlay', 'ZainSilence Screed Isolation', 'Wall & Ceiling Strips'],
     href: '/acoustic-soundproofing-flooring',
     anchor: 'Explore Acoustic Solutions',
+    img: '/images/acoustic-soundproofing-flooring/acoustic-rubber-underlayment-dubai-hero.jpg',
+    alt: 'Installer laying marble tile over a recycled rubber acoustic underlay roll in a Dubai high-rise apartment.',
   },
   {
     title: 'Gym & Commercial Fitness Flooring',
@@ -75,6 +85,8 @@ const productHubs = [
     products: ['ZainFit Interlocking Tiles', 'ZainSquare Heavy-Duty Tiles', 'ZainActive Continuous Rolls'],
     href: '/gym-fitness-flooring',
     anchor: 'Explore Fitness Flooring',
+    img: '/images/gym-fitness-flooring/gym-rubber-flooring-dubai-installation.jpg',
+    alt: 'High-density rubber gym flooring installed in a commercial fitness facility in Dubai, UAE.',
   },
   {
     title: 'Agricultural, Equine & Outdoor Pavers',
@@ -82,6 +94,8 @@ const productHubs = [
     products: ['Zain Horse Mat', 'Zain Hammer Top', 'ZainPavers Dog Bone'],
     href: '/animal-agricultural-flooring',
     anchor: 'Explore Agricultural Solutions',
+    img: '/images/animal-agricultural-flooring/horse-stable-rubber-mats-dubai.jpg',
+    alt: 'Heavy-duty rubber stable mats installed in an equestrian stall in Dubai, UAE.',
   },
 ];
 
@@ -273,45 +287,66 @@ const emirates = [
   {/* Section 1: Hero */}
   <header class="bg-charcoal-700 text-white">
     <div class={`${container} py-16 sm:py-20`}>
-      <h1 class="max-w-3xl text-4xl font-extrabold leading-tight text-white sm:text-5xl">
-        Sustainable Rubber Flooring &amp; Acoustic Isolation Solutions in Dubai &amp; the UAE
-      </h1>
+      <div class="grid items-center gap-10 lg:grid-cols-2">
+        <div>
+          <h1 class="text-4xl font-extrabold leading-tight text-white sm:text-5xl">
+            Sustainable Rubber Flooring &amp; Acoustic Isolation Solutions in Dubai &amp; the UAE
+          </h1>
 
-      <p class="mt-5 max-w-2xl border-l-[3px] border-amber-400 pl-4 text-lg text-industrial-100">
-        <strong class="font-semibold text-white">Rukn Al Zain General Trading LLC</strong> is a
-        leading Dubai-based distributor of high-performance SBR and EPDM recycled rubber flooring
-        systems. Specifically engineered to withstand severe GCC climatic conditions, our durable
-        materials serve high-impact commercial gyms, soundproof residential developments,
-        agricultural facilities, and outdoor walkways across all seven Emirates.
-      </p>
+          <p class="mt-5 max-w-xl border-l-[3px] border-amber-400 pl-4 text-lg text-industrial-100">
+            <strong class="font-semibold text-white">Rukn Al Zain General Trading LLC</strong> is a
+            leading Dubai-based distributor of high-performance SBR and EPDM recycled rubber
+            flooring systems. Specifically engineered to withstand severe GCC climatic conditions,
+            our durable materials serve high-impact commercial gyms, soundproof residential
+            developments, agricultural facilities, and outdoor walkways across all seven Emirates.
+          </p>
 
-      <ul class="mt-6 max-w-2xl space-y-2 text-industrial-200">
-        <li class="flex gap-3">
-          <span aria-hidden="true" class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-400"></span>
-          <span><strong class="font-semibold text-white">Direct Warehouse Stock:</strong> Fast 24–48 hour site dispatch directly from our central Dubai hub.</span>
-        </li>
-        <li class="flex gap-3">
-          <span aria-hidden="true" class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-400"></span>
-          <span><strong class="font-semibold text-white">Eco-Friendly &amp; High Density:</strong> Sustainable recycled rubber engineered for maximum impact absorption and longevity.</span>
-        </li>
-        <li class="flex gap-3">
-          <span aria-hidden="true" class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-400"></span>
-          <span><strong class="font-semibold text-white">Full UAE Reach:</strong> Complete logistics coverage across Dubai, Abu Dhabi, Sharjah, Ajman, RAK, UAQ, and Fujairah.</span>
-        </li>
-      </ul>
+          <ul class="mt-6 max-w-xl space-y-2 text-industrial-200">
+            <li class="flex gap-3">
+              <span aria-hidden="true" class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-400"></span>
+              <span><strong class="font-semibold text-white">Direct Warehouse Stock:</strong> Fast 24–48 hour site dispatch directly from our central Dubai hub.</span>
+            </li>
+            <li class="flex gap-3">
+              <span aria-hidden="true" class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-400"></span>
+              <span><strong class="font-semibold text-white">Eco-Friendly &amp; High Density:</strong> Sustainable recycled rubber engineered for maximum impact absorption and longevity.</span>
+            </li>
+            <li class="flex gap-3">
+              <span aria-hidden="true" class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-400"></span>
+              <span><strong class="font-semibold text-white">Full UAE Reach:</strong> Complete logistics coverage across Dubai, Abu Dhabi, Sharjah, Ajman, RAK, UAQ, and Fujairah.</span>
+            </li>
+          </ul>
 
-      <div class="mt-8 flex flex-wrap gap-3">
-        <a href="#request-quote" class={`${primaryCta} focus-visible:ring-offset-charcoal-700`}>
-          Request Free Sample &amp; Quote
-        </a>
-        <a
-          href="https://wa.me/971505698195?text=Hello%20Rukn%20Al%20Zain%2C%20I%20have%20an%20inquiry%20regarding%20your%20rubber%20flooring%20products."
-          target="_blank"
-          rel="noopener"
-          class={whatsappCta}
-        >
-          WhatsApp Now (+971 50 569 8195)
-        </a>
+          <div class="mt-8 flex flex-wrap gap-3">
+            <a href="#request-quote" class={`${primaryCta} focus-visible:ring-offset-charcoal-700`}>
+              Request Free Sample &amp; Quote
+            </a>
+            <a
+              href="https://wa.me/971505698195?text=Hello%20Rukn%20Al%20Zain%2C%20I%20have%20an%20inquiry%20regarding%20your%20rubber%20flooring%20products."
+              target="_blank"
+              rel="noopener"
+              class={whatsappCta}
+            >
+              WhatsApp Now (+971 50 569 8195)
+            </a>
+          </div>
+        </div>
+
+        <figure class="m-0">
+          <img
+            src="/images/about-us/rukn-al-zain-hero-banner.jpg"
+            alt="Rukn Al Zain General Trading commercial rubber flooring warehouse and corporate showroom in Dubai"
+            title="Rukn Al Zain warehouse and showroom, Dubai"
+            width="1376"
+            height="768"
+            fetchpriority="high"
+            decoding="async"
+            class="h-auto w-full rounded border border-white/10"
+          />
+          <figcaption class="mt-2 text-sm text-industrial-300">
+            Inside the Rukn Al Zain warehouse and showroom in Dubai — recycled rubber tiles, gym
+            rolls, and acoustic underlayment ready for dispatch.
+          </figcaption>
+        </figure>
       </div>
     </div>
   </header>
@@ -381,20 +416,31 @@ const emirates = [
       <ul class="mt-8 grid gap-6 md:grid-cols-3">
         {
           productHubs.map((hub) => (
-            <li class="flex flex-col rounded border border-industrial-300 bg-white p-6 shadow-card">
-              <h3 class="font-heading text-lg font-bold text-charcoal">{hub.title}</h3>
-              <p class="mt-2 flex-1 text-sm text-charcoal-600">{hub.body}</p>
-              <p class="mt-4 text-sm">
-                <strong class="font-semibold text-charcoal">Core Products:</strong>{' '}
-                <span class="text-charcoal-600">{hub.products.join(', ')}</span>
-              </p>
-              <a
-                href={hub.href}
-                class="mt-4 inline-flex items-center gap-1 rounded text-sm font-semibold text-amber-700 hover:text-amber-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700"
-              >
-                {hub.anchor}
-                <span aria-hidden="true">&rarr;</span>
-              </a>
+            <li class="flex flex-col overflow-hidden rounded border border-industrial-300 bg-white shadow-card">
+              <img
+                src={hub.img}
+                alt={hub.alt}
+                width="1408"
+                height="768"
+                loading="lazy"
+                decoding="async"
+                class="aspect-[16/9] w-full border-b border-industrial-300 object-cover"
+              />
+              <div class="flex flex-1 flex-col p-6">
+                <h3 class="font-heading text-lg font-bold text-charcoal">{hub.title}</h3>
+                <p class="mt-2 flex-1 text-sm text-charcoal-600">{hub.body}</p>
+                <p class="mt-4 text-sm">
+                  <strong class="font-semibold text-charcoal">Core Products:</strong>{' '}
+                  <span class="text-charcoal-600">{hub.products.join(', ')}</span>
+                </p>
+                <a
+                  href={hub.href}
+                  class="mt-4 inline-flex items-center gap-1 rounded text-sm font-semibold text-amber-700 hover:text-amber-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700"
+                >
+                  {hub.anchor}
+                  <span aria-hidden="true">&rarr;</span>
+                </a>
+              </div>
             </li>
           ))
         }
@@ -500,12 +546,32 @@ const emirates = [
   <section aria-labelledby="about-h" class={`${sectionShell} bg-white`}>
     <div class={container}>
       <h2 id="about-h" class={h2}>Why Rukn Al Zain?</h2>
-      <p class={lede}>
-        Rukn Al Zain General Trading LLC is a premier UAE supplier of recycled rubber flooring,
-        acoustic underlays, and equine matting. We partner with contractors, fit-out firms,
-        fitness owners, and farm operators to supply high-durability surfaces engineered for GCC
-        conditions.
-      </p>
+
+      <div class="mt-6 grid gap-10 lg:grid-cols-2 lg:items-center">
+        <p class="text-charcoal-600">
+          Rukn Al Zain General Trading LLC is a premier UAE supplier of recycled rubber flooring,
+          acoustic underlays, and equine matting. We partner with contractors, fit-out firms,
+          fitness owners, and farm operators to supply high-durability surfaces engineered for GCC
+          conditions.
+        </p>
+
+        <figure class="m-0">
+          <img
+            src="/images/about-us/rukn-al-zain-warehouse-delivery.jpg"
+            alt="Rukn Al Zain branded delivery van and forklift loading rubber flooring pallets at the Dubai warehouse"
+            title="Rukn Al Zain warehouse dispatch, Dubai"
+            width="1376"
+            height="768"
+            loading="lazy"
+            decoding="async"
+            class="h-auto w-full rounded border border-industrial-300"
+          />
+          <figcaption class="mt-2 text-sm text-charcoal-500">
+            Orders picked and loaded directly from our Dubai warehouse for express UAE-wide
+            delivery.
+          </figcaption>
+        </figure>
+      </div>
 
       <h3 class="mt-10 font-heading text-lg font-bold text-charcoal">Core Brand Values</h3>
       <dl class="mt-5 grid gap-5 sm:grid-cols-3">
