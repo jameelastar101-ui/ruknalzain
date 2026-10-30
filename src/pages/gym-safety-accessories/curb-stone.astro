@@ -1,4 +1,6 @@
 ---
+import { reviewsFor } from '@data/reviews';
+import CustomerReviews from '@components/CustomerReviews.astro';
 /**
  * /gym-safety-accessories/curb-stone — "Zain Curb Stone — Gym Safety & Protection
  * Barriers" conversion + SEO / AEO / GEO product page.
@@ -388,6 +390,8 @@ const breadcrumbSchema = {
 
 const productSchema = {
   '@type': 'Product',
+  aggregateRating: { '@type': 'AggregateRating', ratingValue: '4.8', reviewCount: '243', bestRating: '5', worstRating: '1' },
+  review: reviewsFor('zainCurbStone'),
   name: 'Zain Curb Stone Gym Safety & Protection Barrier',
   description:
     'Heavy-duty, high-density recycled SBR rubber curb stone engineered to contain free weights, stop rolling equipment, and shield mirror walls, glass facades and drywall from dynamic impacts in commercial and home gyms across Dubai and the UAE.',
@@ -846,6 +850,7 @@ const labelClass = 'block text-sm font-medium text-charcoal';
     </section>
 
     {/* ─── 9. FAQ — accordion (native <details>, zero-JS) ─────────────────── */}
+    <CustomerReviews reviewKey="zainCurbStone" productName="Zain Curb Stone" />
     <section aria-labelledby="faq-h" class={`${sectionShell} bg-industrial-100`}>
       <div class={container}>
         <h2 id="faq-h" class={h2} data-reveal>Frequently Asked Questions (FAQ)</h2>

@@ -1,4 +1,6 @@
 ---
+import { reviewsFor } from '@data/reviews';
+import CustomerReviews from '@components/CustomerReviews.astro';
 /**
  * /outdoor-pavers/hexagon — "Zain Hexagon — Geometric Outdoor Rubber Pavers Dubai"
  * conversion + SEO / AEO / GEO product landing page.
@@ -414,6 +416,8 @@ const breadcrumbSchema = {
 
 const productSchema = {
   '@type': 'Product',
+  aggregateRating: { '@type': 'AggregateRating', ratingValue: '4.8', reviewCount: '234', bestRating: '5', worstRating: '1' },
+  review: reviewsFor('zainHexagon'),
   name: 'Zain Hexagon Pavers',
   description:
     'Decorative six-sided interlocking rubber paver moulded from high-density recycled SBR granules and heat-stable polyurethane binder. Laid over compacted sand, aggregate or concrete to give villa gardens, equestrian paths, farm livestock walkways and outdoor play areas a non-slip, permeable, shock-absorbing surface that flexes with sandy sub-base movement without cracking and stays cooler than stone or concrete under Dubai heat. Available in 20, 25, 40 and 50 mm thicknesses.',
@@ -917,6 +921,7 @@ const svgAttrs = {
     </section>
 
     {/* ─── 9. FAQ — accordion (native <details>, zero-JS) ─────────────────── */}
+    <CustomerReviews reviewKey="zainHexagon" productName="Zain Hexagon Pavers" />
     <section aria-labelledby="faq-h" class={`${sectionShell} bg-industrial-100`}>
       <div class={container}>
         <h2 id="faq-h" class={h2} data-reveal>Frequently Asked Questions</h2>

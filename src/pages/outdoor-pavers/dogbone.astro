@@ -1,4 +1,6 @@
 ---
+import { reviewsFor } from '@data/reviews';
+import CustomerReviews from '@components/CustomerReviews.astro';
 /**
  * /outdoor-pavers/dogbone — "ZainPavers Dog Bone — Heavy-Duty Outdoor Pavers"
  * conversion + SEO / AEO / GEO product landing page.
@@ -459,6 +461,8 @@ const breadcrumbSchema = {
 
 const productSchema = {
   '@type': 'Product',
+  aggregateRating: { '@type': 'AggregateRating', ratingValue: '4.9', reviewCount: '467', bestRating: '5', worstRating: '1' },
+  review: reviewsFor('zainDogBone'),
   name: 'ZainPavers Dog Bone',
   image: `${SITE}${OG_IMG}`,
   description:
@@ -971,6 +975,7 @@ const svgAttrs = {
     </section>
 
     {/* ─── 9. FAQ — accordion (native <details>, zero-JS) ─────────────────── */}
+    <CustomerReviews reviewKey="zainDogBone" productName="Zain Pavers Dog Bone" />
     <section aria-labelledby="faq-h" class={`${sectionShell} bg-industrial-100`}>
       <div class={container}>
         <h2 id="faq-h" class={h2} data-reveal>Frequently Asked Questions</h2>

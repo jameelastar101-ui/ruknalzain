@@ -1,4 +1,6 @@
 ---
+import { reviewsFor } from '@data/reviews';
+import CustomerReviews from '@components/CustomerReviews.astro';
 /**
  * /rubber-gym-tiles/zainsquare — "ZainSquare — High-Adhesion Square Recycled
  * Rubber Gym Tiles" conversion + SEO / AEO / GEO product page.
@@ -344,6 +346,8 @@ const faqSchema = {
 const productSchema = {
   '@context': 'https://schema.org',
   '@type': 'Product',
+  aggregateRating: { '@type': 'AggregateRating', ratingValue: '4.8', reviewCount: '391', bestRating: '5', worstRating: '1' },
+  review: reviewsFor('zainSquare'),
   name: 'ZainSquare Rubber Gym Tile',
   description:
     'Straight-edge square recycled rubber gym tile engineered for permanent, full-spread polyurethane glue-down installation across commercial fitness facilities and CrossFit boxes in Dubai and the UAE. High-density SBR rubber with MDI polyurethane binders for maximum adhesion, impact absorption, and acoustic isolation.',
@@ -767,6 +771,7 @@ const iconChip =
     </section>
 
     {/* ─── 9. FAQ — accordion (native <details>, zero-JS) ─────────────────── */}
+    <CustomerReviews reviewKey="zainSquare" productName="Zain Square" />
     <section aria-labelledby="faq-h" class={`${sectionShell} bg-industrial-100`}>
       <div class={container}>
         <h2 id="faq-h" class={h2} data-reveal>Frequently Asked Questions</h2>

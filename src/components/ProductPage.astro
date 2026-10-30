@@ -1,4 +1,6 @@
 ---
+import { reviewsFor } from '@data/reviews';
+import CustomerReviews from '@components/CustomerReviews.astro';
 /**
  * ProductPage.astro — product spoke. AEO definition under the H1, GEO spec
  * <table>, benefits / applications lists, a keyword-anchored link back up to the
@@ -27,8 +29,27 @@ const d = entry.data;
 const hub = await getEntry(d.hub);
 const productName = d.h1.split(' — ')[0];
 const hero = images[d.image];
+
+/* Aggregate ratings per product path (supplied by client). */
+const ratings: Record<string, [number, number]> = { '/rubber-gym-tiles/zainextreme': [4.9, 446] };
+const rating = ratings[d.path];
+const site = (Astro.site ?? new URL("https://ruknalzain.ae")).origin;
+const productSchema = rating && {
+  '@context': 'https://schema.org',
+  '@type': 'Product',
+  name: productName,
+  description: d.definition,
+  image: `${site}${hero.src}`,
+  url: `${site}${d.path}`,
+  brand: { '@type': 'Brand', name: 'Rukn Al Zain' },
+  manufacturer: { '@type': 'Organization', name: 'Rukn Al Zain General Trading LLC' },
+  areaServed: 'United Arab Emirates',
+  aggregateRating: { '@type': 'AggregateRating', ratingValue: String(rating[0]), reviewCount: String(rating[1]), bestRating: '5', worstRating: '1' },
+  review: reviewsFor('zainExtreme'),
+};
 ---
 <article>
+  {productSchema && <script type="application/ld+json" is:inline set:html={JSON.stringify(productSchema)} />}
   <div class="border-b border-industrial-300 bg-industrial-100">
     <div class="mx-auto max-w-content px-4 py-4 sm:px-6 lg:px-8">
       <Breadcrumbs
@@ -170,5 +191,6 @@ const hero = images[d.image];
     </section>
   </div>
 
+  {rating && <CustomerReviews reviewKey="zainExtreme" productName={productName} />}
   <Faq faqs={d.faqs} heading={`${productName} — frequently asked questions`} id="product-faq" />
 </article>

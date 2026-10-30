@@ -1,4 +1,6 @@
 ---
+import { reviewsFor } from '@data/reviews';
+import CustomerReviews from '@components/CustomerReviews.astro';
 /**
  * /acoustic-underlay — "ZainAcoustic Underlay — Acoustic Sound Insulation in Dubai"
  * conversion + SEO / AEO / GEO product page.
@@ -318,6 +320,8 @@ const breadcrumbSchema = {
 
 const productSchema = {
   '@type': 'Product',
+  aggregateRating: { '@type': 'AggregateRating', ratingValue: '4.9', reviewCount: '412', bestRating: '5', worstRating: '1' },
+  review: reviewsFor('acousticUnderlay'),
   name: 'ZainAcoustic Underlay',
   description:
     'High-performance thin-profile acoustic sound insulation underlayment formulated from recycled SBR rubber. Creates a continuous structural break beneath marble, porcelain tile, vinyl and engineered wood flooring to control impact sound transmission across high-rise developments in Dubai and the UAE.',
@@ -754,6 +758,7 @@ const labelClass = 'block text-sm font-medium text-charcoal';
     </section>
 
     {/* ─── 9. FAQ — accordion (native <details>, zero-JS) ─────────────────── */}
+    <CustomerReviews reviewKey="acousticUnderlay" productName="Zain Acoustic Underlay" />
     <section aria-labelledby="faq-h" class={`${sectionShell} bg-industrial-100`}>
       <div class={container}>
         <h2 id="faq-h" class={h2} data-reveal>Frequently Asked Questions</h2>

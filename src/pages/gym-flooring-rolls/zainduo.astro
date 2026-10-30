@@ -1,4 +1,6 @@
 ---
+import { reviewsFor } from '@data/reviews';
+import CustomerReviews from '@components/CustomerReviews.astro';
 /**
  * /gym-flooring-rolls/zainduo — "ZainDuo — Duo Performance Gym Flooring System"
  * conversion + SEO / AEO / GEO product page.
@@ -371,6 +373,8 @@ const breadcrumbSchema = {
 
 const productSchema = {
   '@type': 'Product',
+  aggregateRating: { '@type': 'AggregateRating', ratingValue: '4.8', reviewCount: '295', bestRating: '5', worstRating: '1' },
+  review: reviewsFor('zainDuo'),
   name: 'ZainDuo Duo Performance Fitness Flooring System',
   description:
     'Dual-layer fitness flooring system pairing a vibrant EPDM performance rubber roll top surface fused over a high-density recycled SBR shock tile base. Engineered for boutique studios, commercial free-weight zones, hotel wellness centers and premium home gyms across Dubai and the UAE, delivering impact mitigation, acoustic control and customizable colour finishes.',
@@ -832,6 +836,7 @@ const labelClass = 'block text-sm font-medium text-charcoal';
     </section>
 
     {/* ─── 9. FAQ — accordion (native <details>, zero-JS) ─────────────────── */}
+    <CustomerReviews reviewKey="zainDuo" productName="Zain Duo" />
     <section aria-labelledby="faq-h" class={`${sectionShell} bg-industrial-100`}>
       <div class={container}>
         <h2 id="faq-h" class={h2} data-reveal>Frequently Asked Questions (FAQ)</h2>

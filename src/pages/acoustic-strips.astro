@@ -1,4 +1,6 @@
 ---
+import { reviewsFor } from '@data/reviews';
+import CustomerReviews from '@components/CustomerReviews.astro';
 /**
  * /acoustic-strips — "Zain Acoustic Strip — Perimeter & Decking Isolation Dubai"
  * conversion + SEO / AEO / GEO product landing page.
@@ -344,6 +346,8 @@ const breadcrumbSchema = {
 
 const productSchema = {
   '@type': 'Product',
+  aggregateRating: { '@type': 'AggregateRating', ratingValue: '4.8', reviewCount: '274', bestRating: '5', worstRating: '1' },
+  review: reviewsFor('zainAcousticStrip'),
   name: 'Zain Acoustic Strip',
   description:
     'Self-adhesive acoustic isolation strip made from recycled tire rubber (SBR granules). Laid under timber decking joists and battens to isolate them from the structure, and run around the room perimeter so a floating floor or screed does not bridge to the surrounding walls. Both uses cut transmitted sound and structural vibration, protecting the rated acoustic performance of the floor build-up across Dubai and UAE developments.',
@@ -827,6 +831,7 @@ const labelClass = 'block text-sm font-medium text-charcoal';
     </section>
 
     {/* ─── 9. FAQ — accordion (native <details>, zero-JS) ─────────────────── */}
+    <CustomerReviews reviewKey="zainAcousticStrip" productName="Zain Acoustic Strip" />
     <section aria-labelledby="faq-h" class={`${sectionShell} bg-industrial-100`}>
       <div class={container}>
         <h2 id="faq-h" class={h2} data-reveal>Frequently Asked Questions</h2>

@@ -1,4 +1,6 @@
 ---
+import { reviewsFor } from '@data/reviews';
+import CustomerReviews from '@components/CustomerReviews.astro';
 /**
  * /rubber-gym-tiles/zainfit — "ZainFit — Easy-Install Interlocking Rubber Gym
  * Tiles" conversion + SEO / AEO / GEO product page.
@@ -336,6 +338,8 @@ const faqSchema = {
 const productSchema = {
   '@context': 'https://schema.org',
   '@type': 'Product',
+  aggregateRating: { '@type': 'AggregateRating', ratingValue: '4.9', reviewCount: '520', bestRating: '5', worstRating: '1' },
+  review: reviewsFor('zainFit'),
   name: 'ZainFit — Easy-Install Interlocking Rubber Gym Tiles',
   description:
     'Tool-free interlocking rubber gym tiles built with high-density SBR rubber and heat-resistant polyurethane binders for fast, adhesive-free installation, removal, and reuse across UAE residential and commercial fitness spaces.',
@@ -757,6 +761,7 @@ const iconChip =
     </section>
 
     {/* ─── 9. FAQ — accordion (native <details>, zero-JS) ─────────────────── */}
+    <CustomerReviews reviewKey="zainFit" productName="Zain Fit" />
     <section aria-labelledby="faq-h" class={`${sectionShell} bg-industrial-100`}>
       <div class={container}>
         <h2 id="faq-h" class={h2} data-reveal>

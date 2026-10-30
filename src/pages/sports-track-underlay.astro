@@ -1,4 +1,6 @@
 ---
+import { reviewsFor } from '@data/reviews';
+import CustomerReviews from '@components/CustomerReviews.astro';
 /**
  * /sports-track-underlay — "Zain Prime — Sports Track & Court Underlay Dubai"
  * conversion + SEO / AEO / GEO product page.
@@ -343,6 +345,8 @@ const breadcrumbSchema = {
 
 const productSchema = {
   '@type': 'Product',
+  aggregateRating: { '@type': 'AggregateRating', ratingValue: '4.8', reviewCount: '338', bestRating: '5', worstRating: '1' },
+  review: reviewsFor('zainPrime'),
   name: 'Zain Prime Sports Track & Court Underlay',
   description:
     'High-performance recycled SBR rubber underlay installed beneath sports tracks and courts to absorb athletic impact, reduce structural noise and stabilise the playing surface. Compatible with timber, vinyl, acrylic and synthetic sports floor finishes across sports halls and multipurpose courts in Dubai and the UAE.',
@@ -782,6 +786,7 @@ const labelClass = 'block text-sm font-medium text-charcoal';
     </section>
 
     {/* ─── 9. FAQ — accordion (native <details>, zero-JS) ─────────────────── */}
+    <CustomerReviews reviewKey="zainPrime" productName="Zain Prime" />
     <section aria-labelledby="faq-h" class={`${sectionShell} bg-industrial-100`}>
       <div class={container}>
         <h2 id="faq-h" class={h2} data-reveal>Frequently Asked Questions</h2>

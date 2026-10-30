@@ -1,4 +1,6 @@
 ---
+import { reviewsFor } from '@data/reviews';
+import CustomerReviews from '@components/CustomerReviews.astro';
 /**
  * /hammer-top — "Zain Hammer Top — Textured Livestock & Farm Mats Dubai"
  * conversion + SEO / AEO / GEO product landing page.
@@ -359,6 +361,8 @@ const breadcrumbSchema = {
 
 const productSchema = {
   '@type': 'Product',
+  aggregateRating: { '@type': 'AggregateRating', ratingValue: '4.8', reviewCount: '310', bestRating: '5', worstRating: '1' },
+  review: reviewsFor('zainHammerTop'),
   name: 'Zain Hammer Top',
   description:
     'Heavy-duty recycled SBR rubber livestock and farm mat with a raised hammer-top textured surface. Laid over concrete in dairy stalls, equine wash bays, grooming areas and stable enclosures across Dubai and the UAE to give animals anti-slip footing under continuous washdown, insulate them from subfloor heat, and resist heavy hoof wear and waste acidity. The non-porous surface stops urine absorption and washes down with standard high-pressure equipment.',
@@ -830,6 +834,7 @@ const labelClass = 'block text-sm font-medium text-charcoal';
     </section>
 
     {/* ─── 9. FAQ — accordion (native <details>, zero-JS) ─────────────────── */}
+    <CustomerReviews reviewKey="zainHammerTop" productName="Zain Hammer Top" />
     <section aria-labelledby="faq-h" class={`${sectionShell} bg-industrial-100`}>
       <div class={container}>
         <h2 id="faq-h" class={h2} data-reveal>Frequently Asked Questions</h2>

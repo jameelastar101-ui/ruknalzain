@@ -1,4 +1,6 @@
 ---
+import { reviewsFor } from '@data/reviews';
+import CustomerReviews from '@components/CustomerReviews.astro';
 /**
  * /gym-flooring-rolls/zainactive-rolls — "ZainActive Rolls — Continuous SBR &
  * EPDM Rubber Flooring Rolls Dubai" conversion + SEO / AEO / GEO product page.
@@ -362,6 +364,8 @@ const breadcrumbSchema = {
 
 const productSchema = {
   '@type': 'Product',
+  aggregateRating: { '@type': 'AggregateRating', ratingValue: '4.9', reviewCount: '512', bestRating: '5', worstRating: '1' },
+  review: reviewsFor('zainActiveRolls'),
   name: 'ZainActive Rolls — Continuous SBR & EPDM Rubber Flooring Rolls',
   description:
     'Heavy-duty rubber flooring rolls made from high-density recycled SBR and resilient EPDM granules bound with MDI polyurethane. Supplied in low-seam continuous lengths for large commercial fitness centers, multi-purpose halls and functional sprint tracks across Dubai and the UAE, delivering shock absorption, dynamic equipment support and acoustic isolation.',
@@ -792,6 +796,7 @@ const labelClass = 'block text-sm font-medium text-charcoal';
     </section>
 
     {/* ─── 9. FAQ — accordion (native <details>, zero-JS) ─────────────────── */}
+    <CustomerReviews reviewKey="zainActiveRolls" productName="Zain Active Rolls" />
     <section aria-labelledby="faq-h" class={`${sectionShell} bg-industrial-100`}>
       <div class={container}>
         <h2 id="faq-h" class={h2} data-reveal>Frequently Asked Questions (FAQ)</h2>

@@ -1,4 +1,6 @@
 ---
+import { reviewsFor } from '@data/reviews';
+import CustomerReviews from '@components/CustomerReviews.astro';
 /**
  * /screed-isolation — "ZainSilence — High-Load Screed Isolation Systems Dubai"
  * conversion + SEO / AEO / GEO product page.
@@ -346,6 +348,8 @@ const breadcrumbSchema = {
 
 const productSchema = {
   '@type': 'Product',
+  aggregateRating: { '@type': 'AggregateRating', ratingValue: '4.9', reviewCount: '485', bestRating: '5', worstRating: '1' },
+  review: reviewsFor('zainSilence'),
   name: 'ZainSilence High-Load Screed Isolation System',
   description:
     'Heavy-duty recycled crumb-rubber screed isolation matting laid over the structural slab before a wet cementitious screed is poured. Creates a continuous elastomeric break that decouples the floating screed from the slab for impact sound dampening and structural vibration isolation, while carrying high floor loads without compression, across high-rise residential, hotel and commercial developments in Dubai and the UAE.',
@@ -804,6 +808,7 @@ const labelClass = 'block text-sm font-medium text-charcoal';
     </section>
 
     {/* ─── 9. FAQ — accordion (native <details>, zero-JS) ─────────────────── */}
+    <CustomerReviews reviewKey="zainSilence" productName="Zain Silence" />
     <section aria-labelledby="faq-h" class={`${sectionShell} bg-industrial-100`}>
       <div class={container}>
         <h2 id="faq-h" class={h2} data-reveal>Frequently Asked Questions</h2>
