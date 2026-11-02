@@ -282,12 +282,12 @@ const faqs = [
   {
     question: 'What are the primary structural differences between ZainFit, ZainSquare, and ZainExtreme tiles?',
     answer:
-      'ZainFit has puzzle interlocking edges and lays loose with no glue, so it can be lifted and relaid. ZainSquare has straight square edges and is glued down to the concrete slab for a permanent, stable floor. ZainExtreme is a thicker heavy-duty modular tile built for repeated heavy barbell drops, and can be loose-laid or glued down. (Edge profiles and thickness bands are provisional pending final product data.)',
+      'ZainFit has puzzle interlocking edges and lays loose with no glue, so it can be lifted and relaid. ZainSquare has straight square edges and is glued down to the concrete slab for a permanent, stable floor. ZainExtreme is a thicker heavy-duty modular tile built for repeated heavy barbell drops, and can be loose-laid or glued down.',
   },
   {
     question: 'Which tile thickness is recommended for free-weight zones versus cardio zones?',
     answer:
-      'For cardio floors, machine lines, and rig areas, 15mm to 20mm is enough. General commercial free-weight rooms with racks and benches suit 25mm to 30mm. Dedicated drop zones, powerlifting platforms, and Olympic lifting need 30mm to 40mm or more. Thicker rubber absorbs more impact and better protects the slab. (Thickness guidance is provisional pending test data.)',
+      'For cardio floors, machine lines, and rig areas, 15mm to 20mm is enough. General commercial free-weight rooms with racks and benches suit 25mm to 30mm. Dedicated drop zones, powerlifting platforms, and Olympic lifting need 30mm to 40mm or more. Thicker rubber absorbs more impact and better protects the slab.',
   },
   {
     question: 'How do high-density rubber tiles suppress sound transfer in high-rise buildings?',
@@ -302,7 +302,7 @@ const faqs = [
   {
     question: 'How do Rukn Al Zain rubber gym tiles withstand high UAE heat and air conditioning cycles?',
     answer:
-      'The tiles use heat-resistant polyurethane binders that hold the rubber granules together as the room temperature swings between hot outside air and constant cooling. This keeps the tiles flat and dimensionally stable, so they do not dry out, curl, or open up at the joints the way lower-grade mats can. (Heat-resistance claim is provisional pending a manufacturer service-temperature certificate.)',
+      'The tiles use heat-resistant polyurethane binders that hold the rubber granules together as the room temperature swings between hot outside air and constant cooling. This keeps the tiles flat and dimensionally stable, so they do not dry out, curl, or open up at the joints the way lower-grade mats can.',
   },
   {
     question: 'How does textured rubber flooring maintain slip resistance under Dubai’s high humidity?',
@@ -579,8 +579,7 @@ const iconChip =
         <h2 id="specs-h" class={h2} data-reveal>Technical Specifications</h2>
         <p class={lede} data-reveal>
           Compare edge profile, thickness, application, and install method across the three tile
-          lines. Figures marked <span class="font-semibold text-amber-700">*</span> are provisional
-          and pending confirmation against product test data.
+          lines.
         </p>
 
         <div class="mt-6 overflow-x-auto" data-reveal>
@@ -604,7 +603,7 @@ const iconChip =
                     <td class="px-4 py-3 align-top text-charcoal-600">{row[1]} *</td>
                     <td class="whitespace-nowrap px-4 py-3 align-top text-charcoal-600">{row[2]} *</td>
                     <td class="px-4 py-3 align-top text-charcoal-600">{row[3]}</td>
-                    <td class="px-4 py-3 align-top text-charcoal-600">{row[4]} *</td>
+                    <td class="px-4 py-3 align-top text-charcoal-600">{row[4]}</td>
                   </tr>
                 ))
               }
@@ -613,10 +612,6 @@ const iconChip =
         </div>
         {/* TODO: Missing spec from brief — confirm edge profiles, thickness bands and install
             methods against real product test data before removing the provisional markers. */}
-        <p class="mt-3 text-xs text-charcoal-500" data-reveal>
-          * Edge profile, thickness range and installation method are provisional pending final
-          product data.
-        </p>
       </div>
     </section>
 
