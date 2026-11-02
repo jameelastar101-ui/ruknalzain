@@ -9,29 +9,143 @@ import { reviewsFor } from '@data/reviews';
 export interface Props {
   reviewKey: Parameters<typeof reviewsFor>[0];
   productName: string;
+  /** When both are given, the heading reads "Customer Reviews — {ratingValue}/5 from {reviewCount} Reviews". */
+  ratingValue?: string;
+  reviewCount?: string;
+  /** Render as a scroll-snap carousel with prev/next buttons instead of a grid. */
+  carousel?: boolean;
 }
-const { reviewKey, productName } = Astro.props;
+const { reviewKey, productName, ratingValue, reviewCount, carousel = false } = Astro.props;
 const reviews = reviewsFor(reviewKey);
+
+const cardBase = 'flex flex-col rounded-md border border-industrial-300 bg-industrial-100 p-5';
+const navBtn =
+  'grid h-10 w-10 place-items-center rounded border border-industrial-300 bg-white font-bold text-charcoal transition-colors hover:border-amber-400 hover:bg-amber-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2';
 ---
 <section aria-labelledby="reviews-h" class="border-t border-industrial-300 bg-white py-14 sm:py-16">
   <div class="mx-auto max-w-content px-4 sm:px-6 lg:px-8">
-    <h2 id="reviews-h" class="text-2xl font-bold text-charcoal">Customer reviews</h2>
-    <p class="mt-2 text-charcoal-600">What UAE customers say about {productName}.</p>
-    <ul class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+    <div class="flex items-end justify-between gap-4">
+      <div>
+        <h2 id="reviews-h" class="text-2xl font-bold text-charcoal">
+          {
+            ratingValue && reviewCount
+              ? `Customer Reviews — ${ratingValue}/5 from ${reviewCount} Reviews`
+              : 'Customer reviews'
+          }
+        </h2>
+        <p class="mt-2 text-charcoal-600">What UAE customers say about {productName}.</p>
+      </div>
       {
-        reviews.map((r) => (
-          <li class="flex flex-col rounded-md border border-industrial-300 bg-industrial-100 p-5">
-            <p class="font-heading text-sm font-semibold text-charcoal">
-              <span aria-hidden="true" class="text-amber-500">★</span>
-              {r.reviewRating.ratingValue}/5
-            </p>
-            <blockquote class="mt-3 flex-1 text-sm leading-relaxed text-charcoal-700">
-              “{r.reviewBody}”
-            </blockquote>
-            <p class="mt-4 text-sm font-semibold text-charcoal">{r.author.name}</p>
-          </li>
-        ))
+        carousel && (
+          <div class="flex shrink-0 gap-2" data-reviews-nav>
+            <button type="button" class={navBtn} data-dir="-1" aria-label="Previous reviews">
+              <span aria-hidden="true">←</span>
+            </button>
+            <button type="button" class={navBtn} data-dir="1" aria-label="Next reviews">
+              <span aria-hidden="true">→</span>
+            </button>
+          </div>
+        )
       }
-    </ul>
+    </div>
+
+    {
+      carousel ? (
+        <ul
+          data-reviews-track
+          tabindex="0"
+          aria-label={`${productName} customer reviews`}
+          class="reviews-track mt-8 flex snap-x snap-mandatory gap-5 overflow-x-auto pb-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+        >
+          {reviews.map((r) => (
+            <li class={`${cardBase} w-[85%] shrink-0 snap-start sm:w-[calc(50%-0.625rem)] lg:w-[calc(33.333%-0.84rem)]`}>
+              <p class="font-heading text-sm font-semibold text-charcoal">
+                <span aria-hidden="true" class="text-amber-500">★</span>
+                {r.reviewRating.ratingValue}/5
+              </p>
+              <blockquote class="mt-3 flex-1 text-sm leading-relaxed text-charcoal-700">
+                “{r.reviewBody}”
+              </blockquote>
+              <p class="mt-4 text-sm font-semibold text-charcoal">{r.author.name}</p>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <ul class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {reviews.map((r) => (
+            <li class={cardBase}>
+              <p class="font-heading text-sm font-semibold text-charcoal">
+                <span aria-hidden="true" class="text-amber-500">★</span>
+                {r.reviewRating.ratingValue}/5
+              </p>
+              <blockquote class="mt-3 flex-1 text-sm leading-relaxed text-charcoal-700">
+                “{r.reviewBody}”
+              </blockquote>
+              <p class="mt-4 text-sm font-semibold text-charcoal">{r.author.name}</p>
+            </li>
+          ))}
+        </ul>
+      )
+    }
   </div>
 </section>
+
+{
+  carousel && (
+    <style>
+      .reviews-track {
+        scrollbar-width: none;
+        scroll-behavior: smooth;
+      }
+      .reviews-track::-webkit-scrollbar {
+        display: none;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .reviews-track {
+          scroll-behavior: auto;
+        }
+      }
+    </style>
+  )
+}
+
+{
+  carousel && (
+    <script>
+      document.querySelectorAll<HTMLElement>('[data-reviews-nav]').forEach((nav) => {
+        const track = nav
+          .closest('section')
+          ?.querySelector<HTMLElement>('[data-reviews-track]');
+        if (!track) return;
+        const step = () =>
+          (track.querySelector('li')?.getBoundingClientRect().width ?? track.clientWidth) + 20;
+        const move = (dir: number) => {
+          const max = track.scrollWidth - track.clientWidth;
+          if (dir > 0 && track.scrollLeft >= max - 4) track.scrollTo({ left: 0 });
+          else if (dir < 0 && track.scrollLeft <= 4) track.scrollTo({ left: max });
+          else track.scrollBy({ left: dir * step() });
+        };
+        nav.querySelectorAll<HTMLButtonElement>('button').forEach((btn) => {
+          btn.addEventListener('click', () => move(Number(btn.dataset.dir)));
+        });
+
+        // Auto-advance; pauses on hover/focus/touch, when off-screen, and for reduced-motion users.
+        if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        const section = track.closest('section')!;
+        let paused = false;
+        let visible = false;
+        const pause = () => (paused = true);
+        const resume = () => (paused = false);
+        section.addEventListener('mouseenter', pause);
+        section.addEventListener('mouseleave', resume);
+        section.addEventListener('focusin', pause);
+        section.addEventListener('focusout', resume);
+        section.addEventListener('touchstart', pause, { passive: true });
+        new IntersectionObserver(([e]) => (visible = e.isIntersecting)).observe(section);
+        setInterval(() => {
+          if (!paused && visible && !document.hidden) move(1);
+        }, 4000);
+      });
+    </script>
+  )
+}

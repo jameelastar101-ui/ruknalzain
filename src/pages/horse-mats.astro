@@ -335,6 +335,81 @@ const faqs = [
     answer:
       'Manufactured with high-density polyurethane-bound SBR rubber, the mats resist UV degradation, moisture absorption, and thermal warping under GCC climate conditions.',
   },
+  {
+    question: 'What are the horse mats made from?',
+    answer:
+      'They are made from heavy-duty vulcanised SBR rubber with a non-slip textured surface and grooved underside for grip and moisture control.',
+  },
+  {
+    question: 'What sizes and thicknesses are available?',
+    answer:
+      'Standard mats are typically 1.83 m × 1.22 m (6 ft × 4 ft), available in 12 mm, 17 mm, and 20 mm thicknesses; each mat’s exact weight is listed on the product page.',
+  },
+  {
+    question: 'Do the mats have a strong rubber smell?',
+    answer:
+      'There may be a mild rubber odor when new, especially in enclosed areas; it normally reduces with ventilation and regular cleaning.',
+  },
+  {
+    question: 'Which thickness should I choose?',
+    answer:
+      'Choose 17–20 mm for horse stalls and high-traffic areas; 12 mm is better suited to walkways, grooming areas, or lighter-duty use.',
+  },
+  {
+    question: 'Can I use the same mats in stalls and wash bays?',
+    answer:
+      'Yes for stalls, but for wash bays choose a drainage-friendly layout or ensure the base has an adequate slope so water does not pool.',
+  },
+  {
+    question: 'Can the mats be cut to fit my stable?',
+    answer:
+      'Yes, the rubber can be cut to fit around walls, corners, and irregular stall layouts; custom sizing may also be available on request.',
+  },
+  {
+    question: 'What surface should the mats be installed on?',
+    answer:
+      'Install them on a clean, level, firm base such as concrete or compacted crushed stone; avoid soft or uneven ground that can cause movement.',
+  },
+  {
+    question: 'Do I need adhesive to install them?',
+    answer:
+      'No, the mats are heavy enough to remain in place when fitted tightly edge-to-edge, though adhesive may be recommended for certain sloped or high-traffic areas.',
+  },
+  {
+    question: 'Do you provide installation in Dubai and Sharjah?',
+    answer:
+      'Yes, professional delivery and installation can be arranged; contact us for availability and a quote for your location.',
+  },
+  {
+    question: 'How do I clean the mats?',
+    answer:
+      'Remove soiled bedding daily, sweep away debris, then hose down with water and a mild detergent or disinfectant when needed.',
+  },
+  {
+    question: 'How do I manage urine and odor?',
+    answer:
+      'Use absorbent bedding, remove wet patches promptly, keep the stable ventilated, and periodically lift and clean the mats and base.',
+  },
+  {
+    question: 'How long do the mats last?',
+    answer:
+      'With proper installation and maintenance, quality rubber stall mats can last for many years; lifespan depends on thickness, traffic, and care.',
+  },
+  {
+    question: 'Do you deliver across the UAE?',
+    answer:
+      'Yes, we deliver across Dubai, Sharjah, Abu Dhabi, and other Emirates; delivery time and charges depend on your location and order size.',
+  },
+  {
+    question: 'Can I request a sample before buying?',
+    answer:
+      'Yes, samples are available so you can check the texture, thickness, weight, and odor before placing a full order.',
+  },
+  {
+    question: 'What is your return and warranty policy?',
+    answer:
+      'Unused mats in original condition may be eligible for return or exchange under our stated policy; manufacturing defects are covered by the product warranty.',
+  },
 ];
 
 /* ─── Structured data — single combined @graph ───────────────────────────
@@ -360,7 +435,7 @@ const breadcrumbSchema = {
 
 const productSchema = {
   '@type': 'Product',
-  aggregateRating: { '@type': 'AggregateRating', ratingValue: '4.9', reviewCount: '378', bestRating: '5', worstRating: '1' },
+  aggregateRating: { '@type': 'AggregateRating', ratingValue: '4.9', reviewCount: '6', bestRating: '5', worstRating: '1' },
   review: reviewsFor('zainHorseMats'),
   name: 'Zain Horse Mat',
   description:
@@ -489,28 +564,17 @@ const labelClass = 'block text-sm font-medium text-charcoal';
               non-slip safety and thermal concrete protection for animal health and comfort.
             </p>
 
-            <ul class="mt-6 grid gap-3 sm:grid-cols-2">
-              {
-                heroPoints.map((p) => (
-                  <li class="rounded border border-white/10 bg-white/5 p-4">
-                    <p class="font-heading text-sm font-semibold text-white">{p.term}</p>
-                    <p class="mt-1 text-sm text-industrial-200">{p.desc}</p>
-                  </li>
-                ))
-              }
-            </ul>
-
             <div class="mt-8 flex flex-wrap gap-3">
-              <a href="#lead-capture" class={`${primaryCta} focus-visible:ring-offset-charcoal-700`}>
-                Request Quote &amp; Sample Kit
+              <a href="tel:+971505698195" class={`${primaryCta} focus-visible:ring-offset-charcoal-700`}>
+                Call For Quote
               </a>
               <a
                 href={WHATSAPP_HERO}
                 target="_blank"
                 rel="noopener"
-                class={`${ghostCta} focus-visible:ring-offset-charcoal-700`}
+                class="inline-flex items-center justify-center rounded bg-[#25D366] px-5 py-3 font-semibold text-white transition-colors hover:bg-[#1EBE5A] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#25D366] focus-visible:ring-offset-2 focus-visible:ring-offset-charcoal-700"
               >
-                Chat on WhatsApp (+971 50 569 8195)
+                Chat on WhatsApp
               </a>
             </div>
           </div>
@@ -531,6 +595,14 @@ const labelClass = 'block text-sm font-medium text-charcoal';
         </div>
       </div>
     </header>
+
+    <CustomerReviews
+      reviewKey="zainHorseMats"
+      productName="Zain Horse Mats"
+      ratingValue="4.9"
+      reviewCount="378"
+      carousel
+    />
 
     {/* ─── 2. TRUST BAR ───────────────────────────────────────────────────── */}
     <section aria-labelledby="trust-h" class={`${sectionShell} bg-white`}>
@@ -835,7 +907,6 @@ const labelClass = 'block text-sm font-medium text-charcoal';
     </section>
 
     {/* ─── 9. FAQ — accordion (native <details>, zero-JS) ─────────────────── */}
-    <CustomerReviews reviewKey="zainHorseMats" productName="Zain Horse Mats" />
     <section aria-labelledby="faq-h" class={`${sectionShell} bg-industrial-100`}>
       <div class={container}>
         <h2 id="faq-h" class={h2} data-reveal>Frequently Asked Questions</h2>
