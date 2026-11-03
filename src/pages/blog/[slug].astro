@@ -88,7 +88,7 @@ const blogPostingSchema = {
   inLanguage: 'en-AE',
   datePublished: published.toISOString().slice(0, 10),
   dateModified: modified.toISOString().slice(0, 10),
-  image: `${SITE}/logo.jpg`,
+  image: d.image ? `${SITE}${d.image}` : `${SITE}/logo.jpg`,
   author: {
     '@type': 'Organization',
     name: 'Rukn Al Zain General Trading LLC',
@@ -111,6 +111,8 @@ const crumbLink =
   description={d.metaDescription}
   canonical={PATH}
   ogType="article"
+  ogImage={d.image}
+  ogImageAlt={d.imageAlt}
   noindex={d.noindex}
 >
   <div class="border-b border-industrial-300 bg-industrial-100">
@@ -150,6 +152,18 @@ const crumbLink =
     <div class="bg-white py-14 sm:py-16">
       <div class={container}>
         <div class="prose-rz max-w-3xl">
+          {
+            d.image && d.imageAlt && (
+              <img
+                src={d.image}
+                alt={d.imageAlt}
+                width="1376"
+                height="768"
+                fetchpriority="high"
+                class="w-full rounded border border-industrial-300"
+              />
+            )
+          }
           <Content />
         </div>
 
@@ -278,6 +292,13 @@ const crumbLink =
       border: 1px solid theme('colors.industrial.300');
       border-radius: theme('borderRadius.DEFAULT');
       background: #fff;
+    }
+    .prose-rz img {
+      display: block;
+      width: 100%;
+      height: auto;
+      border: 1px solid theme('colors.industrial.300');
+      border-radius: theme('borderRadius.DEFAULT');
     }
     .prose-rz figcaption {
       margin-top: 0.65rem;

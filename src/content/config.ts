@@ -134,8 +134,12 @@ const posts = defineCollection({
         }),
       )
       .min(3)
-      .max(6)
+      .max(8)
       .optional(),
+    /** Hero / social-share image path under /public (e.g. /images/blog/x/hero.webp). */
+    image: z.string().startsWith('/').optional(),
+    /** Descriptive, keyword-rich alt text for the hero image. */
+    imageAlt: z.string().min(15).optional(),
     /** Emit noindex,nofollow (drafts / thin pages). */
     noindex: z.boolean().default(false),
     /** Keep out of the index list and the static paths until ready. */
